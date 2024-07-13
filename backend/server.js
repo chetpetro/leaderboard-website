@@ -2,6 +2,9 @@ require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const leaderboardRoutes = require('./routes/leaderboard');
+const userRoutes = require('./routes/user');
+const schedule = require('node-schedule');
+const newFeaturedLeaderboard = require('./controllers/serverController');
 
 const app = express();
 
@@ -13,12 +16,17 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/leaderboards" , leaderboardRoutes);
+app.use("/api/user", userRoutes);
 
 const PORT = process.env.PORT;
 const URI = process.env.MONGO_URI;
 mongoose.connect(URI)
     .then(() => {
-        app.listen(PORT, () => console.log(`Connected to db & Listening on port: ${PORT}`));  
+        app.listen(PORT, () => console.log(`Connected to db & Listening on port: ${PORT}`));
+        
+        const job = schedule.scheduleJob('1 * * * * *', function(){
+            //newFeaturedLeaderboard();
+        });
     })
     .catch((err) => {
         console.log('Cannot connect to db: ' + err);

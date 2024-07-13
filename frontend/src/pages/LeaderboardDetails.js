@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import LeaderboardEntry from "../components/LeaderboardEntry";
 import { useParams } from "react-router-dom";
+import CreateEntryForm from "../components/CreateEntryForm";
 
-const LeaderboardDetails = () => {
+const LeaderboardDetails = ({user, motw}) => {
     const { name } = useParams()
     const [leaderboard, setLeaderboard] = useState('');
 
@@ -20,13 +21,19 @@ const LeaderboardDetails = () => {
     }, [])
 
     return (
-        <div className="leaderboard-details">
-            <h2>{ leaderboard.mapName && leaderboard.mapName.replace('-', ' ') }</h2>
+        <div>
+            {motw.mapName === leaderboard.mapName && <h2 className="details-map-name" style={{color:"gold"}}>{ leaderboard.mapName && leaderboard.mapName.replace('-', ' ') }</h2>}
+            {motw.mapName !== leaderboard.mapName && <h2 className="details-map-name">{ leaderboard.mapName && leaderboard.mapName.replace('-', ' ') }</h2>}
             <p>Creator: { leaderboard.creator }</p>
-            <div className="leaderboad-entries">
-                {leaderboard && leaderboard.entries.sort((a, b) => a.time - b.time).map((entry, index) => (
-                    <LeaderboardEntry key={entry.userName} entry={entry} pos={index + 1} />
-                ))}
+            {motw.mapName === leaderboard.mapName && <p>Map of the Week</p>}
+            <div className="leaderboard-details">
+                <div className="leaderboad-entries">
+                    {leaderboard && leaderboard.entries.sort((a, b) => a.time - b.time).map((entry, index) => (
+                        <LeaderboardEntry key={entry.userName} entry={entry} pos={index + 1} />
+                    ))}
+                </div>
+                {user.userName && <CreateEntryForm mapName={ leaderboard.mapName } entries={ leaderboard.entries } user={user}/>}
+                {!user.userName && <h2>Login to Submit Entry</h2>}
             </div>
         </div>
     );

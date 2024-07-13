@@ -1,5 +1,4 @@
 const Leaderboard = require('../models/LeaderboardModel');
-const mongoose = require('mongoose');
 
 const getLeaderboards = async (req, res) =>  {
     const response = await Leaderboard.find({}).sort({entries: -1});
@@ -17,6 +16,7 @@ const getLeaderboard = async (req, res) =>  {
 
 const createLeaderboard = async (req, res) => {
     try {
+        console.log(req.body);
         const response = await Leaderboard.create(req.body);
         res.status(200).json(response);
     } catch (err) {
@@ -34,11 +34,17 @@ const createEntry = async (req, res) => {
     res.status(200).json(response);
 }
 
+const getMOTW = async (req, res) => {
+    const response = await Leaderboard.findOne({ featured: true });
 
+    if (!response) return res.status(404).json({error: "No featured map"});
+    res.status(200).json(response)
+}
 
 module.exports = {
     getLeaderboards,
     getLeaderboard,
     createLeaderboard,
-    createEntry
+    createEntry,
+    getMOTW
 }

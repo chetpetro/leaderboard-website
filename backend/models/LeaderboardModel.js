@@ -5,15 +5,24 @@ const Schema = mongoose.Schema;
 const leaderboardSchema = new Schema({
     mapName: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     creator: {
         type: String,
         required: true
     },
+    featured: {
+        type: Boolean,
+        default: false
+    },
     entries: [{
         userName: {
             type: String,
+            required: true
+        },
+        discordID: {
+            type: Number,
             required: true
         },
         time: {

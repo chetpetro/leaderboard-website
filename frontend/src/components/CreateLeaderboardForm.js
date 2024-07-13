@@ -6,7 +6,6 @@ const CreateLeaderboardForm = () => {
     
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMapName(mapName.replace('-', ' '))
         if (mapName === '') return;
 
         const check = await fetch('/api/leaderboards/' + mapName);
@@ -23,11 +22,13 @@ const CreateLeaderboardForm = () => {
         }).then(() => {
             setMapName('');
             setCreator('')
+            window.location.reload();
         }).catch((err) => console.log(err));
     }
 
     return (
         <form className="create-leaderboard-form" onSubmit={handleSubmit}>
+            <h2>Add Leaderboard</h2>
             <label>Map Name:</label>
             <input type="text" onChange={(e) => setMapName(e.target.value)} value={mapName}/>
             <label>Creator:</label>
