@@ -52,8 +52,17 @@ const getUser = async (req, res) => {
     res.status(200).json(userEntries)
 }
 
+const getUsers = async (req, res) => {
+    const users = await User.find({});
+
+    if (!users) return res.status(400).json({error: "No users found"});
+
+    res.status(200).json(users)
+}
+
 module.exports = {
     loginUser,
     singupUser,
-    getUser
+    getUser,
+    getUsers
 }

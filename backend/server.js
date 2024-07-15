@@ -1,4 +1,4 @@
-require('dotenv').config()
+const test = require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const leaderboardRoutes = require('./routes/leaderboard');
@@ -20,11 +20,12 @@ app.use("/api/user", userRoutes);
 
 const PORT = process.env.PORT;
 const URI = process.env.MONGO_URI;
+
 mongoose.connect(URI)
     .then(() => {
         app.listen(PORT, () => console.log(`Connected to db & Listening on port: ${PORT}`));
         
-        const job = schedule.scheduleJob('1 * * * * *', function(){
+        const job = schedule.scheduleJob('* * * * 0', function(){
             //newFeaturedLeaderboard();
         });
     })

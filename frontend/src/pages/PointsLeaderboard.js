@@ -1,19 +1,16 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import LeaderboardEntry from "../components/LeaderboardEntry";
-import { useParams } from "react-router-dom";
-import CreateEntryForm from "../components/CreateEntryForm";
 
-const LeaderboardDetails = ({user, motw}) => {
-    const { name } = useParams()
-    const [leaderboard, setLeaderboard] = useState('');
+const PointsLeaderboard = () => {
+    const [users, setUsers] = useState('')
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
-            const response = await fetch('/api/leaderboards/' + name)
+            const response = await fetch('/api/user/')
             const json = await response.json();
 
             if (response.ok) {
-                setLeaderboard(json[0]);
+                set(json);
             }
         }
 
@@ -22,10 +19,7 @@ const LeaderboardDetails = ({user, motw}) => {
 
     return (
         <div>
-            {motw.mapName === leaderboard.mapName && <h2 className="details-map-name" style={{color:"gold"}}>{ leaderboard.mapName && leaderboard.mapName }</h2>}
-            {motw.mapName !== leaderboard.mapName && <h2 className="details-map-name">{ leaderboard.mapName && leaderboard.mapName }</h2>}
-            <p>Creator: { leaderboard.creator }</p>
-            {motw.mapName === leaderboard.mapName && <p>Map of the Week</p>}
+            <h2 className="details-map-name" >Points</h2>
             <div className="leaderboard-details">
                 <div className="leaderboad-entries">
                     {leaderboard && leaderboard.entries.sort((a, b) => a.time - b.time).map((entry, index) => (
@@ -39,4 +33,4 @@ const LeaderboardDetails = ({user, motw}) => {
     );
 }
  
-export default LeaderboardDetails;
+export default PointsLeaderboard;
