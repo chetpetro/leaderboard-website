@@ -20,7 +20,21 @@ const loginUser = async (req, res) => {
     }
 }
 
-const singupUser = async (req, res) => {
+const loginUserDiscord = async (req, res) => {
+    const { tokenType, accessToken } = req.body;
+
+    try{
+        const user = await User.loginDiscord(tokenType, accessToken);
+
+        const token = createToken(user._id);
+
+        res.status(200).json({userName: user.userName, discordID: user.discordID, token})
+    } catch (err) {
+        res.status(400).json({error: err.message})
+    }
+}
+
+const signupUser = async (req, res) => {
     const { userName, discordID, password } = req.body;
 
     try{
@@ -29,6 +43,20 @@ const singupUser = async (req, res) => {
         const token = createToken(user._id);
 
         res.status(200).json({userName, discordID: user.discordID, token})
+    } catch (err) {
+        res.status(400).json({error: err.message})
+    }
+}
+
+const signupUserDiscord = async (req, res) => {
+    const { tokenType, accessToken } = req.body;
+
+    try{
+        const user = await User.signupDiscord(tokenType, accessToken);
+
+        const token = createToken(user._id);
+
+        res.status(200).json({userName: user.userName, discordID: user.discordID, token})
     } catch (err) {
         res.status(400).json({error: err.message})
     }
@@ -53,7 +81,7 @@ const getUser = async (req, res) => {
 }
 
 const getUsers = async (req, res) => {
-    const users = await User.find({});
+    const users = await User.find({}).sort({points: -1});
 
     if (!users) return res.status(400).json({error: "No users found"});
 
@@ -62,7 +90,9 @@ const getUsers = async (req, res) => {
 
 module.exports = {
     loginUser,
-    singupUser,
+    signupUser,
     getUser,
-    getUsers
+    getUsers,
+    signupUserDiscord,
+    loginUserDiscord
 }

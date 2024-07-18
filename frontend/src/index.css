@@ -2,21 +2,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
 
+
 :root {
-  --primary: #17b185;
+  --primary: #cc8dd4;
   --error: #e7195a;
+
+  /** CSS DARK THEME PRIMARY COLORS */
+  --color-primary-100: #9c27b0;
+  --color-primary-200: #a945b9;
+  --color-primary-300: #b55ec2;
+  --color-primary-400: #c176cb;
+  --color-primary-500: #cc8dd4;
+  --color-primary-600: #d7a4dd;
+  /** CSS DARK THEME SURFACE COLORS */
+  --color-surface-100: #121212;
+  --color-surface-200: #282828;
+  --color-surface-300: #3f3f3f;
+  --color-surface-400: #575757;
+  --color-surface-500: #717171;
+  --color-surface-600: #8b8b8b;
 }
 
 body {
-  background: #eeecec;
+  background: var(--color-surface-100);
   margin: 0;
   font-family: "Poppins";
+  color: white;
 }
 
 header {
   background: #fff;
-  background: rgb(23,177,133);
-  background: linear-gradient(90deg, rgba(23,177,133,1) 10%, rgba(2,192,232,1) 100%);
+  background: var(--color-surface-400)
 }
 
 nav {
@@ -74,7 +90,7 @@ header a {
 }
 
 .leaderboard-entry {
-  background: #fff;
+  background: var(--color-surface-200);
   border-radius: 4px;
   margin: 20px auto;
   padding: 20px;
@@ -84,8 +100,8 @@ header a {
 
 .leaderboard-entry p {
   margin: 0;
-  font-size: 0.9em;
-  color: #555;
+  font-size: 1.1em;
+  color: white;
   margin: 10px 10px;
   display: inline-block;
   width: 10%;
@@ -96,7 +112,6 @@ header a {
 }
 
 .leaderboard-preview {
-  background: #fff;
   border-radius: 4px;
   margin: 10px 20px 10px 0px;
   padding: 20px;
@@ -112,7 +127,15 @@ header a {
 .leaderboard-preview p {
   margin: 0;
   font-size: 0.9em;
-  color: #555;
+  color: white;
+  width: auto;
+}
+
+.leaderboard-preview img {
+  height: 6em;
+  position: absolute;
+  right: 13px;
+  top: 13px
 }
 
 label, input {
@@ -127,12 +150,14 @@ input {
   border: 1px solid #ddd;
   border-radius: 4px;
   box-sizing: border-box;
+  background-color: var(--color-surface-200);
+  color: white;
 }
 
 form button {
   background: var(--primary);
   border: 0;
-  color: #fff;
+  color: var(--color-surface-100);;
   padding: 10px;
   font-family: "Poppins";
   border-radius: 4px;
@@ -151,12 +176,12 @@ form.signup, form.login {
   max-width: 400px;
   margin: 40px auto;
   padding: 20px;
-  background: #fff;
+  background: var(--color-surface-200);
   border-radius: 4px;
 }
 
 .logout-button, .login-button {
-  background: gray;
+  background: var(--color-surface-300);
   border: 0;
   color: #fff;
   padding: 10px;
@@ -171,7 +196,7 @@ form.signup, form.login {
 .signup-button {
   background: var(--primary);
   border: 0;
-  color: #fff;
+  color: var(--color-surface-100);
   padding: 10px;
   font-family: "Poppins";
   border-radius: 4px;
@@ -179,4 +204,22 @@ form.signup, form.login {
   font-size: 1em;
   display: inline-block;
   margin: 0 10px;
+}
+
+.discord-button {
+  background: #7289da;
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  display: inline-block;
+  margin: 0 10px;
+}
+
+.discord-icon {
+  height: 12px; 
+  padding: 0px 10px;
 }

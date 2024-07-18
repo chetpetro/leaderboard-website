@@ -8,6 +8,7 @@ import Signup from './pages/Signup';
 import LeaderboardDetails from './pages/LeaderboardDetails';
 import { useState, useEffect } from 'react';
 import User from './pages/User';
+import PointsLeaderboard from './pages/PointsLeaderboard';
 
 function App() {
 
@@ -45,6 +46,7 @@ function App() {
             <Route path='/user/:discordID' element={<User />}/>
             <Route path='/login' element={<Login setUser={setUser}/>} />
             <Route path='/sign-up' element={<Signup setUser={setUser}/>} />
+            <Route path='/points-leaderboard' element={<PointsLeaderboard />} />
           </Routes>
         </div>
       </BrowserRouter>

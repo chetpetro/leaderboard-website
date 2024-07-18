@@ -3,12 +3,8 @@ data = {"maps":[["Deep Cave","thatguy.", [56989,"708329473967390761","Tur_nup","
 
 const Leaderboard = require('./models/LeaderboardModel');
 const mongoose = require('mongoose');
-require('dotenv').config()
+require('dotenv').config({ path: __dirname + '/.env'})
 
-
-
-const PORT = process.env.PORT;
-const URI = process.env.MONGO_URI;
 mongoose.connect()
     .then(() => {
 

@@ -16,6 +16,7 @@ const Home = ({ motw }) => {
         }
 
         fetchLeaderboards();
+
     }, [])
     
     return (

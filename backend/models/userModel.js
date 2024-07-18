@@ -15,8 +15,7 @@ const userSchema = new Schema({
         unique: true
     },
     password: {
-        type: String,
-        required: true
+        type: String
     },
     points: {
         type: Number,
@@ -42,6 +41,28 @@ userSchema.statics.signup = async function(userName, discordID, password) {
     return user;
 }
 
+userSchema.statics.signupDiscord = async function(tokenType, accessToken) {
+
+    if (!tokenType || !accessToken) throw Error('Empty Feild');
+
+    const response = await fetch('https://discord.com/api/users/@me', {
+        headers: { authorization: `${tokenType} ${accessToken}` }
+    })
+    const json = await response.json();
+    const userName = json.username;
+    const discordID = json.id;
+    
+    const userNameCheck = await this.findOne({ userName });
+    if (userNameCheck) throw Error('Username already exists.');
+
+    const discordIDCheck = await this.findOne({ discordID });
+    if (discordIDCheck) throw Error('Discord ID already exists.');
+
+    const user = await this.create({ userName, discordID });
+
+    return user;
+}
+
 userSchema.statics.login = async function(userName, password) {
 
     if (!userName || !password) throw Error('Empty Feild');
@@ -51,6 +72,21 @@ userSchema.statics.login = async function(userName, password) {
 
     const match = await bcrypt.compare(password, user.password);
     if(!match) throw Error("Incorrect Password");
+
+    return user;
+}
+
+userSchema.statics.loginDiscord = async function(tokenType, accessToken) {
+
+    if (!tokenType || !accessToken) throw Error('Empty Feild');
+
+    const response = await fetch('https://discord.com/api/users/@me', {
+        headers: { authorization: `${tokenType} ${accessToken}` }
+    })
+    const json = await response.json();
+    const userName = json.username;
+
+    const user = await this.findOne({ userName });
 
     return user;
 }

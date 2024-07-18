@@ -1,4 +1,6 @@
 const Leaderboard = require('../models/LeaderboardModel');
+const { getAverageColor } = require('fast-average-color-node');
+require('dotenv').config({ path: __dirname + '/../.env'})
 
 const getLeaderboards = async (req, res) =>  {
     const response = await Leaderboard.find({}).sort({entries: -1});
@@ -16,8 +18,38 @@ const getLeaderboard = async (req, res) =>  {
 
 const createLeaderboard = async (req, res) => {
     try {
-        console.log(req.body);
-        const response = await Leaderboard.create(req.body);
+        const { url } = req.body;
+        const splitURL = url.split('=')
+        const API_KEY = process.env.STEAM_API_KEY
+
+        let mapData = new FormData();
+        mapData.append('itemcount', '1');
+        mapData.append('publishedfileids[0]', splitURL[splitURL.length - 1])
+
+        const mapResponse = await fetch(`https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/`, {
+            method:"POST",
+            body: mapData
+        });
+        const mapJson = await mapResponse.json();
+        const mapInfo = mapJson.response.publishedfiledetails[0];
+    
+        const playerResponse = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${API_KEY}&steamids=${mapInfo.creator}`);
+        const playerJson = await playerResponse.json();
+        
+        const colour = await getAverageColor(mapInfo.preview_url);
+
+        console.log(colour)
+
+        mapEntry = { 
+            mapName: mapInfo.title,
+            creator: playerJson.response.players[0].personaname,
+            description: mapInfo.description,
+            previewImage: mapInfo.preview_url,
+            colour,
+            entries: []
+        }
+
+        const response = await Leaderboard.create(mapEntry);
         res.status(200).json(response);
     } catch (err) {
         res.status(400).json({error: err.message});

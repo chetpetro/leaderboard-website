@@ -25,6 +25,7 @@ const LeaderboardDetails = ({user, motw}) => {
             {motw.mapName === leaderboard.mapName && <h2 className="details-map-name" style={{color:"gold"}}>{ leaderboard.mapName && leaderboard.mapName }</h2>}
             {motw.mapName !== leaderboard.mapName && <h2 className="details-map-name">{ leaderboard.mapName && leaderboard.mapName }</h2>}
             <p>Creator: { leaderboard.creator }</p>
+            <p>{ leaderboard.description }</p>
             {motw.mapName === leaderboard.mapName && <p>Map of the Week</p>}
             <div className="leaderboard-details">
                 <div className="leaderboad-entries">

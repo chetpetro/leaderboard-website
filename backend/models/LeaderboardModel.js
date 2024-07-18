@@ -16,6 +16,15 @@ const leaderboardSchema = new Schema({
         type: Boolean,
         default: false
     },
+    description: {
+        type: String
+    },
+    previewImage: {
+        type: String
+    },
+    colour : {
+        type: Object
+    },
     entries: [{
         userName: {
             type: String,

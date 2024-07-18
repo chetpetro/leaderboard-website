@@ -1,27 +1,20 @@
 import { useState } from "react";
 
 const CreateLeaderboardForm = () => {
-    const [mapName, setMapName] = useState('');
-    const [creator, setCreator] = useState('');
+    const [url, setURL] = useState('');
     
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (mapName === '') return;
+        if (url === '') return;
 
-        const check = await fetch('/api/leaderboards/' + mapName);
-        const json = await check.json();
-        if (json.length !== 0) return console.log("Map already exists")
-
-        const leaderboard = { mapName, creator, entries: []};
         fetch('/api/leaderboards/', {
             method: "POST",
-            body: JSON.stringify(leaderboard),
+            body: JSON.stringify({url}),
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then(() => {
-            setMapName('');
-            setCreator('')
+            setURL('');
             window.location.reload();
         }).catch((err) => console.log(err));
     }
@@ -29,10 +22,8 @@ const CreateLeaderboardForm = () => {
     return (
         <form className="create-leaderboard-form" onSubmit={handleSubmit}>
             <h2>Add Leaderboard</h2>
-            <label>Map Name:</label>
-            <input type="text" onChange={(e) => setMapName(e.target.value)} value={mapName}/>
-            <label>Creator:</label>
-            <input type="text" onChange={(e) => setCreator(e.target.value)} value={creator}/>
+            <label>Steam Page URL:</label>
+            <input type="text" onChange={(e) => setURL(e.target.value)} value={url}/>
             <button>Add</button>
         </form>
     );

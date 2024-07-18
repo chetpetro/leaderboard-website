@@ -11,6 +11,7 @@ const Navbar = ({ user, setUser, motw }) => {
                 </Link>
                 <ul>
                     <Link to="/"><li>Home</li></Link>
+                    <Link to="/points-leaderboard"><li>Points</li></Link>
                     {motw.mapName && <Link to={`/${motw.mapName}`}><li>MotW: {motw.mapName}</li></Link>}
                     {user.userName && <Link to={`/user/${user.discordID}`}><li>{ user.userName }</li></Link>}
                     {!user.userName && <Link to="/login"><button className='login-button'>Login</button></Link>}
