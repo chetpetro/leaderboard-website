@@ -15,7 +15,7 @@ const CreateLeaderboardForm = () => {
             }
         }).then(() => {
             setURL('');
-            //window.location.reload();
+            window.location.reload();
         }).catch((err) => console.log(err));
     }
 
