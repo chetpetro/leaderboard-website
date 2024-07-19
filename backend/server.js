@@ -5,10 +5,16 @@ const leaderboardRoutes = require('./routes/leaderboard');
 const userRoutes = require('./routes/user');
 const schedule = require('node-schedule');
 const newFeaturedLeaderboard = require('./controllers/serverController');
+const cors = require('cors');
 
 const app = express();
 
 // Middleware
+app.use(cors(
+    {
+        origin: ["https://leaderboard-website-api.vercel.app/"]
+    }
+))
 app.use(express.json());
 app.use((req, res, next) => {
     console.log(req.path, req.method);
