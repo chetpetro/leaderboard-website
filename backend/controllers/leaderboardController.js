@@ -38,8 +38,6 @@ const createLeaderboard = async (req, res) => {
         });
         const mapJson = await mapResponse.json();
         const mapInfo = mapJson.response.publishedfiledetails[0];
-        
-        console.log(API_KEY)
 
         const playerResponse = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${API_KEY}&steamids=${mapInfo.creator}`);
         const playerJson = await playerResponse.json();
