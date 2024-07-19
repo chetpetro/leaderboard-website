@@ -11,7 +11,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: ["https://pogostuckleaderboards.vercel.app/"],
+    origin: ["https://pogostuckleaderboards.vercel.app"],
     credentials: true
 }))
 app.use(express.json());
