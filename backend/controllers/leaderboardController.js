@@ -1,6 +1,6 @@
 const Leaderboard = require('../models/LeaderboardModel');
 const { getAverageColor } = require('fast-average-color-node');
-require('dotenv').config({ path: __dirname + '/../.env'})
+require('dotenv').config()
 
 const getLeaderboards = async (req, res) =>  {
     const response = await Leaderboard.find({}).sort({entries: -1});
@@ -21,7 +21,6 @@ const createLeaderboard = async (req, res) => {
         const match = /(?<=id=)\d*/.exec(url)
         return match ? match[0] : null;
     }
-
 
     try {
         let { url, entries } = req.body;
