@@ -42,9 +42,9 @@ const createLeaderboard = async (req, res) => {
         const playerResponse = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${API_KEY}&steamids=${mapInfo.creator}`);
         const playerJson = await playerResponse.json();
         
-        const colour = await getAverageColor(mapInfo.preview_url);
-
         throw Error(JSON.stringify({ name: playerJson.response.players[0].personaname}))
+
+        const colour = await getAverageColor(mapInfo.preview_url);
 
         mapEntry = { 
             mapName: mapInfo.title,
