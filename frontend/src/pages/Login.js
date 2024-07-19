@@ -56,7 +56,7 @@ const Login = ({ setUser }) => {
             <label>Password:</label>
             <input type="text" onChange={(e) => setPassword(e.target.value)} value={password}/>
             <button>Login</button>
-            <a href="https://discord.com/oauth2/authorize?client_id=1263159916512677918&response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogin&scope=identify"><div className="discord-button" >Login with Discord<img className="discord-icon" src="https://static-00.iconduck.com/assets.00/discord-icon-2048x1570-y371emu6.png"/></div></a>
+            <a href="https://discord.com/oauth2/authorize?client_id=1263159916512677918&response_type=token&redirect_uri=https%3A%2F%2Fpogostuckleaderboards.vercel.app%2Flogin&scope=identify"><div className="discord-button" >Login with Discord<img className="discord-icon" src="https://static-00.iconduck.com/assets.00/discord-icon-2048x1570-y371emu6.png"/></div></a>
         </form>
     );
 }
