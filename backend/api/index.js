@@ -20,7 +20,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/", (req, res) => res.status(200).json({ message: "Hello World"}));
+app.get("/", (req, res) => res.status(200).json({ message: process.env.PORT}));
 app.use("/api/leaderboards" , leaderboardRoutes);
 app.use("/api/user", userRoutes);
 
