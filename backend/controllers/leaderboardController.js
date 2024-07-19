@@ -28,8 +28,6 @@ const createLeaderboard = async (req, res) => {
         const mapID = getID(url)
         const API_KEY = process.env.STEAM_API_KEY
 
-        console.log(mapID)
-
         let mapData = new FormData();
         mapData.append('itemcount', '1');
         mapData.append('publishedfileids[0]', mapID)

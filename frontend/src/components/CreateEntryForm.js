@@ -39,7 +39,7 @@ const CreateEntryForm = ({ mapName, entries, user }) => {
         <form className="create-entry-form" onSubmit={handleSubmit}>
             <h2>Submit Entry</h2>
             <label>Time: (HH:mm:ss.mmm)</label>
-            <input type="text" pattern="[0-9]{2,}:[0-5]{1}[0-9]{1}:[0-5]{1}[0-9]{1}\.[0-9]{3}" onChange={(e) => setTime(e.target.value)} value={time}/>
+            <input type="text" pattern="[0-9]{2}:[0-5]{1}[0-9]{1}:[0-5]{1}[0-9]{1}\.[0-9]{3}" onChange={(e) => setTime(e.target.value)} value={time}/>
             <button>Add</button>
         </form>
     );
