@@ -22,7 +22,7 @@ const CreateEntryForm = ({ mapName, entries, user }) => {
             entries.push({ userName: user.userName, discordID: user.discordID, time: msTime });
         }
 
-        fetch('/api/leaderboards/' + mapName, {
+        fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + mapName, {
             method: 'PATCH',
             body: JSON.stringify({entries}),
             headers: {

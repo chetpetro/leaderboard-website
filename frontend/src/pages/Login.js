@@ -10,7 +10,7 @@ const Login = ({ setUser }) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         
-        const response = await fetch('/api/user/login', {
+        const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/login', {
             method:"POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({userName, password})
@@ -32,7 +32,7 @@ const Login = ({ setUser }) => {
 		const [accessToken, tokenType] = [fragment.get('access_token'), fragment.get('token_type')];
 
         if (accessToken){
-            fetch('/api/user/login-discord', {
+            fetch('https://leaderboard-website-api.vercel.app/api/user/login-discord', {
                 method:"POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({tokenType, accessToken})

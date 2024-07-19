@@ -9,7 +9,7 @@ const LeaderboardDetails = ({user, motw}) => {
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
-            const response = await fetch('/api/leaderboards/' + name)
+            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + name)
             const json = await response.json();
 
             if (response.ok) {

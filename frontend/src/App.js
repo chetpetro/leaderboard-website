@@ -26,7 +26,7 @@ function App() {
     }
 
     const fetchMOTW = async () => {
-      const response = await fetch('/api/leaderboards/motw');
+      const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/motw');
       const json = await response.json();
       
       if (response.ok) setMOTW(json)

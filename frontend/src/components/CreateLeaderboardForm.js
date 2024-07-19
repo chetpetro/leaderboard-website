@@ -7,7 +7,7 @@ const CreateLeaderboardForm = () => {
         e.preventDefault();
         if (url === '') return;
 
-        fetch('/api/leaderboards/', {
+        fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/', {
             method: "POST",
             body: JSON.stringify({url}),
             headers: {
