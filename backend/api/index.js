@@ -32,7 +32,7 @@ mongoose.connect(URI)
         app.listen(PORT, () => console.log(`Connected to db & Listening on port: ${PORT}`));
         
         const job = schedule.scheduleJob('* * * * 0', function(){
-            //newFeaturedLeaderboard();
+            newFeaturedLeaderboard();
         });
     })
     .catch((err) => {
