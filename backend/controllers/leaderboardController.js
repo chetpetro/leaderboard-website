@@ -17,14 +17,21 @@ const getLeaderboard = async (req, res) =>  {
 }
 
 const createLeaderboard = async (req, res) => {
+    const getID = (url) => {
+        const match = /(?<=id=)\d*/.exec(url)
+        return match ? match[0] : null;
+    }
+
+
     try {
-        const { url } = req.body;
-        const splitURL = url.split('=')
+        let { url, entries } = req.body;
+        if (!entries) entries = []
+        const mapID = getID(url)
         const API_KEY = process.env.STEAM_API_KEY
 
         let mapData = new FormData();
         mapData.append('itemcount', '1');
-        mapData.append('publishedfileids[0]', splitURL[splitURL.length - 1])
+        mapData.append('publishedfileids[0]', mapID)
 
         const mapResponse = await fetch(`https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/`, {
             method:"POST",
@@ -32,13 +39,14 @@ const createLeaderboard = async (req, res) => {
         });
         const mapJson = await mapResponse.json();
         const mapInfo = mapJson.response.publishedfiledetails[0];
+
+        const existsCheck = await Leaderboard.find({mapName: mapInfo.title});
+        if (existsCheck) throw Error("Map already exists");
     
         const playerResponse = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${API_KEY}&steamids=${mapInfo.creator}`);
         const playerJson = await playerResponse.json();
         
         const colour = await getAverageColor(mapInfo.preview_url);
-
-        console.log(colour)
 
         mapEntry = { 
             mapName: mapInfo.title,
@@ -46,7 +54,7 @@ const createLeaderboard = async (req, res) => {
             description: mapInfo.description,
             previewImage: mapInfo.preview_url,
             colour,
-            entries: []
+            entries
         }
 
         const response = await Leaderboard.create(mapEntry);

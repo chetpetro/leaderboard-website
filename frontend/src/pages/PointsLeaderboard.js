@@ -21,15 +21,15 @@ const PointsLeaderboard = () => {
         <div>
             <h2 className="details-map-name" >Points</h2>
             <div className="leaderboard-details">
-                <div className="leaderboad-entries">
+                <table className="leaderboad-entries">
                     {users && users.map((user, index) => (
-                        <div className="leaderboard-entry">
-                            <p style={{width: "2%"}}>{ index + 1 }</p>
-                            <Link to={`/user/${user.discordID}`}><p>{ user.userName }</p></Link>
-                            <p>{ user.points }</p>
-                        </div>
+                        <tr className="leaderboard-entry">
+                            <td style={{width: "2%"}}>{ index + 1 }</td>
+                            <Link to={`/user/${user.discordID}`}><td>{ user.userName }</td></Link>
+                            <td>{ user.points }</td>
+                        </tr>
                     ))}
-                </div>
+                </table>
             </div>
         </div>
     );

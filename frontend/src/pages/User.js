@@ -38,15 +38,15 @@ const LeaderboardDetails = () => {
         <div>
             <h2 className="details-map-name">{ user.userName }</h2>
             <div className="leaderboard-details">
-                <div className="leaderboad-entries">
-                    {entries && entries.map((map) => (
-                        <div className="leaderboard-entry" key={map.mapName}>
-                            <p style={{width: "15%"}}>{ map.mapName }</p>
-                            <p style={{width: "2%"}}>{ map.pos }</p>
-                            <p>{ msToTime(map.entry.time) }</p>
-                        </div>
+                <table className="leaderboad-entries">
+                    {entries && entries.sort((a,b) => a.pos - b.pos).map((map) => (
+                        <tr className="leaderboard-entry" key={map.mapName}>
+                            <td style={{width: "15%"}}>{ map.mapName }</td>
+                            <td style={{width: "2%"}}>{ map.pos }</td>
+                            <td>{ msToTime(map.entry.time) }</td>
+                        </tr>
                     ))}
-                </div>
+                </table>
                 <h4 style={{fontSize: "2em"}}>Points: {user.points}</h4>
             </div>
         </div>

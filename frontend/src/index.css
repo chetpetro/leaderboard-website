@@ -73,8 +73,7 @@ header a {
 
 .leaderboards {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .leaderboard-details {
@@ -98,7 +97,7 @@ header a {
   box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
 }
 
-.leaderboard-entry p {
+.leaderboard-entry td {
   margin: 0;
   font-size: 1.1em;
   color: white;
@@ -114,9 +113,11 @@ header a {
 .leaderboard-preview {
   border-radius: 4px;
   margin: 10px 20px 10px 0px;
-  padding: 20px;
+  padding: 10px 10px;
   position: relative;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+  width: 90%;
+  height: 88%;
+  border-radius: 10px;
 }
 
 .leaderboard-preview h4 {
@@ -132,10 +133,10 @@ header a {
 }
 
 .leaderboard-preview img {
-  height: 6em;
-  position: absolute;
-  right: 13px;
-  top: 13px
+  object-fit: cover;
+  width: 100%;
+  height: 140px;
+  border-radius: 10px;
 }
 
 label, input {
@@ -222,4 +223,23 @@ form.signup, form.login {
 .discord-icon {
   height: 12px; 
   padding: 0px 10px;
+}
+
+.page-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-button-container button{
+  background: var(--primary);
+  border: 0;
+  color: var(--color-surface-100);
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  display: inline-block;
+  margin: 10px 10px;
 }

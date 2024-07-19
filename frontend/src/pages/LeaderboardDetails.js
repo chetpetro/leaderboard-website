@@ -28,11 +28,11 @@ const LeaderboardDetails = ({user, motw}) => {
             <p>{ leaderboard.description }</p>
             {motw.mapName === leaderboard.mapName && <p>Map of the Week</p>}
             <div className="leaderboard-details">
-                <div className="leaderboad-entries">
+                <table className="leaderboad-entries">
                     {leaderboard && leaderboard.entries.sort((a, b) => a.time - b.time).map((entry, index) => (
                         <LeaderboardEntry key={entry.userName} entry={entry} pos={index + 1} />
                     ))}
-                </div>
+                </table>
                 {user.userName && <CreateEntryForm mapName={ leaderboard.mapName } entries={ leaderboard.entries } user={user}/>}
                 {!user.userName && <h2>Login to Submit Entry</h2>}
             </div>
