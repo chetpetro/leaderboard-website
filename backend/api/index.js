@@ -1,4 +1,4 @@
-require('dotenv').config({ path: __dirname + '/.env'})
+require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const leaderboardRoutes = require('../routes/leaderboard');
@@ -11,7 +11,8 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: ["https://leaderboard-website-frontend.vercel.app/"]
+    origin: ["https://leaderboard-website-frontend.vercel.app/"],
+    credentials: true
 }))
 app.use(express.json());
 app.use((req, res, next) => {
@@ -19,7 +20,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/", (req, res) => res.status(200).json({ message: "Hellow World"}));
+app.get("/", (req, res) => res.status(200).json({ message: "Hello World"}));
 app.use("/api/leaderboards" , leaderboardRoutes);
 app.use("/api/user", userRoutes);
 
