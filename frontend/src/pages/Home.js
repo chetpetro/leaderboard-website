@@ -10,7 +10,7 @@ const Home = ({ motw }) => {
 
     useEffect(() => {
         const fetchLeaderboards = async () => {
-            const response = await fetch('/api/leaderboards');
+            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards');
             const json = await response.json();
 
             if (response.ok) {
