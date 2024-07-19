@@ -44,19 +44,19 @@ const createLeaderboard = async (req, res) => {
 
         const colour = await getAverageColor(mapInfo.preview_url);
 
-        throw Error(JSON.stringify(playerJson.response));
+        res.status(400).json(playerJson)
 
-        mapEntry = { 
-            mapName: mapInfo.title,
-            creator: playerJson.response.players[0].personaname,
-            description: mapInfo.description,
-            previewImage: mapInfo.preview_url,
-            colour,
-            entries
-        }
+        // mapEntry = { 
+        //     mapName: mapInfo.title,
+        //     creator: playerJson.response.players[0].personaname,
+        //     description: mapInfo.description,
+        //     previewImage: mapInfo.preview_url,
+        //     colour,
+        //     entries
+        // }
 
-        const response = await Leaderboard.create(mapEntry);
-        res.status(200).json(response);
+        // const response = await Leaderboard.create(mapEntry);
+        // res.status(200).json(response);
     } catch (err) {
         res.status(400).json({error: err.message});
     }
