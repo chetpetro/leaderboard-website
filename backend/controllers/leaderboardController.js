@@ -44,7 +44,7 @@ const createLeaderboard = async (req, res) => {
 
         const colour = await getAverageColor(mapInfo.preview_url);
 
-        throw Error(JSON.stringify(playerJson));
+        throw Error(playerJson.response.players[0].personaname);
 
         mapEntry = { 
             mapName: mapInfo.title,
