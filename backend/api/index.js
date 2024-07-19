@@ -1,10 +1,10 @@
 require('dotenv').config({ path: __dirname + '/.env'})
 const express = require('express');
 const mongoose = require('mongoose');
-const leaderboardRoutes = require('./routes/leaderboard');
-const userRoutes = require('./routes/user');
+const leaderboardRoutes = require('../routes/leaderboard');
+const userRoutes = require('../routes/user');
 const schedule = require('node-schedule');
-const newFeaturedLeaderboard = require('./controllers/serverController');
+const newFeaturedLeaderboard = require('../controllers/serverController');
 const cors = require('cors');
 
 const app = express();
@@ -21,7 +21,7 @@ app.use("/api/leaderboards" , leaderboardRoutes);
 app.use("/api/user", userRoutes);
 
 const PORT = process.env.PORT;
-const URI = process.env.MONGO_URI;
+const URI = process.env.MONGODB_URI;
 
 mongoose.connect(URI)
     .then(() => {
