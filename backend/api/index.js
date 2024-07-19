@@ -1,10 +1,10 @@
 require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
-const leaderboardRoutes = require('./routes/leaderboard');
-const userRoutes = require('./routes/user');
+const leaderboardRoutes = require('../routes/leaderboard');
+const userRoutes = require('../routes/user');
 const schedule = require('node-schedule');
-const newFeaturedLeaderboard = require('./controllers/serverController');
+const newFeaturedLeaderboard = require('../controllers/serverController');
 const cors = require('cors');
 
 const app = express();
