@@ -42,7 +42,7 @@ const createLeaderboard = async (req, res) => {
         const existsCheck = await Leaderboard.find({mapName: mapInfo.title});
         if (existsCheck) throw Error("Map already exists");
     
-        const playerResponse = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${API_KEY}&steamids=${mapInfo.creator}`);
+        const playerResponse = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=73A7B076566AD80DF796828984EFFD37&steamids=${mapInfo.creator}`);
         const playerJson = await playerResponse.json();
         
         const colour = await getAverageColor(mapInfo.preview_url);
