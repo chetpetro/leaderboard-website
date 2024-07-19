@@ -38,9 +38,6 @@ const createLeaderboard = async (req, res) => {
         });
         const mapJson = await mapResponse.json();
         const mapInfo = mapJson.response.publishedfiledetails[0];
-
-        const existsCheck = await Leaderboard.find({mapName: mapInfo.title});
-        if (existsCheck) throw Error("Map already exists");
         
         console.log(API_KEY)
 
