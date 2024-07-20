@@ -94,16 +94,12 @@ table {
   width: 100%;
 }
 
-Link {
-  text-decoration: none;
-}
-
 td {
   font-size: 1.1em;
   color: white;
   text-align: left;
   padding: 8px;
-  text-decoration: none;
+  text-decoration: none!important;;
 }
 
 .leaderboard-preview-link {
