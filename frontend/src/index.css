@@ -94,6 +94,10 @@ table {
   width: 100%;
 }
 
+Link {
+  text-decoration: none;
+}
+
 td {
   font-size: 1.1em;
   color: white;

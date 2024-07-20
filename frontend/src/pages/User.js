@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 
 const LeaderboardDetails = () => {
@@ -41,7 +41,7 @@ const LeaderboardDetails = () => {
                 <table className="leaderboad-entries">
                     {entries && entries.sort((a,b) => a.pos - b.pos).map((map) => (
                         <tr className="leaderboard-entry" key={map.mapName}>
-                            <td >{ map.mapName }</td>
+                            <Link to={`/${map.mapName}`}><td >{ map.mapName }</td></Link>
                             <td >{ map.pos }</td>
                             <td>{ msToTime(map.entry.time) }</td>
                         </tr>
