@@ -24,7 +24,7 @@ const PointsLeaderboard = () => {
                 <table className="leaderboad-entries">
                     {users && users.map((user, index) => (
                         <tr className="leaderboard-entry">
-                            <td style={{width: "2%"}}>{ index + 1 }</td>
+                            <td >{ index + 1 }</td>
                             <Link to={`/user/${user.discordID}`}><td>{ user.userName }</td></Link>
                             <td>{ user.points }</td>
                         </tr>

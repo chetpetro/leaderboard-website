@@ -41,8 +41,8 @@ const LeaderboardDetails = () => {
                 <table className="leaderboad-entries">
                     {entries && entries.sort((a,b) => a.pos - b.pos).map((map) => (
                         <tr className="leaderboard-entry" key={map.mapName}>
-                            <td style={{width: "15%"}}>{ map.mapName }</td>
-                            <td style={{width: "2%"}}>{ map.pos }</td>
+                            <td >{ map.mapName }</td>
+                            <td >{ map.pos }</td>
                             <td>{ msToTime(map.entry.time) }</td>
                         </tr>
                     ))}

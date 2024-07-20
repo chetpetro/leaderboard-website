@@ -16,7 +16,7 @@ const LeaderboardEntry = ({ entry, pos }) => {
 
     return (
         <tr className="leaderboard-entry">
-            <td style={{width: "2%"}}>{ pos }</td>
+            <td >{ pos }</td>
             <td>{ msToTime(entry.time) }</td>
             <Link to={`/user/${entry.discordID}`}><td>{ entry.userName }</td></Link>
         </tr>
