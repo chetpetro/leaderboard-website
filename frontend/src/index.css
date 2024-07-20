@@ -93,17 +93,17 @@ header a {
   border-radius: 4px;
   margin: 20px auto;
   padding: 20px;
-  
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+  border-collapse: collapse;
 }
 
 .leaderboard-entry td {
   margin: 0;
   font-size: 1.1em;
   color: white;
-  margin: 10px 10px;
-  
-  width: 10%;
+  border: 1px solid var(--color-surface-300);
+  text-align: left;
+  padding: 8px;
+  text-decoration: none;
 }
 
 .leaderboard-preview-link {
