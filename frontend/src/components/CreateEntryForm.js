@@ -25,10 +25,10 @@ const CreateEntryForm = ({ mapName, entries, user }) => {
         fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + mapName, {
             method: 'PATCH',
             body: JSON.stringify({entries}),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
-            }
+            // headers: {
+            //     'Content-Type': 'application/json',
+            //     'Authorization': `Bearer ${user.token}`
+            // }
         }).then(() => {
             setTime('')
             window.location.reload();
