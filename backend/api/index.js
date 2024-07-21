@@ -7,6 +7,10 @@ const schedule = require('node-schedule');
 const newFeaturedLeaderboard = require('../controllers/serverController');
 const cors = require('cors');
 
+const job = schedule.scheduleJob('1 * * * *', function(){
+    newFeaturedLeaderboard();
+});
+
 const app = express();
 
 // Middleware
@@ -20,7 +24,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
 app.use("/api/leaderboards" , leaderboardRoutes);
 app.use("/api/user", userRoutes);
 app.get("/", (req, res) => res.status(200).json({ message: process.env.PORT}));
@@ -31,10 +34,6 @@ const URI = process.env.MONGODB_URI;
 mongoose.connect(URI)
     .then(() => {
         app.listen(PORT, () => console.log(`Connected to db & Listening on port: ${PORT}`));
-        
-        const job = schedule.scheduleJob('1 * * * *', function(){
-            newFeaturedLeaderboard();
-        });
     })
     .catch((err) => {
         console.log('Cannot connect to db: ' + err);
