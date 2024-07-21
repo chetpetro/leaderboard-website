@@ -99,7 +99,10 @@ td {
   color: white;
   text-align: left;
   padding: 8px;
-  text-decoration: none!important;;
+}
+
+a {
+  text-decoration: none !important;
 }
 
 .leaderboard-preview-link {
