@@ -7,10 +7,6 @@ const schedule = require('node-schedule');
 const newFeaturedLeaderboard = require('../controllers/serverController');
 const cors = require('cors');
 
-const job = schedule.scheduleJob('1 * * * *', function(){
-    newFeaturedLeaderboard();
-});
-
 const app = express();
 
 // Middleware
@@ -34,6 +30,11 @@ const URI = process.env.MONGODB_URI;
 mongoose.connect(URI)
     .then(() => {
         app.listen(PORT, () => console.log(`Connected to db & Listening on port: ${PORT}`));
+
+        const job = schedule.scheduleJob('1 * * * *', function(){
+            newFeaturedLeaderboard();
+            console.log("update");
+        });
     })
     .catch((err) => {
         console.log('Cannot connect to db: ' + err);
