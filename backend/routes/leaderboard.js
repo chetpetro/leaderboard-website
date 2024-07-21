@@ -15,7 +15,7 @@ router.get('/:name', getLeaderboard); // GET one leaderboard by name
 router.post('/', createLeaderboard); // POST new leaderboard
 
 // Auth required to add leaderboard entry
-router.use(requireAuth);
+// router.use(requireAuth);
 router.patch('/:name', createEntry); // PATCH one leaderboard by name
 
 module.exports = router;
