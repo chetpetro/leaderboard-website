@@ -21,7 +21,7 @@ app.use((req, res, next) => {
 
 app.use("/api/leaderboards" , leaderboardRoutes);
 app.use("/api/user", userRoutes);
-app.get("/api/cron", cronRoutes);
+app.use("/api/cron", cronRoutes);
 app.get("/", (req, res) => res.status(200).json({ message: process.env.PORT}));
 
 const PORT = process.env.PORT;
