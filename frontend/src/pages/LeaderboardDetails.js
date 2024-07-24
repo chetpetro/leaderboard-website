@@ -33,7 +33,7 @@ const LeaderboardDetails = ({user, motw}) => {
                         <LeaderboardEntry key={entry.userName} entry={entry} pos={index + 1} />
                     ))}
                 </table>
-                {user.userName && <CreateEntryForm mapName={ leaderboard.steamID } user={user}/>}
+                {user.userName && <CreateEntryForm steamID={ leaderboard.steamID } user={user}/>}
                 {!user.userName && <h2>Login to Submit Entry</h2>}
             </div>
         </div>
