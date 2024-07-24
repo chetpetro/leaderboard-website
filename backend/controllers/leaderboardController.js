@@ -64,20 +64,20 @@ const createLeaderboard = async (req, res) => {
 const createEntry = async (req, res) => {
     const { steamID } = req.params;
 
-    // const check = await Leaderboard.findOne({ steamID });
-    // if (!check) return res.status(404).json({error: "No leadearboard found"});
-    // const json = await check.json()
+    const check = await Leaderboard.findOne({ steamID });
+    if (!check) return res.status(404).json({error: "No leadearboard found"});
+    const json = await check.json()
 
-    // let entries = json.entries
+    let entries = json.entries
 
-    // for(let i = 0; i < entries.length; i++){
-    //     if (entries[i].discordID == req.body.discordID && entries[i].time > req.body.time){
-    //         entries[i] = req.body;
-    //         const update = await Leaderboard.findOneAndUpdate({ steamID }, entries);
-    //         res.status(200).json(update);
-    //         break;
-    //     }
-    // }
+    for(let i = 0; i < entries.length; i++){
+        if (entries[i].discordID == req.body.discordID && entries[i].time > req.body.time){
+            entries[i] = req.body;
+            const update = await Leaderboard.findOneAndUpdate({ steamID }, { entries });
+            res.status(200).json(update);
+            break;
+        }
+    }
 
     const response = await Leaderboard.updateOne({ steamID }, { $push : { entries: req.body }});
 
