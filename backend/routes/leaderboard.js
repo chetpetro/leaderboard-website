@@ -16,6 +16,6 @@ router.post('/', createLeaderboard); // POST new leaderboard
 
 // Auth required to add leaderboard entry
 // router.use(requireAuth);
-router.patch('/:name', createEntry); // PATCH one leaderboard by name
+router.patch('/:steamID', createEntry); // PATCH one leaderboard by name
 
 module.exports = router;

@@ -36,7 +36,7 @@ const Home = ({ motw }) => {
                     .includes(query.toLowerCase()))
                     .slice(page * elementsPerPage, (page + 1) * elementsPerPage)
                     .map((leaderboard) => (
-                        <LeadearboardPreview key={leaderboard._id} leaderboard={leaderboard} motw={motw}/>
+                        <LeadearboardPreview key={leaderboard._id} leaderboard={leaderboard} />
                     ))}
                 </div>
                 <div className="page-button-container">

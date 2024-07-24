@@ -46,6 +46,7 @@ const createLeaderboard = async (req, res) => {
 
         mapEntry = { 
             mapName: mapInfo.title,
+            steamID: mapInfo.steamid,
             creator: playerJson.response.players[0].personaname,
             description: mapInfo.description,
             previewImage: mapInfo.preview_url,
@@ -61,11 +62,11 @@ const createLeaderboard = async (req, res) => {
 }
 
 const createEntry = async (req, res) => {
-    const { name } = req.params;
+    const { steamID } = req.params;
 
-    const response = await Leaderboard.findOneAndUpdate({ mapName: name }, req.body);
+    const response = await Leaderboard.updateOne({ steamID }, { $push : { entries: req.body }});
 
-    if (!response) return res.status(404).json({error: "No leadearboard with map name found"});
+    if (!response) return res.status(404).json({error: "No leadearboard found"});
 
     res.status(200).json(response);
 }

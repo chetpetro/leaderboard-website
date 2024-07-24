@@ -19,7 +19,7 @@ mongoose.connect(URI)
             const body = {url: map[0], entries};
             
             if (body.url){
-                await fetch('http://localhost:4000/api/leaderboards/', {
+                await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/', {
                     method: "POST",
                     body: JSON.stringify(body),
                     headers: {

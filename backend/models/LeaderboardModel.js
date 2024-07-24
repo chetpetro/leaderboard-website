@@ -6,7 +6,10 @@ const leaderboardSchema = new Schema({
     mapName: {
         type: String,
         required: true,
-        unique: true
+    },
+    steamID: {
+        type: String,
+        required: true
     },
     creator: {
         type: String,

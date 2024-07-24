@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const CreateEntryForm = ({ mapName, entries, user }) => {
+const CreateEntryForm = ({ steamID, user }) => {
     const [time, setTime] = useState('00:00:00.000');
     
     const handleSubmit = async (e) => {
@@ -9,31 +9,16 @@ const CreateEntryForm = ({ mapName, entries, user }) => {
         const splitTime = time.split(/[:\.]+/)
         const msTime = Number(splitTime[3]) + Number(splitTime[2]) * 1000 + Number(splitTime[1]) * 60000 + Number(splitTime[0]) * 3600000
         
-        let i = 0
-        for (; i < entries.length; i++) {
-            if (entries[i].discordID === user.discordID) {
-                entries[i].time = msTime;
-                entries[i].userName = user.userName; 
-                break;
-            }
-        }
-
-        if (i === entries.length){
-            entries.push({ userName: user.userName, discordID: user.discordID, time: msTime });
-        }
-
-        console.log(JSON.stringify({entries}))
-        
-        fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + mapName, {
+        fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + steamID, {
             method: 'PATCH',
-            body: JSON.stringify({entries}),
+            body: JSON.stringify({ userName: user.userName, discordID: user.discordID, time: msTime }),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${user.token}`
             }
         }).then(() => {
             setTime('')
-            //window.location.reload();
+            window.location.reload();
         }).catch((err) => console.log(err));
     }
 
