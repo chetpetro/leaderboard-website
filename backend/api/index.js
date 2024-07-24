@@ -21,8 +21,8 @@ app.use((req, res, next) => {
 
 app.use("/api/leaderboards" , leaderboardRoutes);
 app.use("/api/user", userRoutes);
+app.get("/api/cron", cronRoutes);
 app.get("/", (req, res) => res.status(200).json({ message: process.env.PORT}));
-app.get("/api/cron/", cronRoutes);
 
 const PORT = process.env.PORT;
 const URI = process.env.MONGODB_URI;

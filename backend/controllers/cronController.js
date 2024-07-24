@@ -1,7 +1,7 @@
 const Leaderboard = require('../models/LeaderboardModel');
 const User = require('../models/userModel');
 
-const newFeaturedLeaderboard = async () => {
+const newFeaturedLeaderboard = async (req, res) => {
     try{
         const current = await Leaderboard.findOneAndUpdate({ featured: true }, {featured: false});
         
@@ -22,6 +22,8 @@ const newFeaturedLeaderboard = async () => {
     const response = await Leaderboard.aggregate([{ $sample: { size: 1 } }]);
     console.log(response[0].mapName)
     await Leaderboard.findOneAndUpdate({ _id: response[0]._id }, {featured: true});
+
+    res.status(200).json({msg: "updated MotW"})
 }
 
 module.exports = newFeaturedLeaderboard;
