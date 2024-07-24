@@ -22,6 +22,8 @@ const CreateEntryForm = ({ mapName, entries, user }) => {
             entries.push({ userName: user.userName, discordID: user.discordID, time: msTime });
         }
 
+        console.log(JSON.stringify({entries}))
+        
         fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + mapName, {
             method: 'PATCH',
             body: JSON.stringify({entries}),
@@ -31,7 +33,7 @@ const CreateEntryForm = ({ mapName, entries, user }) => {
             }
         }).then(() => {
             setTime('')
-            window.location.reload();
+            //window.location.reload();
         }).catch((err) => console.log(err));
     }
 
