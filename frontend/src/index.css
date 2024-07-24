@@ -102,6 +102,10 @@ td {
   padding: 8px;
 }
 
+tr a {
+  text-align: left;
+}
+
 a {
   text-decoration: none !important;
 }
