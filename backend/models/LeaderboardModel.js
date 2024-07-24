@@ -8,6 +8,7 @@ const leaderboardSchema = new Schema({
         required: true,
     },
     steamID: {
+        type: String,
         required: true
     },
     creator: {
