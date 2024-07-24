@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const leaderboardRoutes = require('../routes/leaderboard');
 const userRoutes = require('../routes/user');
+const cronRoutes = require('../routes/cron')
 const cors = require('cors');
 
 const app = express();
