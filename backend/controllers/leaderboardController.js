@@ -46,7 +46,7 @@ const createLeaderboard = async (req, res) => {
 
         mapEntry = { 
             mapName: mapInfo.title,
-            steamID: mapInfo.steamid,
+            steamID: mapID,
             creator: playerJson.response.players[0].personaname,
             description: mapInfo.description,
             previewImage: mapInfo.preview_url,
