@@ -8,24 +8,35 @@ const cors = require('cors');
 
 const app = express();
 
+
+
+
+var http = require('http');
+var url = require('url');
+
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  var q = url.parse(req.url, true).query;
+  var txt = q.year + " " + q.month;
+  res.end(txt);
+}).listen(8080);
+
+
+
+
+
+
+
 // Middleware
 app.use(cors({
     origin: "*",
     credentials: true
 }))
 
-// http redirect
+
 app.use((req, res, next) => {
     console.log(req.headers ,req.path, req.method);
     next();
-});
-app.use("*", function (req, res, next) {
-    if ("https" !== req.headers["x-forwarded-proto"]) {
-        res.redirect("https://" + req.hostname + req.url);
-    } else {
-        // Continue to other routes if we're not redirecting
-        next();
-    }
 });
 
 app.use(express.json());
