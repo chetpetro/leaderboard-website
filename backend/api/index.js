@@ -15,7 +15,11 @@ app.use(cors({
 }))
 
 // http redirect
-app.get("*", function (req, res, next) {
+app.use((req, res, next) => {
+    console.log(req.headers ,req.path, req.method);
+    next();
+});
+app.use("*", function (req, res, next) {
     if ("https" !== req.headers["x-forwarded-proto"]) {
         res.redirect("https://" + req.hostname + req.url);
     } else {
@@ -25,10 +29,6 @@ app.get("*", function (req, res, next) {
 });
 
 app.use(express.json());
-app.use((req, res, next) => {
-    console.log(req.headers ,req.path, req.method);
-    next();
-});
 
 app.use("/api/leaderboards" , leaderboardRoutes);
 app.use("/api/user", userRoutes);
