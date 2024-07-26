@@ -13,9 +13,20 @@ app.use(cors({
     origin: "*",
     credentials: true
 }))
+
+// http redirect
+app.get("*", function (req, res, next) {
+    if ("https" !== req.headers["x-forwarded-proto"]) {
+        res.redirect("https://" + req.hostname + req.url);
+    } else {
+        // Continue to other routes if we're not redirecting
+        next();
+    }
+});
+
 app.use(express.json());
 app.use((req, res, next) => {
-    console.log(req.path, req.method);
+    console.log(req.headers ,req.path, req.method);
     next();
 });
 
