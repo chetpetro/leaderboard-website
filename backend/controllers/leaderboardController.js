@@ -70,11 +70,15 @@ const createEntry = async (req, res) => {
     let entries = check.entries
 
     for(let i = 0; i < entries.length; i++){
-        if (entries[i].discordID == req.body.discordID && entries[i].time > req.body.time){
-            entries[i] = req.body;
-            const update = await Leaderboard.findOneAndUpdate({ steamID }, { entries });
-            res.status(200).json({msg: 'update'});
-            break;
+        if (entries[i].discordID == req.body.discordID){
+            if (entries[i].time > req.body.time) {
+                entries[i] = req.body;
+                const update = await Leaderboard.findOneAndUpdate({ steamID }, { entries });
+                res.status(200).json(update);
+            } else {
+                res.status(200).json({msg: 'Posting slower time, time not updated!'});
+            }
+            return;
         }
     }
 
