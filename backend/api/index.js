@@ -5,17 +5,16 @@ const leaderboardRoutes = require('../routes/leaderboard');
 const userRoutes = require('../routes/user');
 const cronRoutes = require('../routes/cron')
 const cors = require('cors');
-const http = require('http');
 
 const app = express();
 
 
 // Middleware
 app.use(cors({
-    origin: "*"
+    origin: ["pogostuckleaderboards.vercel.app"]
 }))
 app.use((req, res, next) => {
-    console.log(req.protocol ,req.path, req.method);
+    console.log(req.path, req.method);
     next();
 });
 app.use(express.json());
@@ -35,9 +34,3 @@ mongoose.connect(URI)
     .catch((err) => {
         console.log('Cannot connect to db: ' + err);
     });
-
-
-const httpServer = http.createServer(app);
-httpServer.listen(80, () => {
-    console.log('HTTP Server running on port 80');
-});

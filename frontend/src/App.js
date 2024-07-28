@@ -41,8 +41,8 @@ function App() {
         <Navbar user={user} setUser={setUser} motw={motw}/>
         <div className="pages">
           <Routes>
-            <Route exact path='/' element={<Home motw={motw}/>}/>
-            <Route path='/:name' element={<LeaderboardDetails user={user} motw={motw}/>} />
+            <Route exact path='/' element={<Home />}/>
+            <Route path='/:steamID' element={<LeaderboardDetails user={user} />} />
             <Route path='/user/:discordID' element={<User />}/>
             <Route path='/login' element={<Login setUser={setUser}/>} />
             <Route path='/sign-up' element={<Signup setUser={setUser}/>} />

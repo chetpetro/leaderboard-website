@@ -8,8 +8,8 @@ const getLeaderboards = async (req, res) =>  {
 }
 
 const getLeaderboard = async (req, res) =>  {
-    const { name } = req.params;
-    const response = await Leaderboard.find({ mapName: name })
+    const { steamID } = req.params;
+    const response = await Leaderboard.find({ steamID })
 
     if (!response) return res.status(404).json({error: "No leadearboard with map name found"})
 

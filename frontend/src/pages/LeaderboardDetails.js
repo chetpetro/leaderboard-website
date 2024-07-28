@@ -3,13 +3,13 @@ import LeaderboardEntry from "../components/LeaderboardEntry";
 import { useParams } from "react-router-dom";
 import CreateEntryForm from "../components/CreateEntryForm";
 
-const LeaderboardDetails = ({user, motw}) => {
-    const { name } = useParams()
+const LeaderboardDetails = ({user}) => {
+    const { steamID } = useParams()
     const [leaderboard, setLeaderboard] = useState('');
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
-            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + name)
+            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + steamID)
             const json = await response.json();
 
             if (response.ok) {

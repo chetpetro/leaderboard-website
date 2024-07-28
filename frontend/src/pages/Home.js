@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import LeadearboardPreview from "../components/LeaderboardPreview";
 import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
 
-const Home = ({ motw }) => {
+const Home = () => {
     const [leaderboards, setLeaderboards] = useState('');
     const [query, setQuery] = useState('');
     const [page, setPage] = useState(0);
