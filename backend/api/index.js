@@ -12,16 +12,12 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: "*",
-    credentials: true
+    origin: "*"
 }))
-
-
 app.use((req, res, next) => {
-    console.log(req.headers ,req.path, req.method);
+    console.log(req.protocol ,req.path, req.method);
     next();
 });
-
 app.use(express.json());
 
 app.use("/api/leaderboards" , leaderboardRoutes);
