@@ -84,9 +84,9 @@ userSchema.statics.loginDiscord = async function(tokenType, accessToken) {
         headers: { authorization: `${tokenType} ${accessToken}` }
     })
     const json = await response.json();
-    const userName = json.username;
+    const discordID = json.id;
 
-    const user = await this.findOne({ userName });
+    const user = await this.findOne({ discordID });
 
     return user;
 }
