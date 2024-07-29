@@ -11,7 +11,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: ["pogostuckleaderboards.vercel.app"]
+    origin: "*"
 }))
 app.use((req, res, next) => {
     console.log(req.path, req.method);
