@@ -92,7 +92,7 @@ table {
   background: var(--color-surface-200);
   border-collapse: collapse;
   width: 100%;
-  min-height: 0%;
+  min-height: 10px;
 }
 
 td {
