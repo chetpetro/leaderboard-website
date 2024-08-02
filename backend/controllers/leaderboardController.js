@@ -90,7 +90,7 @@ const createEntry = async (req, res) => {
                 const update = await Leaderboard.findOneAndUpdate({ steamID }, { entries });
 
 
-                await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
+                const discordResposne = await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
                     method: "POST",
                     body: JSON.stringify({content: `<@${steamID}> set a new PB of ${msToTime(req.body.time)} on ${map.mapName}!`}),
                     headers: {
@@ -99,7 +99,7 @@ const createEntry = async (req, res) => {
                     }
                 })
 
-                res.status(200).json(update);
+                res.status(200).json(discordResposne);
             } else {
                 res.status(200).json({msg: 'Posting slower time, time not updated!'});
             }
