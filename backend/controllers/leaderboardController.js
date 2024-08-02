@@ -92,7 +92,7 @@ const createEntry = async (req, res) => {
 
                 await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
                     method: "POST",
-                    body: JSON.stringify({content: `<@${req.body.discordID}> set a new PB of ${msToTime(req.body.time)} on ${map.mapName}!\n[Pogostuck Leaderboards](https://pogostuckleaderboards.vercel.app/)`}),
+                    body: JSON.stringify({content: `<@${req.body.discordID}> set a new PB of ${msToTime(req.body.time)} on ${map.mapName}!\n[Pogostuck Leaderboards](<https://pogostuckleaderboards.vercel.app/>)`}),
                     headers: {
                         "Authorization":  process.env.DISCORD_TOKEN,
                         'Content-Type': 'application/json'

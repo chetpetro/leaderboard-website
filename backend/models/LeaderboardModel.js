@@ -34,7 +34,7 @@ const leaderboardSchema = new Schema({
             required: true
         },
         discordID: {
-            type: Number,
+            type: String,
             required: true
         },
         time: {
