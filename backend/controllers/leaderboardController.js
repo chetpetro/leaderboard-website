@@ -62,18 +62,39 @@ const createLeaderboard = async (req, res) => {
 }
 
 const createEntry = async (req, res) => {
+    
+    const msToTime = (duration) => {
+        var milliseconds = duration.toString().slice(-3);
+        var seconds = Math.floor((duration / 1000) % 60);
+        var minutes = Math.floor((duration / (1000 * 60)) % 60);
+        var hours = Math.floor(duration / (1000 * 60 * 60));
+
+        minutes = (minutes < 10) ? "0" + minutes : minutes;
+        seconds = (seconds < 10) ? "0" + seconds : seconds;
+        hours = (hours < 10) ? "0" + hours : hours;
+
+        return hours + ':' + minutes + ':' + seconds + '.' + milliseconds;
+    }
+
     const { steamID } = req.params;
 
-    const check = await Leaderboard.findOne({ steamID });
-    if (!check) return res.status(404).json({error: "No leadearboard found"});
+    const map = await Leaderboard.findOne({ steamID });
+    if (!map) return res.status(404).json({error: "No leadearboard found"});
 
-    let entries = check.entries
+    let entries = map.entries
 
     for(let i = 0; i < entries.length; i++){
         if (entries[i].discordID == req.body.discordID){
             if (entries[i].time >= req.body.time) {
                 entries[i] = req.body;
                 const update = await Leaderboard.findOneAndUpdate({ steamID }, { entries });
+
+
+                await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
+                    body: {"content": `<@${steamID}> set a new PB of ${msToTime(req.body.time)} on ${map.mapName}!`},
+                    headers: {"Authorization": "MzMzNjc3ODk0ODM4NjQ4ODUz.GpHElN.mHCkHH5OZIR71uDDY2rqkThCtLT6NkIFXadRRg"}
+                })
+
                 res.status(200).json(update);
             } else {
                 res.status(200).json({msg: 'Posting slower time, time not updated!'});
