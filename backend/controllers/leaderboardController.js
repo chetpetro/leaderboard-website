@@ -90,10 +90,11 @@ const createEntry = async (req, res) => {
                 const update = await Leaderboard.findOneAndUpdate({ steamID }, { entries });
 
 
-                await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
-                    body: {"content": `<@${steamID}> set a new PB of ${msToTime(req.body.time)} on ${map.mapName}!`},
-                    headers: {"Authorization": process.env.DISCORD_TOKEN}
-                })
+                // await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
+                //     method: "POST",
+                //     body: {"content": `<@${steamID}> set a new PB of ${msToTime(req.body.time)} on ${map.mapName}!`},
+                //     headers: {"Authorization": process.env.DISCORD_TOKEN}
+                // })
 
                 res.status(200).json(update);
             } else {
