@@ -2,6 +2,19 @@ const Leaderboard = require('../models/LeaderboardModel');
 const { getAverageColor } = require('fast-average-color-node');
 require('dotenv').config()
 
+const msToTime = (duration) => {
+    var milliseconds = duration.toString().slice(-3);
+    var seconds = Math.floor((duration / 1000) % 60);
+    var minutes = Math.floor((duration / (1000 * 60)) % 60);
+    var hours = Math.floor(duration / (1000 * 60 * 60));
+
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+    hours = (hours < 10) ? "0" + hours : hours;
+
+    return hours + ':' + minutes + ':' + seconds + '.' + milliseconds;
+}
+
 const getLeaderboards = async (req, res) =>  {
     const response = await Leaderboard.find({}).sort({entries: -1});
     res.status(200).json(response);
@@ -62,19 +75,6 @@ const createLeaderboard = async (req, res) => {
 }
 
 const createEntry = async (req, res) => {
-    
-    // const msToTime = (duration) => {
-    //     var milliseconds = duration.toString().slice(-3);
-    //     var seconds = Math.floor((duration / 1000) % 60);
-    //     var minutes = Math.floor((duration / (1000 * 60)) % 60);
-    //     var hours = Math.floor(duration / (1000 * 60 * 60));
-
-    //     minutes = (minutes < 10) ? "0" + minutes : minutes;
-    //     seconds = (seconds < 10) ? "0" + seconds : seconds;
-    //     hours = (hours < 10) ? "0" + hours : hours;
-
-    //     return hours + ':' + minutes + ':' + seconds + '.' + milliseconds;
-    // }
 
     const { steamID } = req.params;
 
@@ -90,11 +90,11 @@ const createEntry = async (req, res) => {
                 const update = await Leaderboard.findOneAndUpdate({ steamID }, { entries });
 
 
-                // await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
-                //     method: "POST",
-                //     body: {"content": `<@${steamID}> set a new PB of ${msToTime(req.body.time)} on ${map.mapName}!`},
-                //     headers: {"Authorization": process.env.DISCORD_TOKEN}
-                // })
+                await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
+                    method: "POST",
+                    body: {"content": `<@${steamID}> set a new PB of ${msToTime(req.body.time)} on ${map.mapName}!`},
+                    headers: {"Authorization": process.env.DISCORD_TOKEN}
+                })
 
                 res.status(200).json(update);
             } else {
