@@ -63,18 +63,18 @@ const createLeaderboard = async (req, res) => {
 
 const createEntry = async (req, res) => {
     
-    const msToTime = (duration) => {
-        var milliseconds = duration.toString().slice(-3);
-        var seconds = Math.floor((duration / 1000) % 60);
-        var minutes = Math.floor((duration / (1000 * 60)) % 60);
-        var hours = Math.floor(duration / (1000 * 60 * 60));
+    // const msToTime = (duration) => {
+    //     var milliseconds = duration.toString().slice(-3);
+    //     var seconds = Math.floor((duration / 1000) % 60);
+    //     var minutes = Math.floor((duration / (1000 * 60)) % 60);
+    //     var hours = Math.floor(duration / (1000 * 60 * 60));
 
-        minutes = (minutes < 10) ? "0" + minutes : minutes;
-        seconds = (seconds < 10) ? "0" + seconds : seconds;
-        hours = (hours < 10) ? "0" + hours : hours;
+    //     minutes = (minutes < 10) ? "0" + minutes : minutes;
+    //     seconds = (seconds < 10) ? "0" + seconds : seconds;
+    //     hours = (hours < 10) ? "0" + hours : hours;
 
-        return hours + ':' + minutes + ':' + seconds + '.' + milliseconds;
-    }
+    //     return hours + ':' + minutes + ':' + seconds + '.' + milliseconds;
+    // }
 
     const { steamID } = req.params;
 
