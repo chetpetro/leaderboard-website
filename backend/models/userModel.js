@@ -10,7 +10,7 @@ const userSchema = new Schema({
         unique: true
     },
     discordID: {
-        type: Number,
+        type: String,
         required: true,
         unique: true
     },
