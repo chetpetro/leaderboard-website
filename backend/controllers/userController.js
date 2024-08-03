@@ -75,7 +75,7 @@ const getUser = async (req, res) => {
     }
     let userEntries = {user, entries: []}
     userInfo.map((leaderboard) => leaderboard.entries.sort((a, b) => a.time - b.time).map((entry, index) => {
-        if (entry.discordID === Number(id)) userEntries.entries.push({mapName: leaderboard.mapName, steamID: leaderboard.steamID, pos: index + 1, entry})
+        if (entry.discordID === id) userEntries.entries.push({mapName: leaderboard.mapName, steamID: leaderboard.steamID, pos: index + 1, entry})
     }))
     res.status(200).json(userEntries)
 }
