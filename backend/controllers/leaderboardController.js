@@ -84,7 +84,7 @@ const createEntry = async (req, res) => {
     let entries = map.entries
 
     for(let i = 0; i < entries.length; i++){
-        if (entries[i].discordID == req.body.discordID){
+        if (req.body.time && entries[i].discordID == req.body.discordID){
             if (entries[i].time >= req.body.time) {
                 entries[i] = req.body;
                 const update = await Leaderboard.findOneAndUpdate({ steamID }, { entries });
