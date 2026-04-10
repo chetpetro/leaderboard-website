@@ -1,10 +1,51 @@
 import { Link } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
+import {useEffect, useRef} from "react";
 
 const Navbar = ({ user, setUser, motw }) => {
+    const headerRef = useRef(null);
+
+    useEffect(() => {
+        if (!headerRef.current) return;
+
+        const updateHeight = () => {
+            const height = headerRef.current.offsetHeight;
+            document.documentElement.style.setProperty('--header-height', `${height}px`);
+        };
+
+        const resizeObserver = new ResizeObserver(() => updateHeight());
+        resizeObserver.observe(headerRef.current);
+
+        updateHeight();
+
+        return () => resizeObserver.disconnect();
+    }, []);
+
+    useEffect(() => {
+        if (!headerRef.current) return;
+
+        const handleScroll = () => {
+            const headerEl = headerRef.current;
+            if (!headerEl) return;
+
+            const y = window.scrollY;
+            const isScrolled = headerEl.classList.contains('scrolled');
+
+            if (!isScrolled && y > 100) {
+                headerEl.classList.add('scrolled');
+            } else if (isScrolled && y < 50) {
+                headerEl.classList.remove('scrolled');
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
-        <header>
+        <header ref={headerRef}>
             <nav>
                 <Link to="/">
                     <h1 style={{fontSize: "2em"}}>Pogostuck Leaderboards</h1>

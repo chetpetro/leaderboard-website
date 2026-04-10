@@ -1,0 +1,32 @@
+.teaser {
+    padding-inline: 2rem;
+    margin-inline: auto;
+    text-align: center;
+    height: calc(100vh - var(--header-height)); /* Set in Navbar.js*/
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle at center center, rgba(255, 255, 255, 8%), transparent 70%);
+
+    .inside {
+        max-width: 900px;
+        .search-bar {
+            background-color: var(--color-surface-300);
+            padding-inline: 1.5rem .5rem;
+            padding-block: .75rem;
+            border-radius: var(--border-radius);
+            transition: box-shadow 0.15s ease;
+            &:has(input:focus) {
+                box-shadow: 0px 0px 20px 4px color-mix(in srgb, var(--color-primary-300) 33%, transparent);
+                outline: 1px solid color-mix(in srgb, var(--color-primary-300) 50%, transparent);
+            }
+            input {
+                background-color: transparent;
+                border: none;
+                font-size: 1rem;
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
+    }
+}

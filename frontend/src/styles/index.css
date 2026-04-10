@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+@import "typography.css";
+@import "Navbar.css";
 
 
 
@@ -21,65 +23,26 @@
   --color-surface-400: #575757;
   --color-surface-500: #717171;
   --color-surface-600: #8b8b8b;
+
+  --border-radius: 4px;
 }
 
+* {box-sizing: border-box;}
+input {color: white;}
+h1, h2, h3, h4, h5, h6 {margin: 0;}
+
 body {
-  background: var(--color-surface-100);
+  background: radial-gradient(circle at top center, var(--color-surface-200), var(--color-surface-100));
   margin: 0;
   font-family: "Poppins";
   color: white;
 }
 
-header {
-  background: #fff;
-  background: var(--color-surface-400)
-}
 
-nav {
-  max-width: 1400px;
-  margin: auto;
-  padding: 0px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-nav ul {
-  padding: 0;
-}
-nav ul li {
-  display: inline-block;
-  margin: 0 10px;
-  font-size: 1.5em;
-}
-
-header a {
-  color: #ffffff;
-  text-decoration: none;
-  
-}
 
 .pages{
   max-width: 1400px;
-  padding: 20px;
   margin: 0 auto;
-}
-
-.home {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 5%;
-}
-
-.leaderboards {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-}
-
-.leaderboard-details {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 100px;
 }
 
 .details-map-name{
@@ -141,18 +104,6 @@ a {
 
 label, input {
   display: block;
-}
-
-input {
-  padding: 10px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box;
-  background-color: var(--color-surface-200);
-  color: white;
 }
 
 form button {

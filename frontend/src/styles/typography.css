@@ -1,0 +1,15 @@
+html {
+    --min-font-size: 16px;
+    --max-font-size: 24px;
+
+    font-size: clamp(
+            var(--min-font-size),
+            calc(1rem + 0.8vw),
+            var(--max-font-size)
+    );
+}
+
+h1 {
+    font-size: 3.5rem;
+    text-transform: uppercase;
+}

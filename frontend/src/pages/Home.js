@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import LeadearboardPreview from "../components/LeaderboardPreview";
 import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
+import '../styles/Home.css'
 
 const Home = () => {
     const [leaderboards, setLeaderboards] = useState('');
@@ -24,8 +25,20 @@ const Home = () => {
     
     return (
         <div className="home">
+            <div className="teaser">
+                <div className="inside">
+                    <h1>Ascend the Custom-Map Ranks</h1>
+                    <p>Compare & Submit your leaderboards times for all custom-maps</p>
+                    <div className="search-bar">
+                        <input type="text" placeholder="Search for a map..." onChange={(e) => {
+                            setQuery(e.target.value);
+                            setPage(0)
+                        }} value={query}/>
+                    </div>
+                </div>
+            </div>
             <div>
-                <h4>Seach: <input type="text" onChange={(e) => {
+                <h4>Search: <input type="text" onChange={(e) => {
                     setQuery(e.target.value);
                     setPage(0)
                 }} value={query}/></h4>
