@@ -1,5 +1,8 @@
 .create-leaderboard {
+    transition: opacity .3s ease, margin .3s ease, visibility .3s ease;
+    opacity: 1;
     .create-leaderboard-form {
+        min-height: 0;
         display: flex;
         align-items: center;
         gap: .5rem;
@@ -11,14 +14,15 @@
             padding: .25rem .75rem!important;
             flex-grow: 1;
         }
+        .btn {
+            padding: 0 .5rem;
+        }
     }
 }
 
 .create-leaderboard.hidden {
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: 0;
-    margin-bottom: 0;
+    opacity: 0;
+    margin-top: -2rem; /* or use a known height */
     visibility: hidden;
+    pointer-events: none;
 }

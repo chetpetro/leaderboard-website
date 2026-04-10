@@ -59,8 +59,7 @@ const Home = ({motw}) => {
                     </Link>
                 </div>
             </div>
-            <CreateLeaderboardForm />
-        </div>    
+        </div>
     );
 }
  
