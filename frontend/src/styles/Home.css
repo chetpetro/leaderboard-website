@@ -2,31 +2,109 @@
     padding-inline: 2rem;
     margin-inline: auto;
     text-align: center;
-    height: calc(100vh - var(--header-height)); /* Set in Navbar.js*/
+    height: calc(100vh); /* Set in Navbar.js*/
     display: grid;
     place-items: center;
     background: radial-gradient(circle at center center, rgba(255, 255, 255, 8%), transparent 70%);
 
     .inside {
-        max-width: 900px;
+        display: grid;
+        max-width: 1000px;
+        h1 .text-gradient {
+            text-wrap: nowrap;
+        }
         .search-bar {
             background-color: var(--color-surface-300);
             padding-inline: 1.5rem .5rem;
-            padding-block: .75rem;
             border-radius: var(--border-radius);
             transition: box-shadow 0.15s ease;
+            box-shadow: var(--shadow-lg);
+            cursor: text;
             &:has(input:focus) {
-                box-shadow: 0px 0px 20px 4px color-mix(in srgb, var(--color-primary-300) 33%, transparent);
-                outline: 1px solid color-mix(in srgb, var(--color-primary-300) 50%, transparent);
+                box-shadow: var(--focus-box-shadow);
+                outline: var(--focus-outline);
             }
             input {
                 background-color: transparent;
                 border: none;
                 font-size: 1rem;
+                width: 100%;
                 &:focus {
                     outline: none;
+                    box-shadow: none;
                 }
             }
+        }
+        .teaser-text {
+            font-size: .8rem;
+            margin-block-end: 1.5rem;
+        }
+        .create-map {
+            margin-block-start: .25rem;
+            font-size: .5rem;
+            color: var(--primary);
+            cursor: pointer;
+            justify-self: start;
+        }
+    }
+}
+
+.card {
+    background-color: var(--color-surface-200);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    border: var(--color-surface-300) 1px solid;
+    text-align: start;
+    font-size: .8rem;
+    transition-property: box-shadow, transform, border-color, visibility;
+    transition: .3s ease;
+    padding: .5rem .25rem;
+    outline: none;
+    h2 {
+        color: var(--primary);
+    }
+    h2 {
+        font-size: .667rem;
+    }
+    &:hover,
+    &:focus {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg-hover);
+        border-color: var(--focus-border-color);
+    }
+}
+
+.card.hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transform: translateY(5px);
+}
+
+.map-of-the-week {
+    margin-block: .5rem;
+    display: flex;
+    width: fit-content;
+    margin-inline: auto;
+    .icon-cnt,
+    .card-link {
+        display: grid;
+        place-items: center;
+        padding-inline: .75rem;
+    }
+
+    .card-link {
+        transition: transform 0.15s ease;
+        svg {
+            aspect-ratio: 1;
+            width: 1rem;
+            height: auto;
+        }
+    }
+
+    &:focus, &:hover {
+        .card-link {
+            transform: translateX(2px);
         }
     }
 }

@@ -48,15 +48,14 @@ const Navbar = ({ user, setUser, motw }) => {
         <header ref={headerRef}>
             <nav>
                 <Link to="/">
-                    <h1 style={{fontSize: "2em"}}>Pogostuck Leaderboards</h1>
+                    <span className="logo">Pogostuck Leaderboards</span>
                 </Link>
                 <ul>
-                    <Link to="/"><li>Home</li></Link>
-                    <Link to="/points-leaderboard"><li>Points</li></Link>
+                    <Link to="/points-leaderboard"><li>Leaderboard</li></Link>
                     {motw.mapName && <Link to={`/${motw.steamID}`}><li>MotW: {motw.mapName}</li></Link>}
                     {user.userName && <Link to={`/user/${user.discordID}`}><li>{ user.userName }</li></Link>}
-                    {!user.userName && <Link to="/login"><button className='login-button'>Login</button></Link>}
-                    {!user.userName && <Link to="/sign-up"><button className='signup-button'>Sign Up</button></Link>}
+                    {!user.userName && <Link to="/login"><button className='btn btn-ghost btn-header'>Login</button></Link>}
+                    {!user.userName && <Link to="/sign-up"><button className='btn btn-primary btn-header'>Sign Up</button></Link>}
                     {user.userName && <LogoutButton setUser={setUser} />}
                 </ul>
             </nav>

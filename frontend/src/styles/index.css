@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 @import "typography.css";
 @import "Navbar.css";
+@import "buttons.css";
 
 
 
@@ -24,21 +25,43 @@
   --color-surface-500: #717171;
   --color-surface-600: #8b8b8b;
 
-  --border-radius: 4px;
+  --border-radius: 6px;
+
+  --shadow-sm: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  --shadow-lg: 0px 6px 14px 1px rgba(0, 0, 0, 15%), 0px 19px 40px 11px rgba(0, 0, 0, 10%);
+  --shadow-lg-hover: 0px 6px 14px 1px rgba(0, 0, 0, 20%), 0px 19px 40px 11px rgba(0, 0, 0, 15%);
+
+  --focus-box-shadow: 0px 0px 20px 4px color-mix(in srgb, var(--color-primary-300) 33%, transparent);
+  --focus-border-color: color-mix(in srgb, var(--color-primary-300) 25%, transparent);
+  --focus-outline: 2px solid var(--focus-border-color);
 }
 
 * {box-sizing: border-box;}
 input {color: white;}
-h1, h2, h3, h4, h5, h6 {margin: 0;}
+h1, h2, h3, h4, h5, h6, p {margin: 0;}
+a {color: inherit; text-decoration: none;}
+img, svg {display: block; width: 100%; height: auto;}
 
 body {
-  background: radial-gradient(circle at top center, var(--color-surface-200), var(--color-surface-100));
+  background: var(--color-surface-100);
   margin: 0;
-  font-family: "Poppins";
+  font-family: "Poppins", sans-serif;
   color: white;
 }
 
+input[type="text"] {
+  background: var(--color-surface-300);
+  color: white;
+  border: none;
+  font-size: 1rem;
+  padding: .75rem;
+  border-radius: var(--border-radius);
 
+  &:focus {
+    box-shadow: var(--focus-box-shadow);
+    outline: var(--focus-outline);
+  }
+}
 
 .pages{
   max-width: 1400px;
@@ -104,16 +127,6 @@ a {
 
 label, input {
   display: block;
-}
-
-form button {
-  background: var(--primary);
-  border: 0;
-  color: var(--color-surface-100);;
-  padding: 10px;
-  font-family: "Poppins";
-  border-radius: 4px;
-  cursor: pointer;
 }
 
 nav {

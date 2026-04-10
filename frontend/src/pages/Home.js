@@ -2,12 +2,18 @@ import { useState, useEffect } from "react";
 import LeadearboardPreview from "../components/LeaderboardPreview";
 import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
 import '../styles/Home.css'
+import {Link} from "react-router-dom";
 
-const Home = () => {
+const Home = ({motw}) => {
     const [leaderboards, setLeaderboards] = useState('');
     const [query, setQuery] = useState('');
     const [page, setPage] = useState(0);
     const elementsPerPage = 15;
+    const [showCreateLeaderboard, setShowCreateLeaderboard] = useState(false);
+
+    const handleSearchBarClick = (e) => {
+        e.currentTarget.querySelector('input').focus();
+    }
 
     useEffect(() => {
         const fetchLeaderboards = async () => {
@@ -27,34 +33,30 @@ const Home = () => {
         <div className="home">
             <div className="teaser">
                 <div className="inside">
-                    <h1>Ascend the Custom-Map Ranks</h1>
-                    <p>Compare & Submit your leaderboards times for all custom-maps</p>
-                    <div className="search-bar">
+                    <h1>Ascend the <span className="text-gradient">Custom-Map</span> Ranks</h1>
+                    <p className="text-muted teaser-text">Compare and Submit your leaderboards times for all custom-maps</p>
+                    <div className="search-bar" onClick={handleSearchBarClick}>
                         <input type="text" placeholder="Search for a map..." onChange={(e) => {
                             setQuery(e.target.value);
                             setPage(0)
                         }} value={query}/>
                     </div>
-                </div>
-            </div>
-            <div>
-                <h4>Search: <input type="text" onChange={(e) => {
-                    setQuery(e.target.value);
-                    setPage(0)
-                }} value={query}/></h4>
-                <div className="leaderboards">
-                    {leaderboards && leaderboards
-                    .sort((a, b) => b.entries.length - a.entries.length)
-                    .filter((el) => el.mapName.toLowerCase()
-                    .includes(query.toLowerCase()))
-                    .slice(page * elementsPerPage, (page + 1) * elementsPerPage)
-                    .map((leaderboard) => (
-                        <LeadearboardPreview key={leaderboard._id} leaderboard={leaderboard} />
-                    ))}
-                </div>
-                <div className="page-button-container">
-                    {page > 0 && <button onClick={() => setPage(page - 1)}>&#8592;</button>}
-                    {page * elementsPerPage < leaderboards.length && <button onClick={() => setPage(page + 1)}>&#8594;</button>}
+                    <a className="create-map" onClick={() => setShowCreateLeaderboard(!showCreateLeaderboard)}>
+                        Can't find a Map? Submit the Map here!
+                    </a>
+                    <CreateLeaderboardForm show={showCreateLeaderboard}/>
+                    <Link to={`/${motw.steamID}`} className={'card map-of-the-week' + (motw.mapName ? '' : ' hidden')}>
+                        <span className="icon-cnt text-gradient">⚫</span>
+                        <div className="card-content">
+                            <h2>Map of the Week</h2>
+                            <p>{motw.mapName || "No map selected"}</p>
+                        </div>
+                        <Link className="card-link" to={`/${motw.steamID}`}>
+                            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" className="arrow-icon">
+                                <path d="M0 0 L10 5 L0 10 Z" fill="currentColor" />
+                            </svg>
+                        </Link>
+                    </Link>
                 </div>
             </div>
             <CreateLeaderboardForm />
