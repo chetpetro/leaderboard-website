@@ -1,5 +1,5 @@
 import { useState } from "react";
-import '../styles/CreateLeaderboardForm.css'
+import '../styles/components/CreateLeaderboardForm.css'
 
 const CreateLeaderboardForm = ({show}) => {
     const [url, setURL] = useState('');

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
 import {useEffect, useRef} from "react";
-import '../styles/Navbar.css';
+import '../styles/components/Navbar.css';
 
 const Navbar = ({ user, setUser, motw }) => {
     const headerRef = useRef(null);

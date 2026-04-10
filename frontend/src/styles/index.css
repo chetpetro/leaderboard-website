@@ -9,6 +9,7 @@
 
 :root {
   --max-width: 1200px;
+  --element-spacing: 48px;
   --primary: #cc8dd4;
   --error: #e7195a;
 

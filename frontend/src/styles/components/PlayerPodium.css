@@ -1,0 +1,96 @@
+.player-podium {
+    background-color: var(--primary);
+    color: var(--color-surface-200);
+
+    .inside {
+        text-align: center;
+
+        padding-block: 1rem;
+        .podium {
+            display: grid;
+            gap: 3rem;
+            padding-block-start: 2rem;
+            margin-block: 1rem;
+            .player-cnt {
+                position: relative;
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -12px;
+                    left: 50%;
+                    translate: -50% 0;
+                    width: 70%;
+                    height: 12px;
+                    background: rgba(0, 0, 0, 0.5);
+                    border-radius: 50%;
+                    filter: blur(8px);
+                    z-index: 1;
+                    transition: 1s ease;
+                    transition-property: filter, width;
+                }
+
+                &:has(.first)::after {
+                    filter: blur(12px);
+                    width: 100%;
+                }
+
+                &:has(.second)::after {
+                    filter: blur(10px);
+                    width: 85%;
+                }
+
+                &:has(.first:hover)::after {filter: blur(14px);width: 110%}
+                &:has(.second:hover)::after {filter: blur(12px);width: 95%}
+                &:has(.third:hover)::after {filter: blur(8px);width: 80%}
+            }
+
+            .player {
+                display: grid;
+                gap: .25rem;
+                .medal, .name, .points {transition: transform 1s ease}
+                &:hover {
+                    --move-amount: -8px;
+                    .medal {transform: translateY(var(--move-amount))}
+                    .name {transform: translateY(calc(var(--move-amount) * 0.667))}
+                    .points {transform: translateY(calc(var(--move-amount) * 1.25))}
+                }
+                .medal {
+                    font-size: 4.5rem;
+                }
+
+                .name {
+                    font-size: .75rem;
+                    font-weight: 700;
+                }
+
+                .points {
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                }
+
+                &.first {
+                    order: 1;
+                }
+
+                &.second {
+                    order: 2;
+                }
+
+                &.third {
+                    order: 3;
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: 600px) {
+    .player-podium .inside .podium {
+        grid-template-columns: repeat(auto-fit, minmax(0, max-content));
+        justify-content: center;
+        .player {
+            &.first {transform: translateY(-1.5rem); order: 2}
+            &.second {transform: translateY(-.75rem); order: 3}
+        }
+    }
+}

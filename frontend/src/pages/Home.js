@@ -3,6 +3,7 @@ import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
 import '../styles/home/Home.css'
 import {Link} from "react-router-dom";
 import ActiveMaps from "../components/ActiveMaps";
+import PlayerPodium from "../components/PlayerPodium";
 
 const Home = ({motw}) => {
     const [leaderboards, setLeaderboards] = useState('');
@@ -10,6 +11,8 @@ const Home = ({motw}) => {
     const [page, setPage] = useState(0);
     const elementsPerPage = 15;
     const [showCreateLeaderboard, setShowCreateLeaderboard] = useState(false);
+
+    const [top3Players, setTop3Players] = useState([]);
 
     const handleSearchBarClick = (e) => {
         e.currentTarget.querySelector('input').focus();
@@ -24,7 +27,16 @@ const Home = ({motw}) => {
                 setLeaderboards(json);
             }
         }
+        const fetchUsers = async () => {
+            const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/')
+            const json = await response.json();
 
+            if (response.ok) {
+                setTop3Players(json.slice(0, 3));
+            }
+        }
+
+        fetchUsers();
         fetchLeaderboards();
 
     }, [])
@@ -60,6 +72,7 @@ const Home = ({motw}) => {
                 </div>
             </div>
             <ActiveMaps/>
+            <PlayerPodium players={top3Players}/>
         </div>
     );
 }

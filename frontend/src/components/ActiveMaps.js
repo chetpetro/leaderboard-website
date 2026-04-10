@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import {useEffect, useState} from "react";
-import '../styles/ActiveMaps.css';
+import '../styles/components/ActiveMaps.css';
 
 const ActiveMaps = ({  }) => {
     const [leaderboards, setLeaderboards] = useState('');
@@ -24,9 +24,9 @@ const ActiveMaps = ({  }) => {
                 <h2>Active Maps</h2>
                 <div className="desc-cnt">
                     <span className="dash"></span>
-                    <desc>
+                    <p>
                         The maps with the latest submissions. Click on a map to view the leaderboard and submit your time!
-                    </desc>
+                    </p>
                 </div>
                 {leaderboards && leaderboards.length > 0 ? (
                 <div className="maps">
