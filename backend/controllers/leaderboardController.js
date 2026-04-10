@@ -20,6 +20,11 @@ const getLeaderboards = async (req, res) =>  {
     res.status(200).json(response);
 }
 
+const getRecentLeaderboards = async (req, res) =>  {
+    const response = await Leaderboard.find({}).sort({entries: -1});
+    res.status(200).json(response);
+}
+
 const getLeaderboard = async (req, res) =>  {
     const { steamID } = req.params;
     const response = await Leaderboard.find({ steamID })
@@ -133,5 +138,6 @@ module.exports = {
     getLeaderboard,
     createLeaderboard,
     createEntry,
-    getMOTW
+    getMOTW,
+    getRecentLeaderboards
 }

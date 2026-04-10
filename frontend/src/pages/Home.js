@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import LeadearboardPreview from "../components/LeaderboardPreview";
 import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
 import '../styles/home/Home.css'
 import {Link} from "react-router-dom";
+import ActiveMaps from "../components/ActiveMaps";
 
 const Home = ({motw}) => {
     const [leaderboards, setLeaderboards] = useState('');
@@ -51,19 +51,15 @@ const Home = ({motw}) => {
                             <h2>Map of the Week</h2>
                             <p>{motw.mapName || "No map selected"}</p>
                         </div>
-                        <Link className="card-link" to={`/${motw.steamID}`}>
+                        <span className="card-link" to={`/${motw.steamID}`}>
                             <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" className="arrow-icon">
                                 <path d="M0 0 L10 5 L0 10 Z" fill="currentColor" />
                             </svg>
-                        </Link>
+                        </span>
                     </Link>
                 </div>
             </div>
-            <div className="latest-maps">
-                <div className="inside">
-                    <h2>Latest Maps</h2>
-                </div>
-            </div>
+            <ActiveMaps/>
         </div>
     );
 }

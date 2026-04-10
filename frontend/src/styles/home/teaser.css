@@ -1,10 +1,10 @@
 .teaser {
-    padding-inline: 2rem;
     margin-inline: auto;
     text-align: center;
     height: calc(100vh); /* Set in Navbar.js*/
     display: grid;
     place-items: center;
+    background: var(--color-surface-100) radial-gradient(circle at center center, rgba(255, 255, 255, 8%), transparent 50%) top center;
 
     .inside {
         display: grid;

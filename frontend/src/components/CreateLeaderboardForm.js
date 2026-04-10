@@ -23,7 +23,7 @@ const CreateLeaderboardForm = ({show}) => {
     return (
         <div className={'create-leaderboard' + (show ? '' : ' hidden')}>
             <form className="create-leaderboard-form" onSubmit={handleSubmit}>
-                <label for="steam-url">Steam Page URL:</label>
+                <label htmlFor="steam-url">Steam Page URL:</label>
                 <input id="steam-url" type="text" onChange={(e) => setURL(e.target.value)} value={url}/>
                 <button className="btn btn-ghost">+</button>
             </form>

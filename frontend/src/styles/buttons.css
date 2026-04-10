@@ -25,7 +25,7 @@
 }
 
 .btn-primary {
-    background-color: color-mix(in srgb, var(--primary) 20%, transparent);
+    background-color: color-mix(in srgb, var(--primary) 5%, transparent);
     color: var(--primary);
     border-color: var(--primary);
 }

@@ -15,6 +15,11 @@ h1 {
     text-transform: uppercase;
 }
 
+h2 {
+    font-size: 2rem;
+    line-height: 1.1;
+}
+
 .text-gradient {
     background: linear-gradient(70deg, var(--color-primary-100), var(--color-primary-600), var(--color-primary-300));
     -webkit-background-clip: text;

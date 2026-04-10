@@ -15,7 +15,7 @@ header {
     &.scrolled {
         box-shadow: var(--shadow-sm);
         padding-block: 0;
-        background-color: color-mix(in srgb, var(--color-surface-200) 95%, transparent);
+        background-color: color-mix(in srgb, var(--color-surface-100) 95%, transparent);
         backdrop-filter: blur(10px);
     }
 

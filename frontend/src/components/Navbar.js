@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
 import {useEffect, useRef} from "react";
+import '../styles/Navbar.css';
 
 const Navbar = ({ user, setUser, motw }) => {
     const headerRef = useRef(null);
@@ -52,7 +53,7 @@ const Navbar = ({ user, setUser, motw }) => {
                 </Link>
                 <ul>
                     <Link to="/points-leaderboard"><li>Leaderboard</li></Link>
-                    {motw.mapName && <Link to={`/${motw.steamID}`}><li>MotW: {motw.mapName}</li></Link>}
+                    <Link to={`/${motw.steamID}`}><li>Map of the Week</li></Link>
                     {user.userName && <Link to={`/user/${user.discordID}`}><li>{ user.userName }</li></Link>}
                     {!user.userName && <Link to="/login"><button className='btn btn-ghost btn-header'>Login</button></Link>}
                     {!user.userName && <Link to="/sign-up"><button className='btn btn-primary btn-header'>Sign Up</button></Link>}
