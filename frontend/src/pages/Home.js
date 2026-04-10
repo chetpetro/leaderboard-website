@@ -73,6 +73,13 @@ const Home = ({motw}) => {
             </div>
             <ActiveMaps/>
             <PlayerPodium players={top3Players}/>
+            <div className="see-all-players bg-primary">
+                <div className="inside">
+                    <div className="btn-container">
+                        <Link to={'/points-leaderboard'} className="btn btn-gray">See All Players</Link>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

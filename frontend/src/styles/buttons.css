@@ -9,7 +9,7 @@
     display: inline-block;
     padding: 0.5rem 1rem;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: 600;
     border-radius: 4px;
     cursor: pointer;
     text-align: center;
@@ -17,6 +17,9 @@
     text-transform: uppercase;
     border: 2px solid transparent;
     box-shadow: var(--shadow-sm);
+    transition-property: background-color, color, border-color, box-shadow;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
 }
 
 .btn:focus-visible {
@@ -46,9 +49,20 @@
     border-color: color-mix(in srgb, white 20%, transparent);
 }
 
+.btn-gray {
+    background-color: var(--color-surface-400);
+    color: white;
+    border-color: var(--color-surface-500);
+}
+
+.btn-gray:hover {
+    background-color: var(--color-surface-300);
+    color: white;
+    border-color: var(--color-surface-600);
+}
+
 .btn-header {
     font-size: .75rem;
     padding-inline: .75rem;
     padding-block: .33rem;
-    font-weight: inherit;
 }

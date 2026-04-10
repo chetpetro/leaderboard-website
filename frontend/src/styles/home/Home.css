@@ -3,3 +3,11 @@
 .home > *:not(:first-child) {
     margin-block-start: var(--element-spacing);
 }
+
+.bg-primary + .bg-primary {
+    margin-block-start: 0;
+}
+
+.see-all-players {
+    padding-block: calc(var(--element-spacing)/4);
+}

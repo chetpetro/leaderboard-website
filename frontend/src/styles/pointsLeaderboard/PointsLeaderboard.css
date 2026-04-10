@@ -1,0 +1,20 @@
+.points-leaderboard {
+    .player-podium {
+        margin-block-start: calc(var(--header-height) + 3rem);
+    }
+    .leaderboard {
+        .inside {
+            max-width: 800px;
+        }
+        .leaderboard-entry {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 1rem;
+            text-wrap: nowrap;
+            .name, .points {
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+}
