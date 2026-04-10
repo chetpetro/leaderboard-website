@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import LeadearboardPreview from "../components/LeaderboardPreview";
 import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
-import '../styles/Home.css'
+import '../styles/home/Home.css'
 import {Link} from "react-router-dom";
 
 const Home = ({motw}) => {
@@ -57,6 +57,11 @@ const Home = ({motw}) => {
                             </svg>
                         </Link>
                     </Link>
+                </div>
+            </div>
+            <div className="latest-maps">
+                <div className="inside">
+                    <h2>Latest Maps</h2>
                 </div>
             </div>
         </div>

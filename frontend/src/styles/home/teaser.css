@@ -5,7 +5,6 @@
     height: calc(100vh); /* Set in Navbar.js*/
     display: grid;
     place-items: center;
-    background: radial-gradient(circle at center center, rgba(255, 255, 255, 8%), transparent 70%);
 
     .inside {
         display: grid;
@@ -46,65 +45,32 @@
             cursor: pointer;
             justify-self: start;
         }
-    }
-}
+        .map-of-the-week {
+            margin-block: .5rem;
+            display: flex;
+            width: fit-content;
+            margin-inline: auto;
+            .icon-cnt,
+            .card-link {
+                display: grid;
+                place-items: center;
+                padding-inline: .75rem;
+            }
 
-.card {
-    background-color: var(--color-surface-200);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-lg);
-    border: var(--color-surface-300) 1px solid;
-    text-align: start;
-    font-size: .8rem;
-    transition-property: box-shadow, transform, border-color, visibility;
-    transition: .3s ease;
-    padding: .5rem .25rem;
-    outline: none;
-    h2 {
-        color: var(--primary);
-    }
-    h2 {
-        font-size: .667rem;
-    }
-    &:hover,
-    &:focus {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg-hover);
-        border-color: var(--focus-border-color);
-    }
-}
+            .card-link {
+                transition: transform 0.15s ease;
+                svg {
+                    aspect-ratio: 1;
+                    width: 1rem;
+                    height: auto;
+                }
+            }
 
-.card.hidden {
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden;
-    transform: translateY(5px);
-}
-
-.map-of-the-week {
-    margin-block: .5rem;
-    display: flex;
-    width: fit-content;
-    margin-inline: auto;
-    .icon-cnt,
-    .card-link {
-        display: grid;
-        place-items: center;
-        padding-inline: .75rem;
-    }
-
-    .card-link {
-        transition: transform 0.15s ease;
-        svg {
-            aspect-ratio: 1;
-            width: 1rem;
-            height: auto;
-        }
-    }
-
-    &:focus, &:hover {
-        .card-link {
-            transform: translateX(2px);
+            &:focus, &:hover {
+                .card-link {
+                    transform: translateX(2px);
+                }
+            }
         }
     }
 }
