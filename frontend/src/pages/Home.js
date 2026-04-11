@@ -72,7 +72,12 @@ const Home = ({motw}) => {
                 </div>
             </div>
             <ActiveMaps/>
-            <PlayerPodium players={top3Players}/>
+            <PlayerPodium players={top3Players.map(player => ({
+                _id: player._id,
+                userName: player.userName,
+                discordID: player.discordID,
+                value: player.points + " pts"
+            }))}/>
             <div className="see-all-players bg-primary">
                 <div className="inside">
                     <div className="btn-container">

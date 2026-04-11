@@ -12,6 +12,9 @@
             text-wrap: nowrap;
             padding: .5rem 1rem;
             position: relative;
+            &:first-child {
+                margin-block-start: .25rem;
+            }
             &::before {
                 content: '';
                 position: absolute;
@@ -26,12 +29,12 @@
                 );;
                 background-size: 200% 1px;
                 background-repeat: no-repeat;
-                background-position: left;
+                background-position: right;
                 transition: background-position .75s ease;
             }
             &:hover, &:focus {
                 &::before {
-                    background-position: right;
+                    background-position: left;
                 }
             }
             .name, .points {

@@ -1,5 +1,5 @@
 import '../styles/components/PlayerPodium.css';
-import {json, Link} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 const PlayerPodium = ({ players }) => {
     return (
@@ -17,7 +17,7 @@ const PlayerPodium = ({ players }) => {
                                     {player.userName}
                                 </div>
                                 <div className="points">
-                                    {player.points} pts
+                                    {player.value}
                                 </div>
                             </Link>
                         </div>

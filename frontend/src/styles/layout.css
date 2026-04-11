@@ -7,3 +7,7 @@
 .bg-primary {
     background-color: var(--primary);
 }
+
+.pages > div > *:first-child {
+    margin-block-start: var(--header-height);
+}

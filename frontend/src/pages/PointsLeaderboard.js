@@ -21,7 +21,13 @@ const PointsLeaderboard = () => {
 
     return (
         <div className="points-leaderboard">
-            {users.length >= 3 && <PlayerPodium players={users.slice(0, 3)} />}
+
+            {users.length >= 3 && <PlayerPodium players={users.slice(0,3).map(player => ({
+                _id: player._id,
+                userName: player.userName,
+                discordID: player.discordID,
+                value: player.points + " pts"
+            }))}/>}
             <div className="leaderboard">
                 <div className="inside">
                     {users.length > 3 && users.slice(3).filter(user => user.points > 0).map((user, index) => (

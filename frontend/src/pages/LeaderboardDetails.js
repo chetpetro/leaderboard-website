@@ -21,7 +21,7 @@ const LeaderboardDetails = ({user}) => {
     }, [])
 
     return (
-        <div>
+        <div className="leaderboard-details">
             {leaderboard.featured && <h2 className="details-map-name" style={{color:"gold"}}>{ leaderboard.mapName && leaderboard.mapName }</h2>}
             {!leaderboard.featured && <h2 className="details-map-name">{ leaderboard.mapName && leaderboard.mapName }</h2>}
             <p>Creator: { leaderboard.creator }</p>

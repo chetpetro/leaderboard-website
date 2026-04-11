@@ -35,7 +35,7 @@ const LeaderboardDetails = () => {
     }
 
     return (
-        <div>
+        <div className="user">
             <h2 className="details-map-name">{ user.userName }</h2>
             <div className="leaderboard-details">
                 <table className="leaderboad-entries">

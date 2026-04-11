@@ -3,7 +3,9 @@
     text-align: center;
     height: calc(100vh); /* Set in Navbar.js*/
     display: grid;
-    place-items: center;
+    align-items: start;
+    margin-block-start: 0;
+    padding-block-start: calc(var(--header-height) + 2rem); /* So the gradient gets under the header*/
     background: var(--color-surface-100) radial-gradient(circle at center center, rgba(255, 255, 255, 8%), transparent 50%) top center;
 
     .inside {
