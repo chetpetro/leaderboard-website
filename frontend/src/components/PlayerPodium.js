@@ -9,9 +9,9 @@ const PlayerPodium = ({ players }) => {
                 <div className="podium">
                     {players.map((player, index) => (
                         <div className="player-cnt" key={player._id}>
-                            <Link to={`/user/${player.discordID}`} className={'player ' + (index === 0 ? 'third' : index === 1 ? 'first' : 'second')}>
+                            <Link to={`/user/${player.discordID}`} className={'player ' + (index === 0 ? 'first' : index === 1 ? 'second' : 'third')}>
                                 <div className="media-container medal">
-                                    {index === 1 ? '🥇' : index === 0 ? '🥉' : '🥈'}
+                                    {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
                                 </div>
                                 <div className="name">
                                     {player.userName}
