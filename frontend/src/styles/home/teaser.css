@@ -81,13 +81,32 @@ body:has(.teaser) {
                 }
             }
         }
+        .map-list {
+            display: grid;
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    .map-list-cnt {
+        max-height: 500px;
+        overflow-y: scroll;
+        scrollbar-gutter: stable;
+        padding: 1rem;
+        .map-list {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            .map .media-container {
+                height: 200px;
+            }
+        }
     }
 }
 
 .teaser {
-    transition: 1.25s ease;
+    transition: var(--initial-transition) ease;
     * {
-        transition: 1.25s ease
+        transition: var(--initial-transition) ease
     }
     .search-cnt {
         position: relative;
@@ -107,19 +126,24 @@ body:has(.teaser) {
 .teaser:not(.focused-search) {
     .back-btn {
         transform: translateY(-50%) translateX(0ch) rotate(0deg);
+        visibility:hidden; opacity: 0;height: 0;width: 0;margin: 0;padding: 0;overflow: hidden; border: 0; color: transparent;
+    }
+    .map-list-cnt {
+        visibility: hidden;
         opacity: 0;height: 0;width: 0;margin: 0;padding: 0;overflow: hidden; border: 0; color: transparent;
     }
 }
 .teaser.focused-search {
     padding-block-start: 3rem;
     & > .inside {
-        h1 {font-size: 2rem;text-align: start;margin-block-end: .5rem;}
-        p {opacity: 0;height: 0;width: 0;margin: 0;padding: 0;overflow: hidden}
+        h1 {font-size: 2rem;margin-block-end: .5rem;}
+        .teaser-text {opacity: 0;height: 0;width: 0;margin: 0;padding: 0;overflow: hidden}
         .search-bar input {padding-block: .5rem;}
         .search-cnt .back-btn {
             transform: translateY(-50%) translateX(-6ch) rotate(180deg);
-            transition-delay: 1.25s;
+            transition-delay: var(--initial-transition);
             opacity: 1;
         }
+
     }
 }

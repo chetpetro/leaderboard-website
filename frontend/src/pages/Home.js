@@ -6,7 +6,10 @@ import ActiveMaps from "../components/ActiveMaps";
 import PlayerPodium from "../components/PlayerPodium";
 
 const Home = ({motw}) => {
+    const searchTransitionDuration = 1;
+
     const [query, setQuery] = useState('');
+    const [leaderboards, setLeaderboards] = useState('');
     const [showCreateLeaderboard, setShowCreateLeaderboard] = useState(false);
     const [focusedSearch, setFocusedSearch] = useState(false);
 
@@ -27,8 +30,23 @@ const Home = ({motw}) => {
         const negTranslateY =  cntBoundingBox.top - searchBarBoundingBox.top;
 
 
+
         searchBarRef.current.style.setProperty('--search-bar-translate', negTranslateY + 'px')
     }
+
+    useEffect(() => {
+        const fetchLeaderboards = async () => {
+            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards');
+            const json = await response.json();
+
+            if (response.ok) {
+                setLeaderboards(json);
+            }
+        }
+
+        fetchLeaderboards();
+
+    }, [])
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -45,7 +63,7 @@ const Home = ({motw}) => {
     
     return (
         <div className="home">
-            <div className={"teaser " + (focusedSearch ? 'focused-search' : '')}>
+            <div className={"teaser " + (focusedSearch ? 'focused-search' : '')} style={{"--initial-transition": (searchTransitionDuration +'s')}}>
                 <div className={"inside"} ref={searchContainerRef}>
                     <h1>Ascend the <span className="text-gradient">Custom-Map</span> Ranks</h1>
                     <p className="text-muted teaser-text">Compare and Submit your leaderboards times for all custom-maps</p>
@@ -69,6 +87,25 @@ const Home = ({motw}) => {
                         Can't find a Map? Submit the Map here!
                     </button>
                     <CreateLeaderboardForm show={showCreateLeaderboard}/>
+                    <div className="map-list-cnt">
+                        <div className="map-list">
+                            {leaderboards
+                                .sort((a, b) => b.entries.length - a.entries.length)
+                                .filter((el) => el.mapName.toLowerCase()
+                                    .includes(query.toLowerCase()))
+                                .map(leaderboard => (
+                                <Link to={`/${leaderboard.steamID}`} className="map" key={leaderboard._id}>
+                                    <span className="media-container">
+                                        <img src={leaderboard.previewImage} alt={`${leaderboard.mapName} preview`} />
+                                    </span>
+                                    <div className="map-info">
+                                        <h3>{leaderboard.mapName}</h3>
+                                        <p className="playerAmount">👤 {leaderboard.entries.length}</p>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
                     <Link to={`/${motw.steamID}`} className={'card map-of-the-week animate-hover' + (motw.mapName && !focusedSearch ? '' : ' hidden')}>
                         <span className="icon-cnt text-gradient">⚫</span>
                         <div className="card-content">

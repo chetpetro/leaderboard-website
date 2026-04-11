@@ -1,0 +1,61 @@
+.map {
+    background-color: var(--color-surface-200);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    .media-container {
+        aspect-ratio: 16/9;
+        position: relative;
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 70%, var(--color-surface-100) 85%);
+        }
+        img {
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+    .map-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        flex-grow: 1;
+        padding: .25rem .5rem;
+        display: flex;
+        align-self: stretch;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: .25rem;
+        justify-content: space-between;
+        border-bottom: 2px solid var(--color-surface-200);
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
+        h3 {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: .8rem;
+        }
+        p {
+            font-size: .6667rem;
+        }
+    }
+    outline: transparent 2px solid;
+
+    transition-property: transform, box-shadow, outline;
+    transition: .3s ease;
+    &:hover, &:focus {
+        box-shadow: var(--shadow-lg-hover);
+        transform: translateY(-2px);
+        .map-info {
+            border-color: var(--focus-border-color);
+        }
+    }
+}
