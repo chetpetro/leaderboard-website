@@ -1,6 +1,6 @@
 .points-leaderboard {
     .player-podium {
-        margin-block-start: calc(var(--header-height) + 3rem);
+        margin-block-start: calc(var(--header-height));
     }
     .leaderboard {
         .inside {
@@ -8,9 +8,32 @@
         }
         .leaderboard-entry {
             display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: 1rem;
+            grid-template-columns: 3ch 1fr auto;
             text-wrap: nowrap;
+            padding: .5rem 1rem;
+            position: relative;
+            &::before {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                height: 1px;
+                left: 0;
+                right: 0;
+                transition-property: background-position;
+                background: linear-gradient(to right,
+                    transparent 0%,   var(--primary) 25%, transparent 50%,
+                    transparent 50%,  var(--primary) 75%, transparent 100%
+                );;
+                background-size: 200% 1px;
+                background-repeat: no-repeat;
+                background-position: left;
+                transition: background-position .75s ease;
+            }
+            &:hover, &:focus {
+                &::before {
+                    background-position: right;
+                }
+            }
             .name, .points {
                 overflow: hidden;
                 text-overflow: ellipsis;

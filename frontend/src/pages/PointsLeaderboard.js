@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PlayerPodium from "../components/PlayerPodium";
 import '../styles/pointsLeaderboard/PointsLeaderboard.css';
+import {Link} from "react-router-dom";
 
 const PointsLeaderboard = () => {
     const [users, setUsers] = useState('')
@@ -24,11 +25,11 @@ const PointsLeaderboard = () => {
             <div className="leaderboard">
                 <div className="inside">
                     {users.length > 3 && users.slice(3).filter(user => user.points > 0).map((user, index) => (
-                        <div className="leaderboard-entry" key={user._id}>
+                        <Link to={`/user/${user.discordID}`} className="leaderboard-entry" key={user._id}>
                             <div className="rank">{index + 4}</div>
                             <div className="name">{user.userName}</div>
                             <div className="points">{user.points} pts</div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

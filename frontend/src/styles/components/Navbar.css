@@ -47,3 +47,7 @@ header {
         margin: 0 10px;
     }
 }
+
+.App:not(:has(.pages>.home)) header {
+    background-color: color-mix(in srgb, var(--color-surface-100) 95%, transparent);
+}
