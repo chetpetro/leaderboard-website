@@ -19,7 +19,7 @@ const LeaderboardDetails = () => {
         }
 
         fetchEntries();
-    }, [])
+    }, [discordID])
 
     const msToTime = (duration) => {
         var milliseconds = duration.toString().slice(-3);

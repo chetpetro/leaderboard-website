@@ -15,12 +15,6 @@
     h2 {
         font-size: .667rem;
     }
-    &:hover,
-    &:focus {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg-hover);
-        border-color: var(--focus-border-color);
-    }
 }
 
 .card.hidden {
@@ -28,4 +22,13 @@
     pointer-events: none;
     visibility: hidden;
     transform: translateY(5px);
+}
+
+.animate-hover {
+    &:hover,
+    &:focus {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg-hover);
+        border-color: var(--focus-border-color);
+    }
 }

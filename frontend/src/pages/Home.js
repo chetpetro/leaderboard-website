@@ -6,10 +6,7 @@ import ActiveMaps from "../components/ActiveMaps";
 import PlayerPodium from "../components/PlayerPodium";
 
 const Home = ({motw}) => {
-    const [leaderboards, setLeaderboards] = useState('');
     const [query, setQuery] = useState('');
-    const [page, setPage] = useState(0);
-    const elementsPerPage = 15;
     const [showCreateLeaderboard, setShowCreateLeaderboard] = useState(false);
 
     const [top3Players, setTop3Players] = useState([]);
@@ -19,14 +16,6 @@ const Home = ({motw}) => {
     }
 
     useEffect(() => {
-        const fetchLeaderboards = async () => {
-            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards');
-            const json = await response.json();
-
-            if (response.ok) {
-                setLeaderboards(json);
-            }
-        }
         const fetchUsers = async () => {
             const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/')
             const json = await response.json();
@@ -37,8 +26,6 @@ const Home = ({motw}) => {
         }
 
         fetchUsers();
-        fetchLeaderboards();
-
     }, [])
     
     return (
@@ -50,14 +37,13 @@ const Home = ({motw}) => {
                     <div className="search-bar" onClick={handleSearchBarClick}>
                         <input type="text" placeholder="Search for a map..." onChange={(e) => {
                             setQuery(e.target.value);
-                            setPage(0)
                         }} value={query}/>
                     </div>
-                    <a className="create-map" onClick={() => setShowCreateLeaderboard(!showCreateLeaderboard)}>
+                    <button className="create-map" onClick={() => setShowCreateLeaderboard(!showCreateLeaderboard)}>
                         Can't find a Map? Submit the Map here!
-                    </a>
+                    </button>
                     <CreateLeaderboardForm show={showCreateLeaderboard}/>
-                    <Link to={`/${motw.steamID}`} className={'card map-of-the-week' + (motw.mapName ? '' : ' hidden')}>
+                    <Link to={`/${motw.steamID}`} className={'card map-of-the-week animate-hover' + (motw.mapName ? '' : ' hidden')}>
                         <span className="icon-cnt text-gradient">⚫</span>
                         <div className="card-content">
                             <h2>Map of the Week</h2>

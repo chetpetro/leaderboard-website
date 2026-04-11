@@ -18,7 +18,7 @@ const LeaderboardDetails = ({user}) => {
         }
 
         fetchLeaderboard();
-    }, [])
+    }, [steamID])
 
     return (
         <div className="leaderboard-details">

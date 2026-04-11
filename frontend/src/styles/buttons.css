@@ -61,6 +61,36 @@
     border-color: var(--color-surface-600);
 }
 
+
+.btn-discord {
+    background-color: #5865F2;
+    color: white;
+    border-color: #868fef;
+    .inside {
+        padding: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: .5rem;
+    }
+    .media-container {
+        width: 1.5rem;
+        aspect-ratio: 1;
+        flex-shrink: 0;
+    }
+}
+
+.btn-discord:hover {
+    background-color: #4752c4;
+    color: white;
+    border-color: #4752c4;
+}
+
+.btn-form {
+    font-size: .8rem;
+    padding: .25rem .75rem;
+}
+
 .btn-header {
     font-size: .75rem;
     padding-inline: .75rem;

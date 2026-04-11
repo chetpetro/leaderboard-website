@@ -63,6 +63,16 @@ body {
     justify-content: end;
 }
 
+input[type="number"] {
+  -moz-appearance: textfield;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+input[type="number"],
 input[type="text"] {
   background: var(--color-surface-300);
   color: white;
@@ -136,83 +146,4 @@ a {
 
 label, input {
   display: block;
-}
-
-nav {
-  display: flex;
-  align-items: center;
-}
-nav a {
-  margin-left: 10px;
-}
-
-form.signup, form.login {
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
-  background: var(--color-surface-200);
-  border-radius: 4px;
-}
-
-.logout-button, .login-button {
-  background: var(--color-surface-300);
-  border: 0;
-  color: #fff;
-  padding: 10px;
-  font-family: "Poppins";
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1em;
-  display: inline-block;
-  margin: 0 10px;
-}
-
-.signup-button {
-  background: var(--primary);
-  border: 0;
-  color: var(--color-surface-100);
-  padding: 10px;
-  font-family: "Poppins";
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1em;
-  display: inline-block;
-  margin: 0 10px;
-}
-
-.discord-button {
-  background: #7289da;
-  border: 0;
-  color: #fff;
-  padding: 10px;
-  font-family: "Poppins";
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
-  display: inline-block;
-  margin: 0 10px;
-}
-
-.discord-icon {
-  height: 12px; 
-  padding: 0px 10px;
-}
-
-.page-button-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.page-button-container button{
-  background: var(--primary);
-  border: 0;
-  color: var(--color-surface-100);
-  padding: 10px;
-  font-family: "Poppins";
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1em;
-  display: inline-block;
-  margin: 10px 10px;
 }

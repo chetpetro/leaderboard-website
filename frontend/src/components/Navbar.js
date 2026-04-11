@@ -13,13 +13,12 @@ const Navbar = ({ user, setUser, motw }) => {
             const height = headerRef.current.offsetHeight;
             document.documentElement.style.setProperty('--header-height', `${height}px`);
         };
-
-        const resizeObserver = new ResizeObserver(() => updateHeight());
-        resizeObserver.observe(headerRef.current);
-
+        headerRef.current.addEventListener('transitionend', (e) => {
+            if (e.propertyName === 'padding-top' || e.propertyName === 'padding-bottom') updateHeight();
+        });
         updateHeight();
 
-        return () => resizeObserver.disconnect();
+        return () => {}
     }, []);
 
     useEffect(() => {

@@ -1,12 +1,13 @@
+body:has(.teaser) {
+ background: var(--color-surface-100) radial-gradient(circle at center 20%, rgba(255, 255, 255, 8%), transparent 30%) top center;
+}
 .teaser {
     margin-inline: auto;
     text-align: center;
     height: calc(100vh); /* Set in Navbar.js*/
     display: grid;
     align-items: start;
-    margin-block-start: 0;
-    padding-block-start: calc(var(--header-height) + 2rem); /* So the gradient gets under the header*/
-    background: var(--color-surface-100) radial-gradient(circle at center center, rgba(255, 255, 255, 8%), transparent 50%) top center;
+    padding-block-start: 5rem;
 
     .inside {
         display: grid;
@@ -46,6 +47,11 @@
             color: var(--primary);
             cursor: pointer;
             justify-self: start;
+            background-color: transparent;
+            border: none;
+            &:hover, &:focus-visible {
+                text-decoration: underline;
+            }
         }
         .map-of-the-week {
             margin-block: .5rem;

@@ -1,7 +1,5 @@
 .points-leaderboard {
-    .player-podium {
-        margin-block-start: calc(var(--header-height));
-    }
+    background: var(--color-surface-100) radial-gradient(circle at center top, rgba(255, 255, 255, 8%), transparent 50%) top center;
     .leaderboard {
         .inside {
             max-width: 800px;
