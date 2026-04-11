@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from "react";
+import {useState, useEffect, useRef, useMemo} from "react";
 import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
 import '../styles/home/Home.css'
 import {Link} from "react-router-dom";
@@ -7,14 +7,20 @@ import PlayerPodium from "../components/PlayerPodium";
 
 const Home = ({motw}) => {
     const searchTransitionDuration = 1;
+    const mapListTransitionDuration = 0.35;
 
     const [query, setQuery] = useState('');
-    const [leaderboards, setLeaderboards] = useState('');
+    const [leaderboards, setLeaderboards] = useState([]);
     const [showCreateLeaderboard, setShowCreateLeaderboard] = useState(false);
     const [focusedSearch, setFocusedSearch] = useState(false);
+    const [mapListMounted, setMapListMounted] = useState(false);
+    const [mapListVisible, setMapListVisible] = useState(false);
+    const [mapListContentReady, setMapListContentReady] = useState(false);
 
     const searchContainerRef = useRef(null);
     const searchBarRef = useRef(null);
+    const showMapListTimeoutRef = useRef(null);
+    const hideMapListTimeoutRef = useRef(null);
 
     const [top3Players, setTop3Players] = useState([]);
 
@@ -22,17 +28,51 @@ const Home = ({motw}) => {
         e.currentTarget.querySelector('input').focus();
     }
 
-    const handleSearchFocus = (e) => {
+    const handleSearchFocus = () => {
         if (!searchContainerRef.current || !searchBarRef.current || focusedSearch) return;
         setFocusedSearch(true);
-        const cntBoundingBox = searchContainerRef.current.getBoundingClientRect();
-        const searchBarBoundingBox = searchBarRef.current.getBoundingClientRect();
-        const negTranslateY =  cntBoundingBox.top - searchBarBoundingBox.top;
-
-
-
-        searchBarRef.current.style.setProperty('--search-bar-translate', negTranslateY + 'px')
     }
+
+    const handleSearchBack = () => {
+        setFocusedSearch(false);
+    }
+
+    useEffect(() => {
+        return () => {
+            clearTimeout(showMapListTimeoutRef.current);
+            clearTimeout(hideMapListTimeoutRef.current);
+        }
+    }, []);
+
+    useEffect(() => {
+        clearTimeout(showMapListTimeoutRef.current);
+        clearTimeout(hideMapListTimeoutRef.current);
+
+        if (focusedSearch) {
+            setMapListMounted(true);
+            setMapListVisible(false);
+            setMapListContentReady(false);
+            showMapListTimeoutRef.current = setTimeout(() => {
+                setMapListContentReady(true);
+                requestAnimationFrame(() => setMapListVisible(true));
+            }, searchTransitionDuration * 1000);
+            return;
+        }
+
+        setMapListVisible(false);
+        hideMapListTimeoutRef.current = setTimeout(() => {
+            setMapListContentReady(false);
+            setMapListMounted(false);
+        }, mapListTransitionDuration * 1000);
+    }, [focusedSearch]);
+
+    const filteredLeaderboards = useMemo(() => {
+        if (!mapListContentReady) return [];
+
+        return [...leaderboards]
+            .sort((a, b) => b.entries.length - a.entries.length)
+            .filter((el) => el.mapName.toLowerCase().includes(query.toLowerCase()));
+    }, [leaderboards, query, mapListContentReady]);
 
     useEffect(() => {
         const fetchLeaderboards = async () => {
@@ -68,7 +108,7 @@ const Home = ({motw}) => {
                     <h1>Ascend the <span className="text-gradient">Custom-Map</span> Ranks</h1>
                     <p className="text-muted teaser-text">Compare and Submit your leaderboards times for all custom-maps</p>
                     <div className="search-cnt">
-                        <button className="back-btn btn-clear" onClick={() => setFocusedSearch(false)}>
+                        <button className="back-btn btn-clear" onClick={handleSearchBack}>
                             <div className="media-container">
                                 <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" className="arrow-icon">
                                     <path d="M0 0 L10 5 L0 10 Z" fill="currentColor" />
@@ -87,13 +127,10 @@ const Home = ({motw}) => {
                         Can't find a Map? Submit the Map here!
                     </button>
                     <CreateLeaderboardForm show={showCreateLeaderboard}/>
-                    <div className="map-list-cnt">
+                    {mapListMounted && (
+                    <div className={`map-list-cnt ${mapListVisible ? 'is-visible' : ''}`}>
                         <div className="map-list">
-                            {leaderboards
-                                .sort((a, b) => b.entries.length - a.entries.length)
-                                .filter((el) => el.mapName.toLowerCase()
-                                    .includes(query.toLowerCase()))
-                                .map(leaderboard => (
+                            {filteredLeaderboards.map(leaderboard => (
                                 <Link to={`/${leaderboard.steamID}`} className="map" key={leaderboard._id}>
                                     <span className="media-container">
                                         <img src={leaderboard.previewImage} alt={`${leaderboard.mapName} preview`} />
@@ -106,6 +143,7 @@ const Home = ({motw}) => {
                             ))}
                         </div>
                     </div>
+                    )}
                     <Link to={`/${motw.steamID}`} className={'card map-of-the-week animate-hover' + (motw.mapName && !focusedSearch ? '' : ' hidden')}>
                         <span className="icon-cnt text-gradient">⚫</span>
                         <div className="card-content">

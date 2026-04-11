@@ -1,5 +1,6 @@
 body:has(.teaser) {
  background: var(--color-surface-100) radial-gradient(circle at center 20rem, rgba(255, 255, 255, 8%), transparent 25rem) top center;
+ scrollbar-gutter: stable;
 }
 .teaser {
     margin-inline: auto;
@@ -12,15 +13,22 @@ body:has(.teaser) {
     .inside {
         display: grid;
         max-width: 1000px;
+        width: 100%;
+        min-width: 0;
         h1 .text-gradient {
             text-wrap: nowrap;
         }
         .search-bar {
             flex-grow: 1;
+            min-width: 0;
             background-color: var(--color-surface-300);
             padding-inline: 1.5rem .5rem;
             border-radius: var(--border-radius);
-            transition: box-shadow 0.15s ease, transform 1s ease;
+            transition:
+                box-shadow 0.15s ease,
+                transform var(--initial-transition) ease,
+                margin-inline-start var(--initial-transition) ease;
+            will-change: transform, margin-inline-start;
             box-shadow: var(--shadow-lg);
             cursor: text;
             &:has(input:focus) {
@@ -83,33 +91,95 @@ body:has(.teaser) {
         }
         .map-list {
             display: grid;
+            width: 100%;
+            min-width: 0;
+            grid-template-columns: minmax(0, 1fr);
         }
     }
 }
 
+.map-list-cnt {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .35s ease, transform .35s ease;
+    pointer-events: none;
+    margin-top: 1rem;
+    min-height: min(42vh, 320px);
+    max-height: min(42vh, 320px);
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--primary) 70%, #1b1b1b) transparent;
+}
+
+.map-list-cnt::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.map-list-cnt::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.map-list-cnt::-webkit-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--primary) 70%, #1b1b1b);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.map-list-cnt::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--primary) 82%, #111111);
+}
+
+.map-list-cnt::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+.map-list-cnt::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.map-list-cnt.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
 @media (min-width: 768px) {
-    .map-list-cnt {
-        max-height: 500px;
-        overflow-y: scroll;
-        scrollbar-gutter: stable;
-        padding: 1rem;
-        .map-list {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 1rem;
-            .map .media-container {
-                height: 200px;
+    .teaser {
+        .map-list-cnt {
+            min-height: 500px;
+            max-height: 500px;
+            overflow-y: scroll;
+            scrollbar-gutter: stable;
+            padding: 0 1rem 0 0;
+            .map-list {
+                gap: 1rem;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+
+                .map .media-container {
+                    height: 200px;
+                }
             }
         }
     }
 }
 
 .teaser {
-    transition: var(--initial-transition) ease;
-    * {
-        transition: var(--initial-transition) ease
+    transition: 1s ease;
+    *:not(.map):not(.card) {
+        transition: 1s ease
     }
     .search-cnt {
         position: relative;
+        width: 100%;
+        min-width: 0;
         .back-btn {
             position: absolute;
             top: 50%;
@@ -128,10 +198,6 @@ body:has(.teaser) {
         transform: translateY(-50%) translateX(0ch) rotate(0deg);
         visibility:hidden; opacity: 0;height: 0;width: 0;margin: 0;padding: 0;overflow: hidden; border: 0; color: transparent;
     }
-    .map-list-cnt {
-        visibility: hidden;
-        opacity: 0;height: 0;width: 0;margin: 0;padding: 0;overflow: hidden; border: 0; color: transparent;
-    }
 }
 .teaser.focused-search {
     padding-block-start: 3rem;
@@ -139,9 +205,10 @@ body:has(.teaser) {
         h1 {font-size: 2rem;margin-block-end: .5rem;}
         .teaser-text {opacity: 0;height: 0;width: 0;margin: 0;padding: 0;overflow: hidden}
         .search-bar input {padding-block: .5rem;}
+        .search-bar {margin-inline-start: 3ch;}
         .search-cnt .back-btn {
-            transform: translateY(-50%) translateX(-6ch) rotate(180deg);
-            transition-delay: var(--initial-transition);
+            transform: translateY(-50%) translateX(0ch) rotate(180deg);
+            transition-delay: 1s;
             opacity: 1;
         }
 
