@@ -1,5 +1,5 @@
 body:has(.teaser) {
- background: var(--color-surface-100) radial-gradient(circle at center 20%, rgba(255, 255, 255, 8%), transparent 30%) top center;
+ background: var(--color-surface-100) radial-gradient(circle at center 20rem, rgba(255, 255, 255, 8%), transparent 25rem) top center;
 }
 .teaser {
     margin-inline: auto;
@@ -16,10 +16,11 @@ body:has(.teaser) {
             text-wrap: nowrap;
         }
         .search-bar {
+            flex-grow: 1;
             background-color: var(--color-surface-300);
             padding-inline: 1.5rem .5rem;
             border-radius: var(--border-radius);
-            transition: box-shadow 0.15s ease;
+            transition: box-shadow 0.15s ease, transform 1s ease;
             box-shadow: var(--shadow-lg);
             cursor: text;
             &:has(input:focus) {
@@ -79,6 +80,46 @@ body:has(.teaser) {
                     transform: translateX(2px);
                 }
             }
+        }
+    }
+}
+
+.teaser {
+    transition: 1.25s ease;
+    * {
+        transition: 1.25s ease
+    }
+    .search-cnt {
+        position: relative;
+        .back-btn {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transition: .5s ease;
+            .media-container {
+                max-height: 1rem;
+                aspect-ratio: 1;
+            }
+        }
+    }
+
+}
+.teaser:not(.focused-search) {
+    .back-btn {
+        transform: translateY(-50%) translateX(0ch) rotate(0deg);
+        opacity: 0;height: 0;width: 0;margin: 0;padding: 0;overflow: hidden; border: 0; color: transparent;
+    }
+}
+.teaser.focused-search {
+    padding-block-start: 3rem;
+    & > .inside {
+        h1 {font-size: 2rem;text-align: start;margin-block-end: .5rem;}
+        p {opacity: 0;height: 0;width: 0;margin: 0;padding: 0;overflow: hidden}
+        .search-bar input {padding-block: .5rem;}
+        .search-cnt .back-btn {
+            transform: translateY(-50%) translateX(-6ch) rotate(180deg);
+            transition-delay: 1.25s;
+            opacity: 1;
         }
     }
 }
