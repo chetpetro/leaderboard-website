@@ -24,7 +24,6 @@ body:has(.teaser) {
             padding-inline: .9rem .5rem;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-lg);
-            cursor: text;
             outline: var(--focus-outline);
             outline-color: transparent;
 

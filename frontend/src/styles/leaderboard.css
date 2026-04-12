@@ -1,0 +1,54 @@
+.leaderboard {
+    .inside {
+        max-width: 800px;
+    }
+    .leaderboard-entry {
+        display: grid;
+        grid-template-columns: 3ch 1fr auto;
+        text-wrap: nowrap;
+        padding: .5rem 1rem;
+        position: relative;
+        &:first-child {
+            margin-block-start: .25rem;
+        }
+        .placing {
+            font-style: italic;
+        }
+        &:first-child .placing {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        &:nth-child(2) .placing{
+            color: var(--color-primary-600)
+        }
+        &:nth-child(3) .placing{
+            color: var(--color-primary-700)
+        }
+        &::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            height: 1px;
+            left: 0;
+            right: 0;
+            transition-property: background-position;
+            background: linear-gradient(to right,
+            transparent 0%,   var(--primary) 25%, transparent 50%,
+            transparent 50%,  var(--primary) 75%, transparent 100%
+            );
+            background-size: 200% 1px;
+            background-repeat: no-repeat;
+            background-position: right;
+            transition: background-position .75s ease;
+        }
+        &:hover, &:focus {
+            &::before {
+                background-position: left;
+            }
+        }
+        .name, .points {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}

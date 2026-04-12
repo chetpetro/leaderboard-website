@@ -158,7 +158,6 @@ const Home = ({motw}) => {
                     </Link>
                 </div>
             </div>
-            <ActiveMaps/>
             <PlayerPodium players={top3Players.map(player => ({
                 _id: player._id,
                 userName: player.userName,
@@ -172,6 +171,7 @@ const Home = ({motw}) => {
                     </div>
                 </div>
             </div>
+            <ActiveMaps/>
         </div>
     );
 }
