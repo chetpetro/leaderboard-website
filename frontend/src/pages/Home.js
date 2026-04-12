@@ -100,16 +100,7 @@ const Home = ({motw}) => {
                                 onClick={handleSearchBarClick} onFocus={() => setSearchBarFocused(true)}>
                             <div className="input-with-icon-cnt">
                                 <button className="media-container btn-clear">
-                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="icon-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                                <stop offset="0%" stop-color="var(--color-primary-100)"/>
-                                                <stop offset="50%" stop-color="var(--color-primary-600)"/>
-                                                <stop offset="100%" stop-color="var(--color-primary-300)"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <path stroke="url(#icon-gradient)" strokeWidth="3px" fill="transparent" d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"/>
-                                    </svg>
+                                    <img src="/search-icon.svg" alt="search-icon" />
                                 </button>
                                 <input type="text" placeholder="Search for a map..." onChange={(e) => {
                                     setQuery(e.target.value);
@@ -118,18 +109,20 @@ const Home = ({motw}) => {
                             <div className={"search-results"} ref={searchResultRef}
                                  style={{'--search-result-height': -1 * searchResultHeight + 'px'}}>
                                 <div className={"maps"}>
-                                {maps
+                                    {maps
                                         .filter((el) => el.mapName.toLowerCase()
                                             .includes(query.toLowerCase()))
-                                        .slice(0, 4)
+                                        .slice(0, 6)
                                         .map(map => (
                                             <Link to={`/${map.steamID}`} className="result-map" key={map._id}>
                                                 <div className="media-container">
                                                     <img src={map.previewImage}/>
                                                 </div>
-                                                {map.featured && <h4 style={{color: "gold"}}>{ map.mapName }</h4>}
-                                                {!map.featured && <h4>{ map.mapName }</h4>}
-                                                <p>Creator: { map.creator }</p>
+                                                <div className={"result-map-info"}>
+                                                    {map.featured && <span className="map-name text-gradient">{ map.mapName }</span>}
+                                                    {!map.featured && <span className={"map-name"}>{ map.mapName }</span>}
+                                                    <span className={"creator"}>By: { map.creator }</span>
+                                                </div>
                                             </Link>
                                         ))}
                                 </div>
@@ -141,7 +134,7 @@ const Home = ({motw}) => {
                         Can't find a Map? Submit the Map here!
                     </button>
                     <CreateLeaderboardForm show={showCreateLeaderboard}/>
-                    <Link to={`/${motw.steamID}`} className={'card map-of-the-week animate-hover'}>
+                    <Link to={`/${motw.steamID}`} className={'card map-of-the-week animate-hover ' + (motw ? '' : 'hidden')}>
                         <span className="icon-cnt text-gradient">⚫</span>
                         <div className="card-content">
                             <h2>Map of the Week</h2>
