@@ -166,13 +166,24 @@ body:has(.teaser) {
                 justify-items: start;
                 align-items: center;
                 padding-block: .25rem;
+                min-width: 0;
+
                 .result-map-info {
                     display: grid;
                     justify-items: start;
+                    min-width: 0;
+                    width: 100%;
+
                     .map-name {
                         font-weight: 500;
                         font-size: .8rem;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        width: 100%;
+                        text-align: start;
                     }
+
                     .creator {
                         font-style: italic;
                         font-size: .6667rem;

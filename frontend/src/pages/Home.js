@@ -24,6 +24,15 @@ const Home = ({motw}) => {
     }
 
     useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
+                setSearchBarFocused(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    useEffect(() => {
         if (!searchResultRef.current) return;
         // resizeObserver to track the searchResultHeight of the searchResultRef
         const resizeObserver = new ResizeObserver(entries => {
@@ -111,7 +120,8 @@ const Home = ({motw}) => {
                                 <div className={"maps"}>
                                     {maps
                                         .filter((el) => el.mapName.toLowerCase()
-                                            .includes(query.toLowerCase()))
+                                            .includes(query.toLowerCase()) ||
+                                            el.creator.toLowerCase().includes(query.toLowerCase()))
                                         .slice(0, 6)
                                         .map(map => (
                                             <Link to={`/${map.steamID}`} className="result-map" key={map._id}>
