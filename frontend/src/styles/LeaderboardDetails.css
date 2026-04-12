@@ -65,6 +65,9 @@
         }
         .card {
             padding: .75rem .5rem;
+            h2:last-child {
+                margin:0;
+            }
         }
         p {
             overflow-wrap: break-word;

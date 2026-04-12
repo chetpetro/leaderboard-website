@@ -61,8 +61,8 @@ const LeaderboardDetails = ({user}) => {
                 </div>
                 <div className="col-right">
                     <div className="submit-entry card">
-                        {!user.userName && <CreateEntryForm steamID={ map.steamID } user={user}/>}
-                        {user.userName && <h2>Login to Submit Entry</h2>}
+                        {user.userName && <CreateEntryForm steamID={ map.steamID } user={user}/>}
+                        {!user.userName && <h2>Login to Submit Entry</h2>}
                     </div>
                     <div className="map-details card">
                         <h2 className={"heading-description"}>
