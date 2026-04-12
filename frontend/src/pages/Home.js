@@ -20,6 +20,7 @@ const Home = ({motw}) => {
     const searchInputRef = useRef(null);
 
     const handleSearchBarClick = (e) => {
+        searchInputRef.current.focus();
     }
 
     useEffect(() => {
@@ -97,12 +98,27 @@ const Home = ({motw}) => {
                         </div>
                         <div    className={'search-bar ' + (searchBarFocused ? 'focused' : '') + (mapsInitialized ? '' : ' maps-not-initialized')}
                                 onClick={handleSearchBarClick} onFocus={() => setSearchBarFocused(true)}>
-                            <input type="text" placeholder="Search for a map..." onChange={(e) => {
-                                setQuery(e.target.value);
-                            }} value={query} ref={searchInputRef}/>
-                            <div className={"search-results"} ref={searchResultRef} style={{'--search-result-height': -1*searchResultHeight + 'px'}}>
+                            <div className="input-with-icon-cnt">
+                                <button className="media-container btn-clear">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <defs>
+                                            <linearGradient id="icon-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" stop-color="var(--color-primary-100)"/>
+                                                <stop offset="50%" stop-color="var(--color-primary-600)"/>
+                                                <stop offset="100%" stop-color="var(--color-primary-300)"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <path stroke="url(#icon-gradient)" strokeWidth="3px" fill="transparent" d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"/>
+                                    </svg>
+                                </button>
+                                <input type="text" placeholder="Search for a map..." onChange={(e) => {
+                                    setQuery(e.target.value);
+                                }} value={query} ref={searchInputRef}/>
+                            </div>
+                            <div className={"search-results"} ref={searchResultRef}
+                                 style={{'--search-result-height': -1 * searchResultHeight + 'px'}}>
                                 <div className={"maps"}>
-                                    {maps
+                                {maps
                                         .filter((el) => el.mapName.toLowerCase()
                                             .includes(query.toLowerCase()))
                                         .slice(0, 4)
