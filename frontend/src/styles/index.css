@@ -57,7 +57,7 @@ body {
 html,
 body {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--primary) 70%, #1b1b1b) transparent;
+  scrollbar-color: color-mix(in srgb, var(--color-primary-600) 70%, transparent) transparent;
 }
 
 html::-webkit-scrollbar,
@@ -73,7 +73,7 @@ body::-webkit-scrollbar-track {
 
 html::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
-  background-color: color-mix(in srgb, var(--primary) 70%, #1b1b1b);
+  background-color: color-mix(in srgb, var(--color-primary-600) 70%, transparent);
   border-radius: 999px;
   border: 2px solid transparent;
   background-clip: content-box;
