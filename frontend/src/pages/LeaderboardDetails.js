@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {Link, useParams} from "react-router-dom";
 import CreateEntryForm from "../components/CreateEntryForm";
 import '../styles/LeaderboardDetails.css'
-import PlayerPodium from "../components/PlayerPodium";
 
 const LeaderboardDetails = ({user}) => {
     const { steamID } = useParams()
@@ -42,7 +41,7 @@ const LeaderboardDetails = ({user}) => {
                 <div className="col-left">
                     <div className="map-hero">
                         <div className="map-image media-container">
-                            <img src={map.previewImage}/>
+                            <img src={map.previewImage} alt={`${map.mapName} preview`} />
                         </div>
                         <div className={"map-info"}>
                             <h1 className="details-map-name">{map.mapName || 'Unknown'}</h1>

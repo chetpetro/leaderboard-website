@@ -56,6 +56,7 @@ body {
   font-family: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
   color: white;
   scrollbar-gutter: stable;
+  scroll-behavior: smooth;
 }
 
 html,

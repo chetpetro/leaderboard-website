@@ -43,11 +43,9 @@ const Home = ({motw}) => {
             }
         });
         resizeObserver.observe(searchResultRef.current);
-
+        const current = searchResultRef.current;
         return () => {
-            if (searchResultRef.current) {
-                resizeObserver.unobserve(searchResultRef.current);
-            }
+            resizeObserver.unobserve(current);
         }
     }, [searchResultRef, searchResultHeight]);
 
@@ -87,6 +85,12 @@ const Home = ({motw}) => {
     return (
         <div className="home">
             <div className={"teaser"}>
+                <div className="pogo-char junker media-container">
+                    <img src="/junker.png" alt={"pogostuck charackter of junker"}/>
+                </div>
+                <div className="pogo-char cheeb media-container">
+                    <img src="/cheeb.png" alt={"pogostuck charackter of junker"}/>
+                </div>
                 <div className={"inside"}>
                     <h1>Ascend the <span className="text-gradient">Custom-Map</span> Ranks</h1>
                     <p className="text-muted teaser-text">Compare and Submit your leaderboards times for all custom-maps</p>
@@ -113,7 +117,7 @@ const Home = ({motw}) => {
                                 </button>
                                 <input type="text" placeholder="Search for a map..." onChange={(e) => {
                                     setQuery(e.target.value);
-                                }} value={query} ref={searchInputRef}/>
+                                }} value={query} ref={searchInputRef} id={"search"}/>
                             </div>
                             <div className={"search-results"} ref={searchResultRef}
                                  style={{'--search-result-height': -1 * searchResultHeight + 'px'}}>
@@ -126,7 +130,7 @@ const Home = ({motw}) => {
                                         .map(map => (
                                             <Link to={`/${map.steamID}`} className="result-map" key={map._id}>
                                                 <div className="media-container">
-                                                    <img src={map.previewImage}/>
+                                                    <img src={map.previewImage} alt={`${map.mapName} preview`} />
                                                 </div>
                                                 <div className={"result-map-info"}>
                                                     {map.featured && <span className="map-name text-gradient">{ map.mapName }</span>}

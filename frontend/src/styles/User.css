@@ -7,6 +7,7 @@ body:has(.user) {
     .hero {
         padding-block-start: 2.5rem;
         min-height: 25vh;
+        margin-block-end: 1rem;
         &>.inside {
             display: grid;
             place-items: center;
@@ -27,6 +28,7 @@ body:has(.user) {
                     transform: translateX(100%);
                     content: 'PTS';
                     font-size: 2rem;
+                    width: max-content;
                 }
             }
         }
@@ -42,5 +44,14 @@ body:has(.user) {
     }
     .map-placing.map-pos-3 {
         color: var(--color-primary-700);
+    }
+}
+
+@media (max-width: 400px) {
+    .user .hero >.inside .user-points::after {
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, calc(100% + .75rem));
+        transform: translate(-50%, calc(100% + .75rem));
     }
 }

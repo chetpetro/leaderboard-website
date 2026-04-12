@@ -4,7 +4,6 @@
     }
     .leaderboard-entry {
         display: grid;
-        grid-template-columns: 3ch 1fr auto;
         text-wrap: nowrap;
         padding: .5rem 1rem;
         position: relative;
@@ -50,5 +49,16 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        & > :nth-child(2) {
+            overflow: hidden;
+            text-wrap: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+}
+
+@media (min-width: 300px) {
+    .leaderboard .leaderboard-entry {
+        grid-template-columns: 3ch 1fr auto;
     }
 }

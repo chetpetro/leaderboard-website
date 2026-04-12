@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import {useEffect, useState} from "react";
 import '../styles/components/ActiveMaps.css';
 
-const ActiveMaps = ({  }) => {
+const ActiveMaps = () => {
     const [leaderboards, setLeaderboards] = useState('');
 
     useEffect(() => {
@@ -18,6 +18,16 @@ const ActiveMaps = ({  }) => {
         fetchLeaderboards();
 
     }, [])
+
+    const scrollToSearchAndClick = () => {
+        const search = document.getElementById("search");
+        if (search) {
+            search.scrollIntoView({ behavior: "smooth", block: "center" });
+            setTimeout(() => {
+                search.click();
+            }, 500)
+        }
+    }
     return (
         <div className="active-maps">
             <div className="inside">
@@ -46,7 +56,7 @@ const ActiveMaps = ({  }) => {
                     <p>No active maps found.</p>
                 )}
                 <div className="btn-container justify-center">
-                    <button className="btn btn-primary">See All Maps</button>
+                    <button className="btn btn-primary" onClick={scrollToSearchAndClick}>Search Maps</button>
                 </div>
             </div>
         </div>

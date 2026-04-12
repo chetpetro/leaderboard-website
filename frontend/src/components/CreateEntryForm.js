@@ -6,7 +6,7 @@ const CreateEntryForm = ({ steamID, user }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const splitTime = time.split(/[:\.]+/)
+        const splitTime = time.split(/[:.]+/)
         const msTime = Number(splitTime[3]) + Number(splitTime[2]) * 1000 + Number(splitTime[1]) * 60000 + Number(splitTime[0]) * 3600000
         
         fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + steamID, {

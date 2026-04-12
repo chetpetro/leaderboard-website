@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import '../styles/components/Navbar.css';
 
 const Navbar = ({ user, setUser, motw }) => {
     const headerRef = useRef(null);
+    const menuButtonRef = useRef(null);
+    const firstMobileLinkRef = useRef(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const wasMenuOpenRef = useRef(false);
 
     useEffect(() => {
         if (!headerRef.current) return;
@@ -13,12 +17,16 @@ const Navbar = ({ user, setUser, motw }) => {
             const height = headerRef.current.offsetHeight;
             document.documentElement.style.setProperty('--header-height', `${height}px`);
         };
-        headerRef.current.addEventListener('transitionend', (e) => {
+
+        const handleTransitionEnd = (e) => {
             if (e.propertyName === 'padding-top' || e.propertyName === 'padding-bottom') updateHeight();
-        });
+        };
+
+        headerRef.current.addEventListener('transitionend', handleTransitionEnd);
+        const current = headerRef.current;
         updateHeight();
 
-        return () => {}
+        return () => current.removeEventListener('transitionend', handleTransitionEnd);
     }, []);
 
     useEffect(() => {
@@ -44,21 +52,93 @@ const Navbar = ({ user, setUser, motw }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    useEffect(() => {
+        if (!isMenuOpen) return;
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                setIsMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [isMenuOpen]);
+
+    useEffect(() => {
+        if (isMenuOpen) {
+            document.body.style.overflow = 'hidden';
+            firstMobileLinkRef.current?.focus();
+        } else if (wasMenuOpenRef.current) {
+            document.body.style.overflow = '';
+            menuButtonRef.current?.focus();
+        }
+
+        wasMenuOpenRef.current = isMenuOpen;
+
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isMenuOpen]);
+
+    const closeMenu = () => setIsMenuOpen(false);
+    const mapOfTheWeekPath = motw?.steamID ? `/${motw.steamID}` : '/';
+
     return (
         <header ref={headerRef}>
             <nav>
                 <Link to="/">
                     <span className="logo">Pogostuck Leaderboards</span>
                 </Link>
-                <ul>
-                    <Link to="/points-leaderboard"><li>Leaderboard</li></Link>
-                    <Link to={`/${motw.steamID}`}><li>Map of the Week</li></Link>
-                    {user.userName && <Link to={`/user/${user.discordID}`}><li>{ user.userName }</li></Link>}
-                    {!user.userName && <Link to="/login"><button className='btn btn-ghost btn-header'>Login</button></Link>}
-                    {!user.userName && <Link to="/sign-up"><button className='btn btn-primary btn-header'>Sign Up</button></Link>}
-                    {user.userName && <LogoutButton setUser={setUser} />}
+                <button
+                    ref={menuButtonRef}
+                    type="button"
+                    className={`hamburger ${isMenuOpen ? 'is-open' : ''}`}
+                    aria-expanded={isMenuOpen}
+                    aria-controls="mobile-nav"
+                    aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                    onClick={() => setIsMenuOpen((prev) => !prev)}
+                >
+                    <span aria-hidden="true" />
+                    <span aria-hidden="true" />
+                    <span aria-hidden="true" />
+                </button>
+                <ul className="desktop-nav-links">
+                    <li><Link to="/points-leaderboard">Leaderboard</Link></li>
+                    <li><Link to={mapOfTheWeekPath}>Map of the Week</Link></li>
+                    {user.userName && <li><Link to={`/user/${user.discordID}`}>{ user.userName }</Link></li>}
+                    {!user.userName && <li><Link to="/login"><button className='btn btn-ghost btn-header'>Login</button></Link></li>}
+                    {!user.userName && <li><Link to="/sign-up"><button className='btn btn-primary btn-header'>Sign Up</button></Link></li>}
+                    {user.userName && <li><LogoutButton setUser={setUser} /></li>}
                 </ul>
             </nav>
+
+            <button
+                type="button"
+                className={`mobile-overlay ${isMenuOpen ? 'open' : ''}`}
+                aria-label="Close navigation menu"
+                onClick={closeMenu}
+            />
+            <aside id="mobile-nav" className={`mobile-drawer ${isMenuOpen ? 'open' : ''}`} aria-hidden={!isMenuOpen}>
+                <button
+                    type="button"
+                    className="drawer-close-btn"
+                    aria-label="Close navigation menu"
+                    onClick={closeMenu}
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <nav aria-label="Mobile">
+                    <ul>
+                        <li><Link ref={firstMobileLinkRef} to="/points-leaderboard" onClick={closeMenu}>Leaderboard</Link></li>
+                        <li><Link to={mapOfTheWeekPath} onClick={closeMenu}>Map of the Week</Link></li>
+                        {user.userName && <li><Link to={`/user/${user.discordID}`} onClick={closeMenu}>{ user.userName }</Link></li>}
+                        {!user.userName && <li><Link to="/login" onClick={closeMenu}>Login</Link></li>}
+                        {!user.userName && <li><Link to="/sign-up" onClick={closeMenu}>Sign Up</Link></li>}
+                        {user.userName && <li><LogoutButton setUser={setUser} /></li>}
+                    </ul>
+                </nav>
+            </aside>
         </header>
     )
 }
