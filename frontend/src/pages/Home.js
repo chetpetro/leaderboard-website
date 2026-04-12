@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
 import '../styles/home/Home.css'
 import {Link} from "react-router-dom";
@@ -8,28 +8,58 @@ import PlayerPodium from "../components/PlayerPodium";
 const Home = ({motw}) => {
 
     const [query, setQuery] = useState('');
-    const [leaderboards, setLeaderboards] = useState([]);
+    const [maps, setMaps] = useState([]);
     const [showCreateLeaderboard, setShowCreateLeaderboard] = useState(false);
-
+    const [searchBarFocused, setSearchBarFocused] = useState(false);
     const [top3Players, setTop3Players] = useState([]);
+    const [searchResultHeight, setSearchResultHeight] = useState(0);
+    const [mapsInitialized, setMapsInitialized] = useState(false);
+
+    const searchBarRef = useRef(null);
+    const searchResultRef = useRef(null);
+    const searchInputRef = useRef(null);
 
     const handleSearchBarClick = (e) => {
-        e.currentTarget.querySelector('input').focus();
     }
 
     useEffect(() => {
-        const fetchLeaderboards = async () => {
+        if (!searchResultRef.current) return;
+        // resizeObserver to track the searchResultHeight of the searchResultRef
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                if (entry.target === searchResultRef.current) {
+                    setSearchResultHeight(entry.contentRect.height);
+                }
+            }
+        });
+        resizeObserver.observe(searchResultRef.current);
+
+        return () => {
+            if (searchResultRef.current) {
+                resizeObserver.unobserve(searchResultRef.current);
+            }
+        }
+    }, [searchResultRef, searchResultHeight]);
+
+    useEffect(() => {
+        const fetchMaps = async () => {
             const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards');
             const json = await response.json();
 
             if (response.ok) {
-                setLeaderboards(json);
+                setMaps(json.sort((a, b) => b.entries.length - a.entries.length));
+                requestAnimationFrame(() => setTimeout(() => setMapsInitialized(true), 1500))
             }
         }
 
-        fetchLeaderboards();
-
+        fetchMaps();
     }, [])
+
+    useEffect(() => {
+        if (mapsInitialized) return;
+        searchBarRef.current.style.setProperty('--search-input-height', searchInputRef.current.offsetHeight + 'px');
+
+    }, [mapsInitialized, searchInputRef, searchBarRef]);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -50,13 +80,46 @@ const Home = ({motw}) => {
                 <div className={"inside"}>
                     <h1>Ascend the <span className="text-gradient">Custom-Map</span> Ranks</h1>
                     <p className="text-muted teaser-text">Compare and Submit your leaderboards times for all custom-maps</p>
-                    <div className="search-cnt">
-                        <div    className={'search-bar'}
-                                onClick={handleSearchBarClick}>
+                    <div className="search-bar-with-placeholder-wrapper" ref={searchBarRef}>
+                        <div className={"search-bar-placeholder " + (mapsInitialized ? '' : 'maps-not-initialized')}>
+                             <div className="placeholder-icon">
+                                 <div className="block block-left"></div>
+                                 <div className="block block-right"></div>
+                                 <div className="block block-top"></div>
+                                 <div className="block block-bottom"></div>
+                             </div>
+                            <div className="placeholder-search">
+                                <div className="block block-left"></div>
+                                <div className="block block-right"></div>
+                                <div className="block block-top"></div>
+                                <div className="block block-bottom"></div>
+                            </div>
+                        </div>
+                        <div    className={'search-bar ' + (searchBarFocused ? 'focused' : '') + (mapsInitialized ? '' : ' maps-not-initialized')}
+                                onClick={handleSearchBarClick} onFocus={() => setSearchBarFocused(true)}>
                             <input type="text" placeholder="Search for a map..." onChange={(e) => {
                                 setQuery(e.target.value);
-                            }} value={query}/>
+                            }} value={query} ref={searchInputRef}/>
+                            <div className={"search-results"} ref={searchResultRef} style={{'--search-result-height': -1*searchResultHeight + 'px'}}>
+                                <div className={"maps"}>
+                                    {maps
+                                        .filter((el) => el.mapName.toLowerCase()
+                                            .includes(query.toLowerCase()))
+                                        .slice(0, 4)
+                                        .map(map => (
+                                            <Link to={`/${map.steamID}`} className="result-map" key={map._id}>
+                                                <div className="media-container">
+                                                    <img src={map.previewImage}/>
+                                                </div>
+                                                {map.featured && <h4 style={{color: "gold"}}>{ map.mapName }</h4>}
+                                                {!map.featured && <h4>{ map.mapName }</h4>}
+                                                <p>Creator: { map.creator }</p>
+                                            </Link>
+                                        ))}
+                                </div>
+                            </div>
                         </div>
+
                     </div>
                     <button className="create-map" onClick={() => setShowCreateLeaderboard(!showCreateLeaderboard)}>
                         Can't find a Map? Submit the Map here!
