@@ -1,0 +1,46 @@
+body:has(.user) {
+    background: var(--color-surface-100) radial-gradient(circle at center 20rem, rgba(255, 255, 255, 8%), transparent 25rem) top center;
+    background-repeat: no-repeat;
+}
+.user {
+    min-height: calc(100vh - var(--header-height));
+    .hero {
+        padding-block-start: 2.5rem;
+        min-height: 25vh;
+        &>.inside {
+            display: grid;
+            place-items: center;
+            h1 {
+                font-size: 3rem;
+                line-height: 1.25;
+            }
+            .user-points {
+                font-weight: 700;
+                font-size: 4.5rem;
+                text-shadow: 0 0px 12vw var(--primary);
+                position: relative;
+                line-height: .7;
+                &::after {
+                    position: absolute;
+                    right:0;
+                    bottom: 0;
+                    transform: translateX(100%);
+                    content: 'PTS';
+                    font-size: 2rem;
+                }
+            }
+        }
+    }
+    .map-placing {font-style: italic}
+    .map-placing.map-pos-1 {
+        color: var(--primary);
+        font-weight: bold;
+    }
+    .map-placing.map-pos-2 {
+        color: var(--color-primary-600);
+        font-weight: 500;
+    }
+    .map-placing.map-pos-3 {
+        color: var(--color-primary-700);
+    }
+}

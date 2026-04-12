@@ -145,15 +145,19 @@ const Home = ({motw}) => {
                     </button>
                     <CreateLeaderboardForm show={showCreateLeaderboard}/>
                     <Link to={`/${motw.steamID}`} className={'card map-of-the-week animate-hover ' + (motw ? '' : 'hidden')}>
-                        <span className="icon-cnt text-gradient">⚫</span>
+                        <span className="icon-cnt text-gradient media-container">
+                            <div className={"media-container"}>
+                                 <img src="/crown.svg" alt="crown" />
+                            </div>
+                        </span>
                         <div className="card-content">
                             <h2>Map of the Week</h2>
                             <p>{motw.mapName || "No map selected"}</p>
                         </div>
                         <span className="card-link" to={`/${motw.steamID}`}>
-                            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" className="arrow-icon">
-                                <path d="M0 0 L10 5 L0 10 Z" fill="currentColor" />
-                            </svg>
+                            <div className={"media-container"}>
+                                <img src="/arrow-right.svg" alt="arrow-right" />
+                            </div>
                         </span>
                     </Link>
                 </div>

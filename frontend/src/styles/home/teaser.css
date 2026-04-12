@@ -1,6 +1,5 @@
 body:has(.teaser) {
  background: var(--color-surface-100) radial-gradient(circle at center 20rem, rgba(255, 255, 255, 8%), transparent 25rem) top center;
- scrollbar-gutter: stable;
 }
 .teaser {
     margin-inline: auto;
@@ -101,11 +100,17 @@ body:has(.teaser) {
             .card-link {
                 display: grid;
                 place-items: center;
-                padding-inline: .75rem;
+                padding-inline: .75rem .75rem;
+                .media-container {
+                    max-height: 1.5rem;
+                    aspect-ratio: 1;
+                }
             }
 
             .card-link {
                 transition: transform 0.15s ease;
+                padding-inline-start: .8rem;
+                .media-container {max-height: 1.25rem}
                 svg {
                     aspect-ratio: 1;
                     width: 1rem;
@@ -166,6 +171,19 @@ body:has(.teaser) {
                 align-items: center;
                 padding-block: .25rem;
                 min-width: 0;
+                transition: filter 0.15s ease, transform .15s ease;
+                filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, .8));
+                .media-container {
+                    transition: filter 0.15s ease, transform .15s ease;
+                }
+                &:hover {
+                    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, .4));
+                    transform: translateY(-2px);
+                    .media-container {
+                        transform: scale(1.02);
+                        filter: brightness(1.2);
+                    }
+                }
 
                 .result-map-info {
                     display: grid;

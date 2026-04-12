@@ -14,8 +14,8 @@ header {
     &.scrolled {
         box-shadow: var(--shadow-sm);
         padding-block: 0;
-        background-color: color-mix(in srgb, var(--color-surface-100) 95%, transparent);
-        backdrop-filter: blur(10px);
+        background-color: color-mix(in srgb, var(--color-surface-100) 90%, transparent);
+        backdrop-filter: blur(15px);
     }
 
     .logo {
@@ -51,7 +51,7 @@ header {
     }
 }
 
-.App:not(:has(.pages>.signup)):not(:has(.pages>.login)):not(:has(.pages>.home)) {
+.App:not(:has(.pages>.signup)):not(:has(.pages>.login)):not(:has(.pages>.home)):not(:has(.pages>.user)) {
     header {
         background-color: color-mix(in srgb, var(--color-surface-100) 95%, transparent);
     }
