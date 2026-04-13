@@ -3,6 +3,7 @@ body:has(.teaser) {
 }
 .teaser {
     margin-inline: auto;
+    margin-block-start: 0;
     text-align: center;
     min-height: calc(100dvh);
     display: grid;
