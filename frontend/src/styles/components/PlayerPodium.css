@@ -41,7 +41,7 @@
                 display: grid;
                 gap: .25rem;
                 max-width: fit-content;
-                justify-self: center;
+                margin-inline: auto;
                 .medal, .name, .points {transition: transform 1s ease}
                 &:hover {
                     --move-amount: -8px;
