@@ -296,7 +296,7 @@ body:has(.teaser) {
         z-index: -1;
 
         animation: scroll-pogo linear;
-        animation-timeline: scroll();
+        animation-timeline: scroll()!important;
     }
     .junker {
         --scroll-amnt: 500px;
