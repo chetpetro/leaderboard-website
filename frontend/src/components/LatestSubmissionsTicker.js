@@ -46,9 +46,8 @@ class LatestSubmissionsTicker extends Component {
 
     render() {
         const submissions = Array.isArray(this.props.submissions) ? this.props.submissions : [];
-
         return (
-            <div className="latest-submissions-ticker" role="region" aria-label="Latest submissions">
+            <div className={"latest-submissions-ticker " + (submissions.length === 0 ? 'hidden' : '')} role="region" aria-label="Latest submissions">
                 <div className="latest-submissions-ticker__viewport">
                     {submissions.length > 0 && (
                         <div className="latest-submissions-ticker__content">

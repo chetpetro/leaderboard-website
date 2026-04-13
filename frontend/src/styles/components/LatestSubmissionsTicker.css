@@ -3,6 +3,14 @@
     background: rgba(255, 255, 255, 0.04);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: var(--shadow-sm);
+    transition-property: opacity, visibility, min-height;
+    transition-duration: 2.5s;
+    transition-timing-function: ease;
+    &.hidden {
+        opacity: 0;
+        visibility: hidden;
+        min-height: calc(1.5rem + .25rem);
+    }
 }
 
 .latest-submissions-ticker__viewport {
