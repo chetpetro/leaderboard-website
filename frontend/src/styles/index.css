@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+@import "typography.css";
+@import "buttons.css";
+@import "layout.css";
+@import "card.css";
+@import "map-card.css";
+@import "leaderboard.css";
+
+
+
+:root {
+  --max-width: 1200px;
+  --element-spacing: 48px;
+  --primary: #cc8dd4;
+  --error: #e7195a;
+
+  /** CSS DARK THEME PRIMARY COLORS */
+  --color-primary-100: #9c27b0;
+  --color-primary-200: #a945b9;
+  --color-primary-300: #b55ec2;
+  --color-primary-400: #c176cb;
+  --color-primary-500: #cc8dd4;
+  --color-primary-600: #d7a4dd;
+  --color-primary-700: #e1bbe6;
+  /** CSS DARK THEME SURFACE COLORS */
+  --color-surface-100: #121212;
+  --color-surface-200: #282828;
+  --color-surface-300: #3f3f3f;
+  --color-surface-400: #575757;
+  --color-surface-500: #717171;
+  --color-surface-600: #8b8b8b;
+  --color-surface-700: #a5a5a5;
+
+  --border-radius: 6px;
+
+  --shadow-sm: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  --shadow-lg: 0px 6px 14px 1px rgba(0, 0, 0, 15%), 0px 19px 40px 11px rgba(0, 0, 0, 10%);
+  --shadow-lg-hover: 0px 6px 14px 1px rgba(0, 0, 0, 20%), 0px 19px 40px 11px rgba(0, 0, 0, 15%);
+
+  --focus-box-shadow: 0px 0px 20px 4px color-mix(in srgb, var(--color-primary-300) 33%, transparent);
+  --focus-border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+  --focus-outline: 2px solid var(--focus-border-color);
+}
+
+* {box-sizing: border-box;}
+input {color: white; }
+h1, h2, h3, h4, h5, h6, p {margin: 0;}
+a {color: inherit; text-decoration: none;}
+img, svg {display: block; width: 100%; height: auto;}
+button {font-family: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;}
+
+body {
+  background: var(--color-surface-100);
+  margin: 0;
+  font-family: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+  color: white;
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-primary-600) 70%, transparent) transparent;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--color-primary-600) 70%, transparent);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--primary) 82%, #111111);
+}
+
+html::-webkit-scrollbar-button,
+body::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.justify-start {
+  justify-content: start;
+}
+.justify-center {
+    justify-content: center;
+}
+.justify-end {
+    justify-content: end;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+input[type="number"],
+input[type="text"] {
+  background: var(--color-surface-300);
+  color: white;
+  border: none;
+  font-size: 1rem;
+  padding: .75rem;
+  border-radius: var(--border-radius);
+
+  &:focus {
+    box-shadow: var(--focus-box-shadow);
+    outline: var(--focus-outline);
+  }
+}
+
+label, input {
+  display: block;
+}

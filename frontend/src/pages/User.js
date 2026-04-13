@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import '../styles/User.css'
 
 
 const LeaderboardDetails = () => {
@@ -19,7 +20,7 @@ const LeaderboardDetails = () => {
         }
 
         fetchEntries();
-    }, [])
+    }, [discordID])
 
     const msToTime = (duration) => {
         var milliseconds = duration.toString().slice(-3);
@@ -30,24 +31,32 @@ const LeaderboardDetails = () => {
         minutes = (minutes < 10) ? "0" + minutes : minutes;
         seconds = (seconds < 10) ? "0" + seconds : seconds;
         hours = (hours < 10) ? "0" + hours : hours;
+        hours = hours === "00" ? "" : hours + ":";
+        minutes = hours === "" && minutes === "00" ? "" : minutes + ":";
 
-        return hours + ':' + minutes + ':' + seconds + '.' + milliseconds;
+        return hours + minutes + seconds + '.' + milliseconds;
     }
 
     return (
-        <div>
-            <h2 className="details-map-name">{ user.userName }</h2>
-            <div className="leaderboard-details">
-                <table className="leaderboad-entries">
+        <div className="user">
+            <div className="hero">
+                <div className="inside">
+                    <h1 className="details-map-name text-gradient">{ user.userName }</h1>
+                    <span className="user-points">{user.points}</span>
+                </div>
+            </div>
+            <div className="leaderboad-entries">
+                <div className="inside leaderboard">
                     {entries && entries.sort((a,b) => a.pos - b.pos).map((map) => (
-                        <tr className="leaderboard-entry" key={map.steamID}>
-                            <td><Link to={`/${map.steamID}`}><td >{ map.mapName }</td></Link></td>
-                            <td >{ map.pos }</td>
-                            <td>{ msToTime(map.entry.time) }</td>
-                        </tr>
+                        <div className="leaderboard-entry" key={map.steamID}>
+                            <span className={"map-placing map-pos-" + map.pos}>
+                                { map.pos }
+                            </span>
+                            <Link to={`/${map.steamID}`}>{ map.mapName }</Link>
+                            <span className="time">{ msToTime(map.entry.time) }</span>
+                        </div>
                     ))}
-                </table>
-                <h4 style={{fontSize: "2em"}}>Points: {user.points}</h4>
+                </div>
             </div>
         </div>
     );

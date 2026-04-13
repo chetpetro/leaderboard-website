@@ -1,0 +1,16 @@
+.create-entry-form {
+    label {
+        font-size: .6667rem;
+        font-weight: 500;
+        margin-bottom: .1rem;
+    }
+    .input-cnt {
+        display: flex;
+        flex-direction: row;
+        gap: .5rem;
+        input[type="text"] {
+            font-size: .8rem;
+            padding: .3rem .5rem;
+        }
+    }
+}

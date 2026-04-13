@@ -1,6 +1,7 @@
 import { useState } from "react";
+import '../styles/components/CreateLeaderboardForm.css'
 
-const CreateLeaderboardForm = () => {
+const CreateLeaderboardForm = ({show}) => {
     const [url, setURL] = useState('');
     
     const handleSubmit = async (e) => {
@@ -20,12 +21,13 @@ const CreateLeaderboardForm = () => {
     }
 
     return (
-        <form className="create-leaderboard-form" onSubmit={handleSubmit}>
-            <h2>Add Leaderboard</h2>
-            <label>Steam Page URL:</label>
-            <input type="text" onChange={(e) => setURL(e.target.value)} value={url}/>
-            <button>Add</button>
-        </form>
+        <div className={'create-leaderboard' + (show ? '' : ' hidden')}>
+            <form className="create-leaderboard-form" onSubmit={handleSubmit}>
+                <label htmlFor="steam-url">Steam Page URL:</label>
+                <input id="steam-url" type="text" onChange={(e) => setURL(e.target.value)} value={url}/>
+                <button className="btn btn-ghost">+</button>
+            </form>
+        </div>
     );
 }
  

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import '../styles/Signup.css'
 
 const Signup = ({ setUser }) => {
     const [userName, setUserName] = useState('')
@@ -47,21 +48,33 @@ const Signup = ({ setUser }) => {
             })
             .catch((error) => console.log("Sign Up Discord Error: " + error))
         }
-    }, [])
+    }, [navigate, setUser])
 
     return (
-        <form className="signup" onSubmit={handleSubmit}>
-            <h3>Sign Up</h3>
+        <div className="signup">
+            <div className="inside">
+                <form className="signup-form card" onSubmit={handleSubmit}>
+                    <h1>Sign Up</h1>
 
-            <label>Username:</label>
-            <input type="text" onChange={(e) => setUserName(e.target.value)} value={userName}/>
-            <label>Discord ID:</label>
-            <input type="number" onChange={(e) => setDiscordID(e.target.value)} value={discordID}/>
-            <label>Password:</label>
-            <input type="text" onChange={(e) => setPassword(e.target.value)} value={password}/>
-            <button>Sign Up</button>
-            <a href="https://discord.com/oauth2/authorize?client_id=1263159916512677918&response_type=token&redirect_uri=https%3A%2F%2Fpogostuckleaderboards.vercel.app%2Fsign-up&scope=identify"><div className="discord-button" >Sign Up with Discord<img className="discord-icon" src="https://static-00.iconduck.com/assets.00/discord-icon-2048x1570-y371emu6.png"/></div></a>
-        </form>
+                    <label>Username:</label>
+                    <input type="text" onChange={(e) => setUserName(e.target.value)} value={userName}/>
+                    <label>Discord ID:</label>
+                    <input type="number" onChange={(e) => setDiscordID(e.target.value)} value={discordID}/>
+                    <label>Password:</label>
+                    <input type="text" onChange={(e) => setPassword(e.target.value)} value={password}/>
+                    <div className="btn-container justify-start">
+                        <button className="btn btn-ghost">Sign Up</button>
+                        <a className="btn btn-discord" href="https://discord.com/oauth2/authorize?client_id=1263159916512677918&response_type=token&redirect_uri=https%3A%2F%2Fpogostuckleaderboards.vercel.app%2Fsign-up&scope=identify">
+                        <span className="inside">
+                                <span className="btn-text">Sign Up with Discord</span>
+                            <span className="media-container"><img className="discord-icon" alt="discord icon"
+                                                                   src="/discord.svg"/></span>
+                        </span>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     );
 }
  

@@ -28,6 +28,11 @@ const leaderboardSchema = new Schema({
     colour : {
         type: Object
     },
+    lastSubmissionAt: {
+        type: Date,
+        default: null,
+        index: true
+    },
     entries: [{
         userName: {
             type: String,
@@ -40,6 +45,10 @@ const leaderboardSchema = new Schema({
         time: {
             type: Number,
             required: true
+        },
+        submittedAt: {
+            type: Date,
+            default: Date.now
         }
     }]
 }, { timestamps: true });

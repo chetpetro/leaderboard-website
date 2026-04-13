@@ -1,0 +1,33 @@
+.card {
+    background-color: var(--color-surface-200);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    border: var(--color-surface-300) 1px solid;
+    text-align: start;
+    font-size: .8rem;
+    transition-property: box-shadow, transform, border-color, visibility;
+    transition: .3s ease;
+    padding: .5rem .25rem;
+    outline: none;
+    h2 {
+        color: var(--primary);
+        font-size: .667rem;
+        margin-bottom: .25rem;
+    }
+}
+
+.card.hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transform: translateY(5px);
+}
+
+.animate-hover {
+    &:hover,
+    &:focus {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg-hover);
+        border-color: var(--focus-border-color);
+    }
+}

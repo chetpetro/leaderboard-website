@@ -1,0 +1,9 @@
+.inside {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding-inline: 1.5rem;
+}
+
+.bg-primary {
+    background-color: var(--primary);
+}

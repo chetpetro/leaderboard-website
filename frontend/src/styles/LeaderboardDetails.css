@@ -1,0 +1,86 @@
+.map-details {
+    .inside {
+        display: grid;
+        justify-items: center;
+        gap: 2rem;
+        & > * > *{
+            margin-bottom: 1rem;
+        }
+
+        .col-left {
+            justify-self: stretch;
+            .map-hero {
+                position: relative;
+                box-shadow: var(--shadow-lg);
+
+                .map-image {
+                    aspect-ratio: 16/9;
+
+                    img {
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                }
+
+                .map-info {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    padding-inline-start: .5rem;
+
+                    .details-map-name {
+                        font-size: 1.5rem;
+                        line-height: .8;
+                        text-shadow: 0 0px 20px rgba(0, 0, 0, 1);
+                    }
+                    .map-creator {
+                        font-size: .8rem;
+                        color: var(--color-surface-700);
+                        text-shadow: 0 0px 20px rgba(0, 0, 0, 1);
+                    }
+
+                    z-index: 2;
+
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        z-index: -1;
+                        background: linear-gradient(to bottom, transparent 50%, var(--color-surface-100));
+                    }
+                }
+            }
+        }
+
+        .col-right {
+            .map-details {
+                .description {
+                    font-size: .75rem;
+                }
+            }
+        }
+        .card {
+            padding: .75rem .5rem;
+            h2:last-child {
+                margin:0;
+            }
+        }
+        p {
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    .map-details > .inside {
+        grid-template-columns: 2fr 1fr;
+        .col-right {
+            margin-top: 2.5rem;
+        }
+    }
+}

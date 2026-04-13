@@ -1,0 +1,35 @@
+.active-maps {
+    .desc-cnt {
+        font-size: .5rem;
+        color: var(--color-surface-600);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        .dash {
+            border-radius: var(--border-radius);
+            width: 10rem;
+            height: .25rem;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            margin-bottom: .5rem;
+        }
+        p {
+            margin-bottom: .5rem;
+        }
+    }
+    .maps {
+        display: grid;
+        gap: 1rem;
+    }
+    .btn-container {
+        margin-block-start: 2rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .active-maps {
+        .maps {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+}

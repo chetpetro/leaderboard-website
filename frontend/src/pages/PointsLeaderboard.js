@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"
+import PlayerPodium from "../components/PlayerPodium";
+import '../styles/pointsLeaderboard/PointsLeaderboard.css';
+import {Link} from "react-router-dom";
 
 const PointsLeaderboard = () => {
     const [users, setUsers] = useState('')
@@ -18,18 +20,24 @@ const PointsLeaderboard = () => {
     }, [])
 
     return (
-        <div>
-            <h2 className="details-map-name" >Points</h2>
-            <div className="leaderboard-details">
-                <table className="leaderboad-entries">
-                    {users && users.map((user, index) => (
-                        <tr className="leaderboard-entry">
-                            <td >{ index + 1 }</td>
-                            <Link to={`/user/${user.discordID}`}><td>{ user.userName }</td></Link>
-                            <td>{ user.points }</td>
-                        </tr>
+        <div className="points-leaderboard">
+
+            {users.length >= 3 && <PlayerPodium players={users.slice(0,3).map(player => ({
+                _id: player._id,
+                userName: player.userName,
+                discordID: player.discordID,
+                value: player.points + " pts"
+            }))}/>}
+            <div className="leaderboard">
+                <div className="inside">
+                    {users.length > 3 && users.slice(3).filter(user => user.points > 0).map((user, index) => (
+                        <Link to={`/user/${user.discordID}`} className="leaderboard-entry" key={user._id}>
+                            <div className="placing">{index + 4}</div>
+                            <div className="name">{user.userName}</div>
+                            <div className="points">{user.points} pts</div>
+                        </Link>
                     ))}
-                </table>
+                </div>
             </div>
         </div>
     );

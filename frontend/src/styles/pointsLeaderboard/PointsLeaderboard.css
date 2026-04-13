@@ -1,0 +1,3 @@
+.points-leaderboard {
+    background: var(--color-surface-100) radial-gradient(circle at center top, rgba(255, 255, 255, 8%), transparent 50%) top center;
+}
