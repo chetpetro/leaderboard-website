@@ -13,7 +13,6 @@ const VALID_SUBMISSION_EXCEPTION_RULES = [
     {userName: 'toddsighting', mapName: 'The 6 Trials', time: '00:24:09.223'},
     {userName: 'toddsighting', mapName: 'the greatest map of all time', time: '00:00:22.938'}
 ];
-const DEBUG_SUBMISSION_FILTER = true;
 
 const normalizeText = (value) => String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
 const parseTimeToMilliseconds = (value) => {
