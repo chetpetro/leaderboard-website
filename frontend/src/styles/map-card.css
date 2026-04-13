@@ -6,8 +6,8 @@
     flex-direction: column;
     position: relative;
     overflow: hidden;
+    aspect-ratio: 16/9;
     .media-container {
-        aspect-ratio: 16/9;
         position: relative;
         &::after {
             content: "";
