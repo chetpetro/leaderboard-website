@@ -66,18 +66,24 @@ const Navbar = ({ user, setUser, motw }) => {
     }, [isMenuOpen]);
 
     useEffect(() => {
+        const htmlEl = document.documentElement;
+        const bodyEl = document.body;
+        const prevHtmlOverflow = htmlEl.style.overflow;
+        const prevBodyOverflow = bodyEl.style.overflow;
+
         if (isMenuOpen) {
-            document.body.style.overflow = 'hidden';
+            htmlEl.style.overflow = 'hidden';
+            bodyEl.style.overflow = 'hidden';
             firstMobileLinkRef.current?.focus();
         } else if (wasMenuOpenRef.current) {
-            document.body.style.overflow = '';
             menuButtonRef.current?.focus();
         }
 
         wasMenuOpenRef.current = isMenuOpen;
 
         return () => {
-            document.body.style.overflow = '';
+            htmlEl.style.overflow = prevHtmlOverflow;
+            bodyEl.style.overflow = prevBodyOverflow;
         };
     }, [isMenuOpen]);
 

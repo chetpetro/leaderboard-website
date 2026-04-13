@@ -63,6 +63,7 @@ html,
 body {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--color-primary-600) 70%, transparent) transparent;
+  overflow-x: clip;
 }
 
 html::-webkit-scrollbar,

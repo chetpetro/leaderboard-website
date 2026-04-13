@@ -152,12 +152,17 @@ header {
             backdrop-filter: blur(15px);
             box-shadow: var(--shadow-sm);
             transform: translateX(100%);
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, visibility 0s linear 0.2s;
             z-index: 130;
             overflow-y: auto;
+            visibility: hidden;
+            pointer-events: none;
 
             &.open {
                 transform: translateX(0);
+                visibility: visible;
+                pointer-events: auto;
+                transition: transform 0.2s ease;
             }
 
             .drawer-close-btn {
