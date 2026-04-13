@@ -44,11 +44,7 @@ header {
         .desktop-nav-links {
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-
-        a {
-            margin-left: 10px;
+            gap: 1rem;
         }
 
         ul {
@@ -56,7 +52,6 @@ header {
 
             li {
                 display: inline-block;
-                margin: 0 10px;
             }
         }
     }
@@ -200,7 +195,7 @@ header {
                 padding: 0;
                 display: flex;
                 flex-direction: column;
-                gap: 14px;
+                gap: 1rem;
             }
 
             li {
