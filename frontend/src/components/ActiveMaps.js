@@ -3,15 +3,15 @@ import {useEffect, useState} from "react";
 import '../styles/components/ActiveMaps.css';
 
 const ActiveMaps = () => {
-    const [leaderboards, setLeaderboards] = useState('');
+    const [leaderboards, setLeaderboards] = useState([]);
 
     useEffect(() => {
         const fetchLeaderboards = async () => {
-            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards');
+            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/recent?limit=6');
             const json = await response.json();
 
             if (response.ok) {
-                setLeaderboards(json.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)).slice(0, 6));
+                setLeaderboards(json);
             }
         }
 

@@ -21,7 +21,14 @@ const getLeaderboards = async (req, res) =>  {
 }
 
 const getRecentLeaderboards = async (req, res) =>  {
-    const response = await Leaderboard.find({}).sort({entries: -1});
+    const requestedLimit = Number.parseInt(req.query.limit, 10);
+    const limit = Number.isNaN(requestedLimit) ? 10 : Math.min(Math.max(requestedLimit, 1), 50);
+
+    const response = await Leaderboard
+        .find({})
+        .sort({ lastSubmissionAt: -1, updatedAt: -1 })
+        .limit(limit);
+
     res.status(200).json(response);
 }
 
@@ -87,12 +94,17 @@ const createEntry = async (req, res) => {
     if (!map) return res.status(404).json({error: "No leadearboard found"});
 
     let entries = map.entries
+    const submissionDate = new Date();
 
     for(let i = 0; i < entries.length; i++){
-        if (req.body.time && entries[i].discordID == req.body.discordID){
+        if (req.body.time && entries[i].discordID === req.body.discordID){
             if (entries[i].time >= req.body.time) {
-                entries[i] = req.body;
-                const update = await Leaderboard.findOneAndUpdate({ steamID }, { entries });
+                entries[i] = { ...req.body, submittedAt: submissionDate };
+                const update = await Leaderboard.findOneAndUpdate(
+                    { steamID },
+                    { entries, lastSubmissionAt: submissionDate },
+                    { new: true }
+                );
 
 
                 await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
@@ -121,7 +133,13 @@ const createEntry = async (req, res) => {
         }
     })
 
-    const response = await Leaderboard.updateOne({ steamID }, { $push : { entries: req.body }});
+    const response = await Leaderboard.updateOne(
+        { steamID },
+        {
+            $push: { entries: { ...req.body, submittedAt: submissionDate } },
+            $set: { lastSubmissionAt: submissionDate }
+        }
+    );
 
     res.status(200).json(response)
 }
