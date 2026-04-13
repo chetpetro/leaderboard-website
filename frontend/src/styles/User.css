@@ -48,10 +48,18 @@ body:has(.user) {
 }
 
 @media (max-width: 400px) {
-    .user .hero >.inside .user-points::after {
-        bottom: 0;
-        left: 50%;
-        transform: translate(-50%, calc(100% + .75rem));
-        transform: translate(-50%, calc(100% + .75rem));
+    .user .hero >.inside {
+        .details-map-name {
+            text-wrap: wrap;
+            overflow-wrap: anywhere;
+            /* it should  break mid word*/
+            word-break: break-all;
+        }
+        .user-points::after {
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, calc(100% + .75rem));
+            transform: translate(-50%, calc(100% + .75rem));
+        }
     }
 }
