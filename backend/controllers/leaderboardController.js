@@ -19,20 +19,19 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamI
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const userUrl = `${leaderboardUrl}user/${discordID}`;
     const mapUrl = `${leaderboardUrl}${steamID}`;
-    const content = `New PB for <@${discordID}> :astonished~1:`;
-
-    const embeds = [{
-        title: 'New Personal Best',
-        description: `**PB:** ${msToTime(time)}\n**By:** [${userName}](${userUrl})\n**Map:** [${mapName}](${mapUrl})`,
-        footer: {
-            text: 'More on: Pogostuck Leaderboards'
-        },
-        url: leaderboardUrl
-    }];
+    const content = [
+        `New PB for <@${discordID}>`,
+        '',
+        `PB: ${msToTime(time)}`,
+        `By: [${userName}](${userUrl})`,
+        `Map: [${mapName}](${mapUrl})`,
+        '',
+        `More on: [Pogostuck Leaderboards](${leaderboardUrl})`
+    ].join('\n');
 
     await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
         method: 'POST',
-        body: JSON.stringify({ content, embeds }),
+        body: JSON.stringify({ content }),
         headers: {
             Authorization: process.env.DISCORD_TOKEN,
             'Content-Type': 'application/json'
