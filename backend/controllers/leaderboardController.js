@@ -3,16 +3,18 @@ const { getAverageColor } = require('fast-average-color-node');
 require('dotenv').config()
 
 const msToTime = (duration) => {
-    var milliseconds = duration.toString().slice(-3);
-    var seconds = Math.floor((duration / 1000) % 60);
-    var minutes = Math.floor((duration / (1000 * 60)) % 60);
-    var hours = Math.floor(duration / (1000 * 60 * 60));
+    const milliseconds = duration.toString().slice(-3);
+    let seconds = Math.floor((duration / 1000) % 60);
+    let minutes = Math.floor((duration / (1000 * 60)) % 60);
+    let hours = Math.floor(duration / (1000 * 60 * 60));
 
     minutes = (minutes < 10) ? "0" + minutes : minutes;
     seconds = (seconds < 10) ? "0" + seconds : seconds;
     hours = (hours < 10) ? "0" + hours : hours;
+    hours = hours === "00" ? "" : hours + ":";
+    minutes = hours === "" && minutes === "00" ? "" : minutes + ":";
 
-    return hours + ':' + minutes + ':' + seconds + '.' + milliseconds;
+    return hours + minutes + seconds + "." + milliseconds;
 }
 
 const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID }) => {
@@ -22,11 +24,11 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamI
     const content = [
         `New PB for <@${discordID}>`,
         '',
-        `PB: ${msToTime(time)}`,
-        `By: [${userName}](<${userUrl}>)`,
-        `Map: [${mapName}](<${mapUrl}>)`,
+        `**PB:** \`${msToTime(time)}\``,
+        `**By:** [${userName}](<${userUrl}>)`,
+        `**Map:** [${mapName}](<${mapUrl}>)`,
         '',
-        `More on: [Pogostuck Leaderboards](<${leaderboardUrl}>)`
+        `**More on:** [Pogostuck Leaderboards](<${leaderboardUrl}>)`
     ].join('\n');
 
     await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
