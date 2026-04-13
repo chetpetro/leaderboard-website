@@ -23,15 +23,18 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamI
         `New PB for <@${discordID}>`,
         '',
         `PB: ${msToTime(time)}`,
-        `By: [${userName}](${userUrl})`,
-        `Map: [${mapName}](${mapUrl})`,
+        `By: [${userName}](<${userUrl}>)`,
+        `Map: [${mapName}](<${mapUrl}>)`,
         '',
-        `More on: [Pogostuck Leaderboards](${leaderboardUrl})`
+        `More on: [Pogostuck Leaderboards](<${leaderboardUrl}>)`
     ].join('\n');
 
     await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
         method: 'POST',
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({
+            content,
+            flags: 4 // SUPPRESS_EMBEDS: verhindert die Link-Vorschauen in Discord
+        }),
         headers: {
             Authorization: process.env.DISCORD_TOKEN,
             'Content-Type': 'application/json'
