@@ -16,7 +16,7 @@ const msToTime = (duration) => {
     return hours + minutes + seconds + '.' + milliseconds;
 };
 
-const sendDiscordMotwMessage = async ({ mapName, steamID, creator, wrEntry }) => {
+const buildMotwMessageContent = ({ mapName, steamID, creator, wrEntry }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const mapUrl = `${leaderboardUrl}${steamID}`;
 
@@ -24,11 +24,15 @@ const sendDiscordMotwMessage = async ({ mapName, steamID, creator, wrEntry }) =>
         ? `Current WR: \`${msToTime(wrEntry.time)}\` by: [${wrEntry.userName}](<${leaderboardUrl}user/${wrEntry.discordID}>)`
         : 'Current WR: `No run yet`';
 
-    const content = [
+    return [
         `## New Map Of the Week: [${mapName}](<${mapUrl}>) By: ${creator}`,
         wrLine,
         '-# _Submit your best run this week - points are awarded when the next Map of the Week rotation happens._'
     ].join('\n');
+};
+
+const sendDiscordMotwMessage = async ({ mapName, steamID, creator, wrEntry }) => {
+    const content = buildMotwMessageContent({ mapName, steamID, creator, wrEntry });
 
     await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
         method: 'POST',
@@ -40,6 +44,24 @@ const sendDiscordMotwMessage = async ({ mapName, steamID, creator, wrEntry }) =>
             'Content-Type': 'application/json'
         }
     });
+};
+
+const getRandomLeaderboardWithWr = async () => {
+    const response = await Leaderboard.aggregate([{ $sample: { size: 1 } }]);
+    const selectedMap = response[0];
+
+    if (!selectedMap) {
+        return null;
+    }
+
+    const sortedEntries = Array.isArray(selectedMap.entries)
+        ? [...selectedMap.entries].sort((a, b) => a.time - b.time)
+        : [];
+
+    return {
+        selectedMap,
+        wrEntry: sortedEntries.length ? sortedEntries[0] : null
+    };
 };
 
 const newFeaturedLeaderboard = async (req, res) => {
@@ -62,15 +84,15 @@ const newFeaturedLeaderboard = async (req, res) => {
         console.log(err);
     }
 
-    const response = await Leaderboard.aggregate([{ $sample: { size: 1 } }]);
-    const selectedMap = response[0];
+    const randomLeaderboard = await getRandomLeaderboardWithWr();
+
+    if (!randomLeaderboard) {
+        return res.status(404).json({ error: 'No leaderboard found' });
+    }
+
+    const { selectedMap, wrEntry } = randomLeaderboard;
     console.log(selectedMap.mapName)
     await Leaderboard.findOneAndUpdate({ _id: selectedMap._id }, {featured: true});
-
-    const sortedEntries = Array.isArray(selectedMap.entries)
-        ? [...selectedMap.entries].sort((a, b) => a.time - b.time)
-        : [];
-    const wrEntry = sortedEntries.length ? sortedEntries[0] : null;
 
     try {
         await sendDiscordMotwMessage({
@@ -86,4 +108,34 @@ const newFeaturedLeaderboard = async (req, res) => {
     res.status(200).json({msg: "updated MotW"})
 }
 
-module.exports = newFeaturedLeaderboard;
+const previewMotwMessage = async (req, res) => {
+    try {
+        const randomLeaderboard = await getRandomLeaderboardWithWr();
+
+        if (!randomLeaderboard) {
+            return res.status(404).json({ error: 'No leaderboard found' });
+        }
+
+        const { selectedMap, wrEntry } = randomLeaderboard;
+        const content = buildMotwMessageContent({
+            mapName: selectedMap.mapName,
+            steamID: selectedMap.steamID,
+            creator: selectedMap.creator,
+            wrEntry
+        });
+
+        return res.status(200).json({
+            mapName: selectedMap.mapName,
+            content
+        });
+    } catch (err) {
+        console.log('Failed to preview MotW message:', err);
+        return res.status(500).json({ error: 'Could not build message preview' });
+    }
+};
+
+module.exports = {
+    newFeaturedLeaderboard,
+    previewMotwMessage,
+    buildMotwMessageContent
+};
