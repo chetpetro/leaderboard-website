@@ -8,9 +8,91 @@ import LatestSubmissionsTicker from "../components/LatestSubmissionsTicker.js";
 
 const INVALID_SUBMISSION_DAY_START_UTC = Date.UTC(2026, 3, 13, 0, 0, 0, 0);
 const INVALID_SUBMISSION_DAY_END_UTC = Date.UTC(2026, 3, 14, 0, 0, 0, 0);
+const VALID_SUBMISSION_EXCEPTION_RULES = [
+    {userName: 'har', mapName: 'VVVVVV, Rage With Your Friends', time: '00:01:36.992'},
+    {userName: 'toddsighting', mapName: 'The 6 Trials', time: '00:24:09.223'},
+    {userName: 'toddsighting', mapName: 'the greatest map of all time', time: '00:00:22.938'}
+];
+const DEBUG_SUBMISSION_FILTER = true;
+
+const normalizeText = (value) => String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+const parseTimeToMilliseconds = (value) => {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        return Math.trunc(value);
+    }
+
+    const raw = String(value || '').trim();
+    if (!raw) {
+        return null;
+    }
+
+    if (/^\d+$/.test(raw)) {
+        return Number(raw);
+    }
+
+    const [timePart, millisecondsPart = '0'] = raw.split('.');
+    const segments = timePart.split(':').map((segment) => Number(segment));
+    if (segments.some((segment) => Number.isNaN(segment))) {
+        return null;
+    }
+
+    let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
+
+    if (segments.length === 3) {
+        [hours, minutes, seconds] = segments;
+    } else if (segments.length === 2) {
+        [minutes, seconds] = segments;
+    } else if (segments.length === 1) {
+        [seconds] = segments;
+    } else {
+        return null;
+    }
+
+    const milliseconds = Number(millisecondsPart.padEnd(3, '0').slice(0, 3));
+    if (Number.isNaN(milliseconds)) {
+        return null;
+    }
+
+    return ((hours * 60 * 60) + (minutes * 60) + seconds) * 1000 + milliseconds;
+};
+
+const formatMilliseconds = (value) => {
+    const safeValue = Math.max(0, Math.trunc(value));
+    const hours = Math.floor(safeValue / 3600000);
+    const minutes = Math.floor((safeValue % 3600000) / 60000);
+    const seconds = Math.floor((safeValue % 60000) / 1000);
+    const milliseconds = safeValue % 1000;
+
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(3, '0')}`;
+};
+
+const normalizeTime = (value) => {
+    const milliseconds = parseTimeToMilliseconds(value);
+    if (milliseconds === null) {
+        return String(value || '').trim();
+    }
+
+    return formatMilliseconds(milliseconds);
+};
+const createSubmissionExceptionKey = (entry) => {
+    return `${normalizeText(entry?.userName)}|${normalizeText(entry?.mapName)}|${normalizeTime(entry?.time)}`;
+};
+const VALID_SUBMISSION_EXCEPTIONS = new Set(
+    VALID_SUBMISSION_EXCEPTION_RULES.map((entry) => createSubmissionExceptionKey(entry))
+);
 
 const isInvalidSubmissionDay = (timestamp) => {
     return timestamp >= INVALID_SUBMISSION_DAY_START_UTC && timestamp < INVALID_SUBMISSION_DAY_END_UTC;
+};
+
+const shouldFilterSubmission = (entry) => {
+    const isInInvalidDay = isInvalidSubmissionDay(entry?.submittedTimestamp);
+    const exceptionKey = createSubmissionExceptionKey(entry);
+    const isException = VALID_SUBMISSION_EXCEPTIONS.has(exceptionKey);
+
+    return isInInvalidDay && !isException;
 };
 
 const Home = ({motw}) => {
@@ -105,7 +187,7 @@ const Home = ({motw}) => {
                     };
                 });
             })
-            .filter((entry) => !isInvalidSubmissionDay(entry.submittedTimestamp))
+            .filter((entry) => !shouldFilterSubmission(entry))
             .sort((a, b) => b.submittedTimestamp - a.submittedTimestamp)
             .slice(0, 10);
     }, [maps]);
