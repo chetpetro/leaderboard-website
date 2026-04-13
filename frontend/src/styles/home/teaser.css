@@ -14,9 +14,6 @@ body:has(.teaser) {
         max-width: 1000px;
         width: 100%;
         min-width: 0;
-        h1 .text-gradient {
-            text-wrap: nowrap;
-        }
         --input-padding-block: .5rem;
         .search-bar {
             background-color: var(--color-surface-300);
@@ -317,5 +314,13 @@ body:has(.teaser) {
 @keyframes scroll-pogo {
     to {
         transform: translateY(var(--scroll-amnt));
+    }
+}
+
+@media (min-width: 350px) {
+    .teaser {
+        h1 .text-gradient {
+            text-wrap: nowrap;
+        }
     }
 }
