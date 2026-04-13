@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import '../styles/User.css'
+import { msToTime } from "../timeUtils";
 
 
 const LeaderboardDetails = () => {
@@ -22,20 +23,6 @@ const LeaderboardDetails = () => {
         fetchEntries();
     }, [discordID])
 
-    const msToTime = (duration) => {
-        var milliseconds = duration.toString().slice(-3);
-        var seconds = Math.floor((duration / 1000) % 60);
-        var minutes = Math.floor((duration / (1000 * 60)) % 60);
-        var hours = Math.floor(duration / (1000 * 60 * 60));
-
-        minutes = (minutes < 10) ? "0" + minutes : minutes;
-        seconds = (seconds < 10) ? "0" + seconds : seconds;
-        hours = (hours < 10) ? "0" + hours : hours;
-        hours = hours === "00" ? "" : hours + ":";
-        minutes = hours === "" && minutes === "00" ? "" : minutes + ":";
-
-        return hours + minutes + seconds + '.' + milliseconds;
-    }
 
     return (
         <div className="user">

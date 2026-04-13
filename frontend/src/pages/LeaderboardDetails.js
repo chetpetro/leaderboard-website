@@ -2,25 +2,12 @@ import { useState, useEffect } from "react";
 import {Link, useParams} from "react-router-dom";
 import CreateEntryForm from "../components/CreateEntryForm";
 import '../styles/LeaderboardDetails.css'
+import { msToTime } from "../timeUtils";
 
 const LeaderboardDetails = ({user}) => {
     const { steamID } = useParams()
     const [map, setMap] = useState('');
 
-    const msToTime = (duration) => {
-        var milliseconds = duration.toString().slice(-3);
-        var seconds = Math.floor((duration / 1000) % 60);
-        var minutes = Math.floor((duration / (1000 * 60)) % 60);
-        var hours = Math.floor(duration / (1000 * 60 * 60));
-
-        minutes = (minutes < 10) ? "0" + minutes : minutes;
-        seconds = (seconds < 10) ? "0" + seconds : seconds;
-        hours = (hours < 10) ? "0" + hours : hours;
-        hours = hours === "00" ? "" : hours + ":";
-        minutes = hours === "" && minutes === "00" ? "" : minutes + ":";
-
-        return hours + minutes + seconds + '.' + milliseconds;
-    }
 
     useEffect(() => {
         const fetchMap = async () => {

@@ -1,5 +1,6 @@
 @import 'teaser.css';
 
+
 .home > *:not(:first-child) {
     margin-block-start: var(--element-spacing);
 }

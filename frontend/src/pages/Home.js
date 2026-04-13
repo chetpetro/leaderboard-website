@@ -1,9 +1,17 @@
-import {useState, useEffect, useRef} from "react";
+import {useState, useEffect, useRef, useMemo} from "react";
 import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
 import '../styles/home/Home.css'
 import {Link} from "react-router-dom";
 import ActiveMaps from "../components/ActiveMaps";
 import PlayerPodium from "../components/PlayerPodium";
+import LatestSubmissionsTicker from "../components/LatestSubmissionsTicker.js";
+
+const INVALID_SUBMISSION_DAY_START_UTC = Date.UTC(2026, 3, 13, 0, 0, 0, 0);
+const INVALID_SUBMISSION_DAY_END_UTC = Date.UTC(2026, 3, 14, 0, 0, 0, 0);
+
+const isInvalidSubmissionDay = (timestamp) => {
+    return timestamp >= INVALID_SUBMISSION_DAY_START_UTC && timestamp < INVALID_SUBMISSION_DAY_END_UTC;
+};
 
 const Home = ({motw}) => {
 
@@ -81,9 +89,30 @@ const Home = ({motw}) => {
 
         fetchUsers();
     }, [])
-    
+
+    const latestSubmissions = useMemo(() => {
+        return maps
+            .flatMap((map) => {
+                const entries = Array.isArray(map.entries) ? map.entries : [];
+                return entries.map((entry, index) => {
+                    const submittedTimestamp = entry?.submittedAt ? new Date(entry.submittedAt).getTime() : 0;
+                    return {
+                        ...entry,
+                        mapName: map.mapName,
+                        steamID: map.steamID,
+                        submittedTimestamp: Number.isFinite(submittedTimestamp) ? submittedTimestamp : 0,
+                        key: `${map._id || map.steamID}-${entry.discordID || entry.userName || 'entry'}-${index}`
+                    };
+                });
+            })
+            .filter((entry) => !isInvalidSubmissionDay(entry.submittedTimestamp))
+            .sort((a, b) => b.submittedTimestamp - a.submittedTimestamp)
+            .slice(0, 10);
+    }, [maps]);
+
     return (
         <div className="home">
+            <LatestSubmissionsTicker submissions={latestSubmissions} />
             <div className={"teaser"}>
                 <div className="pogo-char junker media-container">
                     <img src="/junker.png" alt={"pogostuck charackter of junker"}/>
