@@ -1,5 +1,6 @@
 @import 'teaser.css';
 @import 'pogo-characters.css';
+@import 'search-bar.css';
 
 
 .home > *:not(:first-child) {
