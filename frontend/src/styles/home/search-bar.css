@@ -132,12 +132,6 @@
 
 /* placeholder loading styling */
 .teaser .search-bar-with-placeholder-wrapper {
-    display: grid;
-    grid-template-areas: "stack";
-
-    .search-bar,.search-bar-placeholder {
-        grid-area: stack;
-    }
     .search-bar {
         transition: 1s ease-in opacity, 1s ease-in height, .3s ease outline-color;
         overflow: hidden;
@@ -167,9 +161,9 @@
             position: relative;
             height: 100%;
             aspect-ratio: 1;
-            .block-left {width: .75rem}
-            .block-right {width: .25rem; right: 0}
-            .block-top,.block-bottom { height: .5rem}
+            .placeholder-block-left {width: .75rem}
+            .placeholder-block-right {width: .25rem; right: 0}
+            .placeholder-block-top,.placeholder-block-bottom { height: .5rem}
         }
         .placeholder-search {
             position: relative;

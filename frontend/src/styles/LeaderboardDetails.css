@@ -3,7 +3,7 @@
         display: grid;
         justify-items: center;
         gap: 2rem;
-        & > * > *{
+        & > * > * {
             margin-bottom: 1rem;
         }
 
@@ -57,6 +57,7 @@
         }
 
         .col-right {
+            width: 100%;
             .map-details {
                 .description {
                     font-size: .75rem;
@@ -81,6 +82,104 @@
         grid-template-columns: 2fr 1fr;
         .col-right {
             margin-top: 2.5rem;
+        }
+    }
+}
+
+/* Placeholder Image */
+.map-hero-placeholder {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    display: grid;
+    .placeholder {
+        position: relative;
+        --border-width: 2px;
+        --shimmer-dark: var(--color-surface-300);
+        --shimmer-light: var(--color-surface-500);
+        --placeholder-image-block-size: 35%;
+        .placeholder-image {
+            aspect-ratio: 16/9;
+
+
+            .placeholder-block-left, .placeholder-block-right {
+                width: var(--placeholder-image-block-size);
+            }
+
+            .placeholder-block-top {
+                height: calc(var(--placeholder-image-block-size) * .7); /*tbh i would've expected it to be * 9/16 but for some reason it doesnt work for all values*/
+            }
+            .placeholder-block-left {
+                /* subtract the placeholder-info height*/
+                height: calc(100% - 4rem);
+            }
+        }
+        .placeholder-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4rem;
+            .placeholder-info-heading {
+                position: relative;
+                height: 3rem;
+                .placeholder-block-top {height: 1rem}
+                .placeholder-block-bottom {height: .5rem;}
+                .placeholder-block-left {width: .5rem;}
+                .placeholder-block-right {width: calc(100% - var(--placeholder-image-block-size) + .5rem);}
+                .placeholder-block-bottom { bottom: 0;}
+            }
+            .placeholder-info-text {
+                position: relative;
+                height: 1rem;
+                .placeholder-block-bottom {height: .5rem;}
+                .placeholder-block-top {height: 2px;top: 0}
+                .placeholder-block-left {width: .5rem;}
+                .placeholder-block-right {width: calc(100% - var(--placeholder-image-block-size) + 2rem);}
+            }
+        }
+    }
+}
+
+.map-details-placeholder {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    .placeholder {
+        --border-width: 1px;
+        --shimmer-dark: var(--color-surface-300);
+        --shimmer-light: var(--color-surface-500);
+    }
+    .placeholder-heading {
+        position: relative;
+        /* top + bottom + line height of heading*/
+        height: calc(.75rem + .5rem + .667rem);
+        .placeholder-block-left, .placeholder-block-right {width: .5rem;}
+        .placeholder-block-top {height: .75rem;}
+        .placeholder-block-bottom { height: .5rem; bottom: 0!important;}
+    }
+    .placeholder-content {
+        display: grid;
+        .placeholder-line-1 {
+            position: relative;
+            height: calc(.25rem + .5rem);
+            .placeholder-block-top {height: .25rem;}
+            .placeholder-block-bottom {height: .25rem;}
+            .placeholder-block-left {width: .5rem;}
+            .placeholder-block-right {
+                width: 10%!important;
+            }
+        }
+        .placeholder-line-2 {
+            position: relative;
+            height: calc(.75rem + .5rem);
+            .placeholder-block-left {width: .5rem;}
+            .placeholder-block-top {height: .25rem;}
+            .placeholder-block-bottom {height: .75rem;}
+            .placeholder-block-right {
+                width: 30%!important;
+                top: 0!important;
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ import { msToTime } from "../timeUtils";
 const LeaderboardDetails = ({user}) => {
     const { steamID } = useParams()
     const [map, setMap] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
 
     useEffect(() => {
@@ -16,6 +17,7 @@ const LeaderboardDetails = ({user}) => {
 
             if (response.ok) {
                 setMap(json[0]);
+                setIsLoading(false);
             }
         }
 
@@ -26,13 +28,36 @@ const LeaderboardDetails = ({user}) => {
         <div className="map-details">
             <div className={"inside"}>
                 <div className="col-left">
-                    <div className="map-hero">
-                        <div className="map-image media-container">
-                            <img src={map.previewImage} alt={`${map.mapName} preview`} />
+                    <div className={"map-hero-placeholder placeholder-wrapper"}>
+                        <div className={"map-hero placeholder-target" + (isLoading ? ' is-loading' : '')}>
+                            <div className="map-image media-container">
+                                <img src={map.previewImage} alt={`${map.mapName} preview`} />
+                            </div>
+                            <div className={"map-info"}>
+                                <h1 className="details-map-name">{map.mapName || 'Unknown'}</h1>
+                                <span className={"map-creator"}>By: { map.creator }</span>
+                            </div>
                         </div>
-                        <div className={"map-info"}>
-                            <h1 className="details-map-name">{map.mapName || 'Unknown'}</h1>
-                            <span className={"map-creator"}>By: { map.creator }</span>
+                        <div className={"placeholder" + (isLoading ? ' is-loading' : '')}>
+                            <div className={"placeholder-image"}>
+                                <div className="placeholder-block placeholder-block-left with-border"></div>
+                                <div className="placeholder-block placeholder-block-right with-border"></div>
+                                <div className="placeholder-block placeholder-block-top with-border"></div>
+                            </div>
+                            <div className={"placeholder-info"}>
+                                <div className="placeholder-info-heading">
+                                    <div className="placeholder-block placeholder-block-left with-border"></div>
+                                    <div className="placeholder-block placeholder-block-right with-border"></div>
+                                    <div className="placeholder-block placeholder-block-top with-border"></div>
+                                    <div className="placeholder-block placeholder-block-bottom with-border"></div>
+                                </div>
+                                <div className={"placeholder-info-text"}>
+                                    <div className="placeholder-block placeholder-block-left with-border"></div>
+                                    <div className="placeholder-block placeholder-block-right with-border"></div>
+                                    <div className="placeholder-block placeholder-block-top with-border"></div>
+                                    <div className="placeholder-block placeholder-block-bottom with-border"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div className="leaderboard map-rankings">
@@ -50,13 +75,35 @@ const LeaderboardDetails = ({user}) => {
                         {user.userName && <CreateEntryForm steamID={ map.steamID } user={user}/>}
                         {!user.userName && <h2>Login to Submit Entry</h2>}
                     </div>
-                    <div className="map-details card">
-                        <h2 className={"heading-description"}>
-                            Description
-                        </h2>
-                        <p className="description">
-                            { map.description }
-                        </p>
+                    <div className="map-details-placeholder placeholder-wrapper">
+                        <div className={"map-details card placeholder-target" + (isLoading ? ' is-loading' : '')}>
+                            <h2 className={"heading-description"}>
+                                Description
+                            </h2>
+                            <p className="description">
+                                { map.description }
+                            </p>
+                        </div>
+                        <div className={"placeholder" + (isLoading ? ' is-loading' : '')}>
+                            <div className={"placeholder-heading"}>
+                                <div className="placeholder-block placeholder-block-left with-border"></div>
+                                <div className="placeholder-block placeholder-block-right with-border"></div>
+                                <div className="placeholder-block placeholder-block-top with-border"></div>
+                                <div className="placeholder-block placeholder-block-bottom with-border"></div>
+                            </div>
+                            <div className={"placeholder-content"}>
+                                <div className={"placeholder-line placeholder-line-1"}>
+                                    <div className="placeholder-block placeholder-block-left with-border-inline"></div>
+                                    <div className="placeholder-block placeholder-block-right with-border-inline"></div>
+                                    <div className="placeholder-block placeholder-block-bottom with-border-inline"></div>
+                                </div>
+                                <div className={"placeholder-line placeholder-line-2"}>
+                                    <div className="placeholder-block placeholder-block-left with-border-inline"></div>
+                                    <div className="placeholder-block placeholder-block-right with-border"></div>
+                                    <div className="placeholder-block placeholder-block-bottom with-border"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
