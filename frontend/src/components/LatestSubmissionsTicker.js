@@ -10,13 +10,6 @@ class LatestSubmissionsTicker extends Component {
             { className: "submission-time", value: msToTime(entry.time) }
         ];
 
-        if (entry.submittedTimestamp > 0) {
-            segments.push({
-                className: "submission-date",
-                value: new Date(entry.submittedTimestamp).toLocaleDateString()
-            });
-        }
-
         return segments.map((segment, index) => (
             <span className={`submission-segment ${segment.className}`} key={`${segment.className}-${index}`}>
                 {index > 0 && <span className="submission-separator"> - </span>}

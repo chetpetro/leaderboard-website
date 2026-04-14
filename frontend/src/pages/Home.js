@@ -6,36 +6,10 @@ import ActiveMaps from "../components/ActiveMaps";
 import PlayerPodium from "../components/PlayerPodium";
 import LatestSubmissionsTicker from "../components/LatestSubmissionsTicker.js";
 
-const INVALID_SUBMISSION_DAY_START_UTC = Date.UTC(2026, 3, 13, 0, 0, 0, 0);
-const INVALID_SUBMISSION_DAY_END_UTC = Date.UTC(2026, 3, 14, 0, 0, 0, 0);
-const VALID_SUBMISSION_EXCEPTION_RULES = [
-    {userName: 'har', mapName: 'VVVVVV, Rage With Your Friends'},
-    {userName: 'toddsighting', mapName: 'The 6 Trials'},
-    {userName: 'toddsighting', mapName: 'the greatest map of all time'},
-    {userName: 'testfiles', mapName: 'kek_trials'},
-    {userName: 'testfiles', mapName: 'Drakula\'s Castle Double Jump Mode'},
-    {userName: 'bittersweet_adv', mapName: 'Drakula\'s Castle Double Jump Mode'},
-    {userName: 'bittersweet_adv', mapName: 'POGOW'}
-];
-
-const normalizeText = (value) => String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
-const createSubmissionExceptionKey = (entry) => {
-    return `${normalizeText(entry?.userName)}|${normalizeText(entry?.mapName)}`;
-};
-const VALID_SUBMISSION_EXCEPTIONS = new Set(
-    VALID_SUBMISSION_EXCEPTION_RULES.map((entry) => createSubmissionExceptionKey(entry))
-);
+const INVALID_SUBMISSION_DAY_END_UTC = Date.UTC(2026, 3, 12, 0, 0, 0, 0);
 
 const isInvalidSubmissionDay = (timestamp) => {
-    return timestamp >= INVALID_SUBMISSION_DAY_START_UTC && timestamp < INVALID_SUBMISSION_DAY_END_UTC;
-};
-
-const shouldFilterSubmission = (entry) => {
-    const isInInvalidDay = isInvalidSubmissionDay(entry?.submittedTimestamp);
-    const exceptionKey = createSubmissionExceptionKey(entry);
-    const isException = VALID_SUBMISSION_EXCEPTIONS.has(exceptionKey);
-
-    return isInInvalidDay && !isException;
+    return timestamp < INVALID_SUBMISSION_DAY_END_UTC;
 };
 
 const Home = ({motw}) => {
@@ -52,7 +26,7 @@ const Home = ({motw}) => {
     const searchResultRef = useRef(null);
     const searchInputRef = useRef(null);
 
-    const handleSearchBarClick = (e) => {
+    const handleSearchBarClick = () => {
         searchInputRef.current.focus();
     }
 
@@ -130,7 +104,7 @@ const Home = ({motw}) => {
                     };
                 });
             })
-            .filter((entry) => !shouldFilterSubmission(entry))
+            .filter((entry) => !isInvalidSubmissionDay(entry?.submittedTimestamp))
             .sort((a, b) => b.submittedTimestamp - a.submittedTimestamp)
             .slice(0, 10);
     }, [maps]);
@@ -212,7 +186,7 @@ const Home = ({motw}) => {
                             <h2>Map of the Week</h2>
                             <p>{motw.mapName || "No map selected"}</p>
                         </div>
-                        <span className="card-link" to={`/${motw.steamID}`}>
+                        <span className="card-link">
                             <div className={"media-container"}>
                                 <img src="/arrow-right.svg" alt="arrow-right" />
                             </div>

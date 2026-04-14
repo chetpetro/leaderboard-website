@@ -48,7 +48,6 @@ const leaderboardSchema = new Schema({
         },
         submittedAt: {
             type: Date,
-            default: Date.now
         }
     }]
 }, { timestamps: true });
