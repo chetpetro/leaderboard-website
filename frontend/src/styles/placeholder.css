@@ -33,13 +33,17 @@
             &.placeholder-block-top,&.placeholder-block-bottom { left: 0; right: 0; height: .5rem}
             &.placeholder-block-top { top: 0;}
             &.placeholder-block-bottom { bottom: 0;}
-            &.with-border {
+            &.with-border,
+            &.with-border-block {
                 &.placeholder-block-left,&.placeholder-block-right {top: var(--border-width); bottom: var(--border-width);}
-                &.placeholder-block-left { left: var(--border-width);}
-                &.placeholder-block-right { right: var(--border-width);}
-                &.placeholder-block-top,&.placeholder-block-bottom { left: var(--border-width); right: var(--border-width); height: .5rem}
                 &.placeholder-block-top { top: var(--border-width);}
                 &.placeholder-block-bottom { bottom: var(--border-width);}
+            }
+            &.with-border,
+            &.with-border-inline {
+                &.placeholder-block-left { left: var(--border-width);}
+                &.placeholder-block-right { right: var(--border-width);}
+                &.placeholder-block-top,&.placeholder-block-bottom { left: var(--border-width); right: var(--border-width);}
             }
         }
     }

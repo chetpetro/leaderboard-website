@@ -149,21 +149,21 @@ const Home = ({motw}) => {
                     <h1>Ascend the <span className="text-gradient">Custom-Map</span> Ranks</h1>
                     <p className="text-muted teaser-text">Compare and Submit your leaderboards times for all custom-maps</p>
                     <div className="search-bar-with-placeholder-wrapper placeholder-wrapper" ref={searchBarRef}>
-                        <div className={"search-bar-placeholder placeholder" + (mapsInitialized ? '' : 'is-loading maps-not-initialized')}>
+                        <div className={"search-bar-placeholder placeholder" + (mapsInitialized ? '' : ' is-loading maps-not-initialized')}>
                              <div className="placeholder-icon">
                                  <div className="block-left with-border block placeholder-block placeholder-block-left with-border"></div>
-                                 <div className="block-right block placeholder-block placeholder-block-right"></div>
+                                 <div className="block-right block placeholder-block placeholder-block-right with-border-block"></div>
                                  <div className="block-top block placeholder-block placeholder-block-top with-border"></div>
                                  <div className="block-bottom block placeholder-block placeholder-block-bottom with-border"></div>
                              </div>
                             <div className="placeholder-search">
-                                <div className="block-left block placeholder-block placeholder-block-left"></div>
+                                <div className="block-left block placeholder-block placeholder-block-left with-border-block"></div>
                                 <div className="block-right block placeholder-block placeholder-block-right with-border"></div>
                                 <div className="block-top block placeholder-block placeholder-block-top with-border"></div>
                                 <div className="block-bottom block placeholder-block placeholder-block-bottom with-border"></div>
                             </div>
                         </div>
-                        <div    className={'search-bar placeholder-target' + (searchBarFocused ? 'focused' : '') + (mapsInitialized ? '' : ' maps-not-initialized')}
+                        <div    className={'search-bar placeholder-target ' + (searchBarFocused ? 'focused' : '') + (mapsInitialized ? '' : ' maps-not-initialized is-loading')}
                                 onClick={handleSearchBarClick} onFocus={() => setSearchBarFocused(true)}>
                             <div className="input-with-icon-cnt">
                                 <button className="media-container btn-clear">

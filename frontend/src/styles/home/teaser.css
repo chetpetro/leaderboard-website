@@ -135,12 +135,6 @@ body:has(.teaser) {
     .search-bar {
         transition: 1s ease-in opacity, 1s ease-in height, .3s ease outline-color;
         overflow: hidden;
-        &.maps-not-initialized {
-            opacity: 0;
-            height: 0;
-            pointer-events: none;
-            z-index: -1;
-        }
 
         .search-results {
             transition: .75s ease;
@@ -221,42 +215,23 @@ body:has(.teaser) {
             }
         }
     }
-    .search-bar-placeholder {
-        transition-property: opacity, visibility;
-        transition-duration: 1s;
-        transition-timing-function: ease;
-        &:not(.maps-not-initialized) {
-            visibility: hidden;
-            opacity: 0;
-            pointer-events: none;
-        }
+    .search-bar-placeholder.placeholder {
+        --border-width: 2px;
+        --background-color: var(--color-surface-200);
+        --shimmer-dark: var(--color-surface-400);
+        --shimmer-light: var(--color-surface-700);
         border-radius: var(--border-radius);
         box-shadow: var(--shadow-lg);
         min-height: var(--search-input-height);
-        position: relative;
-        background: linear-gradient(90deg, var(--color-surface-700), var(--color-surface-400) 50% 75%, var(--color-surface-700));
-        background-repeat: repeat;
-        background-size: 200%;
-        animation: search-placeholder-pulse 1.5s ease-in infinite;
         display: flex;
         overflow: hidden;
-        .block {
-            position: absolute;
-            background-color: var(--color-surface-200);
-            /* the 2px are a fake-semi working border :) */
-            &.block-left,&.block-right {top: 2px; bottom: 2px;}
-            &.block-left { left: 2px;}
-            &.block-right { right: 2px;}
-            &.block-top,&.block-bottom { left: 2px; right: 2px; height: .5rem}
-            &.block-top { top: 2px;}
-            &.block-bottom { bottom: 2px;}
-        }
         .placeholder-icon {
             position: relative;
             height: 100%;
             aspect-ratio: 1;
             .block-left {width: .75rem}
             .block-right {width: .25rem; right: 0}
+            .block-top,.block-bottom { height: .5rem}
         }
         .placeholder-search {
             position: relative;
