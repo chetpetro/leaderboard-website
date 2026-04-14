@@ -182,7 +182,7 @@ const Home = ({motw}) => {
                                             el.creator.toLowerCase().includes(query.toLowerCase()))
                                         .slice(0, 6)
                                         .map(map => (
-                                            <Link to={`/${map.steamID}`} className="result-map" key={map._id}>
+                                            <Link to={`/${map.steamID}`} className="result-map" key={map._id} title={`${map.mapName}`}>
                                                 <div className="media-container">
                                                     <img src={map.previewImage} alt={`${map.mapName} preview`} />
                                                 </div>
