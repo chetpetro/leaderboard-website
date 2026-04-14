@@ -1,0 +1,56 @@
+.placeholder-wrapper {
+    .placeholder-target.is-loading {
+        opacity: 0;
+        height: 0;
+        pointer-events: none;
+        z-index: -1;
+    }
+    .placeholder {
+        --border-width: 0;
+        --background-color: var(--color-surface-200);
+        --shimmer-dark: var(--color-surface-400);
+        --shimmer-light: var(--color-surface-700);
+        position: relative;
+        transition-property: opacity, visibility;
+        transition-duration: 1s;
+        transition-timing-function: ease;
+        &:not(.is-loading) {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+        background: linear-gradient(90deg, var(--shimmer-light), var(--shimmer-dark) 50% 75%, var(--shimmer-light));
+        background-repeat: repeat;
+        background-size: 200%;
+        animation: search-placeholder-pulse 1.5s ease-in infinite;
+
+        .placeholder-block {
+            position: absolute;
+            background-color: var(--background-color);
+            &.placeholder-block-left,&.placeholder-block-right {top: 0; bottom: 0;}
+            &.placeholder-block-left { left: 0;}
+            &.placeholder-block-right { right: 0;}
+            &.placeholder-block-top,&.placeholder-block-bottom { left: 0; right: 0; height: .5rem}
+            &.placeholder-block-top { top: 0;}
+            &.placeholder-block-bottom { bottom: 0;}
+            &.with-border {
+                &.placeholder-block-left,&.placeholder-block-right {top: var(--border-width); bottom: var(--border-width);}
+                &.placeholder-block-left { left: var(--border-width);}
+                &.placeholder-block-right { right: var(--border-width);}
+                &.placeholder-block-top,&.placeholder-block-bottom { left: var(--border-width); right: var(--border-width); height: .5rem}
+                &.placeholder-block-top { top: var(--border-width);}
+                &.placeholder-block-bottom { bottom: var(--border-width);}
+            }
+        }
+    }
+}
+
+@keyframes search-placeholder-pulse {
+    from {
+        background-position: 100% 0;
+
+    }
+    to {
+        background-position: -100% 0;
+    }
+}
