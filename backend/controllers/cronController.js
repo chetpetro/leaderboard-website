@@ -1,34 +1,32 @@
 const Leaderboard = require('../models/LeaderboardModel');
 const User = require('../models/userModel');
-
-const msToTime = (duration) => {
-    const milliseconds = duration.toString().slice(-3);
-    let seconds = Math.floor((duration / 1000) % 60);
-    let minutes = Math.floor((duration / (1000 * 60)) % 60);
-    let hours = Math.floor(duration / (1000 * 60 * 60));
-
-    minutes = (minutes < 10) ? '0' + minutes : minutes;
-    seconds = (seconds < 10) ? '0' + seconds : seconds;
-    hours = (hours < 10) ? '0' + hours : hours;
-    hours = hours === '00' ? '' : hours + ':';
-    minutes = hours === '' && minutes === '00' ? '' : minutes + ':';
-
-    return hours + minutes + seconds + '.' + milliseconds;
-};
+const { replaceTemplateKeywords } = require('../utils/templateReplacer');
+const {msToTime} = require("../utils/timeUtil");
 
 const buildMotwMessageContent = ({ mapName, steamID, creator, wrEntry }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const mapUrl = `${leaderboardUrl}${steamID}`;
 
     const wrLine = wrEntry
-        ? `Current WR: \`${msToTime(wrEntry.time)}\` by: [${wrEntry.userName}](<${leaderboardUrl}user/${wrEntry.discordID}>)`
+        ? replaceTemplateKeywords('Current WR: `%WRTIME%` by: [%WRUSER%](<%WRUSERURL%>)', {
+            WRTIME: msToTime(wrEntry.time),
+            WRUSER: wrEntry.userName,
+            WRUSERURL: `${leaderboardUrl}user/${wrEntry.discordID}`
+        })
         : 'Current WR: `No run yet`';
 
-    return [
-        `## New Map Of the Week: [${mapName}](<${mapUrl}>) By: ${creator}`,
-        wrLine,
+    const template = [
+        '## New Map Of the Week: [%MAPNAME%](<%MAPURL%>) By: %CREATOR%',
+        '%WRLINE%',
         '-# _Submit your best run this week - points are awarded when the next Map of the Week rotation happens._'
     ].join('\n');
+
+    return replaceTemplateKeywords(template, {
+        MAPNAME: mapName,
+        MAPURL: mapUrl,
+        CREATOR: creator,
+        WRLINE: wrLine
+    });
 };
 
 const sendDiscordMotwMessage = async ({ mapName, steamID, creator, wrEntry }) => {

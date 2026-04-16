@@ -1,41 +1,37 @@
 const Leaderboard = require('../models/LeaderboardModel');
 const { getAverageColor } = require('fast-average-color-node');
+const { replaceTemplateKeywords } = require('../utils/templateReplacer');
+const {msToTime} = require("../utils/timeUtil");
 require('dotenv').config()
-
-const msToTime = (duration) => {
-    const milliseconds = duration.toString().slice(-3);
-    let seconds = Math.floor((duration / 1000) % 60);
-    let minutes = Math.floor((duration / (1000 * 60)) % 60);
-    let hours = Math.floor(duration / (1000 * 60 * 60));
-
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-    hours = (hours < 10) ? "0" + hours : hours;
-    hours = hours === "00" ? "" : hours + ":";
-    minutes = hours === "" && minutes === "00" ? "" : minutes + ":";
-
-    return hours + minutes + seconds + "." + milliseconds;
-}
 
 const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const userUrl = `${leaderboardUrl}user/${discordID}`;
     const mapUrl = `${leaderboardUrl}${steamID}`;
-    const content = [
-        `New PB for <@${discordID}>`,
+    const template = [
+        'New PB for <@%DISCORDID%>',
         '',
-        `**PB:** \`${msToTime(time)}\``,
-        `**By:** [${userName}](<${userUrl}>)`,
-        `**Map:** [${mapName}](<${mapUrl}>)`,
+        '**PB:** `%PBTIME%`',
+        '**By:** [%USERNAME%](<%USERURL%>)',
+        '**Map:** [%MAPNAME%](<%MAPURL%>)',
         '',
-        `**More on:** [Pogostuck Leaderboards](<${leaderboardUrl}>)`
+        '**More on:** [Pogostuck Leaderboards](<%LEADERBOARDURL%>)'
     ].join('\n');
+
+    const content = replaceTemplateKeywords(template, {
+        DISCORDID: discordID,
+        PBTIME: msToTime(time),
+        USERNAME: userName,
+        USERURL: userUrl,
+        MAPNAME: mapName,
+        MAPURL: mapUrl,
+        LEADERBOARDURL: leaderboardUrl
+    });
 
     await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
         method: 'POST',
         body: JSON.stringify({
             content,
-            flags: 4 // SUPPRESS_EMBEDS: verhindert die Link-Vorschauen in Discord
         }),
         headers: {
             Authorization: process.env.DISCORD_TOKEN,
