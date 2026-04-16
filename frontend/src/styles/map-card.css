@@ -8,6 +8,7 @@
     overflow: hidden;
     aspect-ratio: 16/9;
     .media-container {
+        flex: 1;
         position: relative;
         &::after {
             content: "";
@@ -20,7 +21,7 @@
         }
         img {
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
         }
     }
     .map-info {
