@@ -114,10 +114,14 @@ const Home = ({motw}) => {
             <LatestSubmissionsTicker submissions={latestSubmissions} />
             <div className={"teaser"}>
                 <div className="pogo-char junker media-container">
-                    <img src="/junker.png" alt={"pogostuck charackter of junker"}/>
+                    <div className="slide-in">
+                        <img src="/junker.png" alt={"Pogostuck character of junker"}/>
+                    </div>
                 </div>
                 <div className="pogo-char cheeb media-container">
-                    <img src="/cheeb.png" alt={"pogostuck charackter of junker"}/>
+                    <div className="slide-in">
+                        <img src="/cheeb.png" alt={"Pogostuck character of cheeb"}/>
+                    </div>
                 </div>
                 <div className={"inside"}>
                     <h1>Ascend the <span className="text-gradient">Custom-Map</span> Ranks</h1>

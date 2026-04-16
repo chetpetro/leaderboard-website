@@ -7,7 +7,7 @@ body:has(.user) {
     .hero {
         padding-block-start: 2.5rem;
         min-height: 25vh;
-        margin-block-end: 1rem;
+        margin-block-end: 2rem;
         &>.inside {
             display: grid;
             place-items: center;

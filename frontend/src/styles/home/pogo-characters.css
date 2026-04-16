@@ -8,7 +8,7 @@
         animation: scroll-pogo linear;
         animation-timeline: scroll()!important;
         .slide-in {
-            animation: slide-in 5s cubic-bezier(0.58, 1.06, 0.67, 0.97);
+            animation: slide-in 3s cubic-bezier(0.58, 1.06, 0.67, 0.97);
         }
     }
     .junker {
@@ -44,7 +44,11 @@
 
 @keyframes slide-in {
     from {
-        transform: translateX(calc(1000px * var(--direction)));
+        opacity: 0;
+        transform: translateX(calc(200px * var(--direction)));
+    }
+    50% {
+        opacity: 1;
     }
     to {
         transform: translateX(0%);
