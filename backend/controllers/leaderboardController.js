@@ -2,7 +2,6 @@ const Leaderboard = require('../models/LeaderboardModel');
 const { getAverageColor } = require('fast-average-color-node');
 const { replaceTemplateKeywords } = require('../utils/templateReplacer');
 const {msToTime} = require("../utils/timeUtil");
-const { sendDiscordMessage } = require('../utils/discordUtil');
 require('dotenv').config()
 
 const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID }) => {
@@ -29,7 +28,16 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamI
         LEADERBOARDURL: leaderboardUrl
     });
 
-    await sendDiscordMessage(content);
+    await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
+        method: 'POST',
+        body: JSON.stringify({
+            content,
+        }),
+        headers: {
+            Authorization: process.env.DISCORD_TOKEN,
+            'Content-Type': 'application/json'
+        }
+    });
 }
 
 const getLeaderboards = async (req, res) =>  {

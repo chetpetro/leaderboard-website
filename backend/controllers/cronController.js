@@ -2,15 +2,22 @@ const Leaderboard = require('../models/LeaderboardModel');
 const User = require('../models/userModel');
 const { replaceTemplateKeywords } = require('../utils/templateReplacer');
 const {msToTime} = require("../utils/timeUtil");
-const { sendDiscordMessage } = require('../utils/discordUtil');
 
 const buildMotwMessageContent = ({ mapName, steamID, creator, wrEntry }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const mapUrl = `${leaderboardUrl}${steamID}`;
 
+    const wrLine = wrEntry
+        ? replaceTemplateKeywords('Current WR: `%WRTIME%` by: [%WRUSER%](<%WRUSERURL%>)', {
+            WRTIME: msToTime(wrEntry.time),
+            WRUSER: wrEntry.userName,
+            WRUSERURL: `${leaderboardUrl}user/${wrEntry.discordID}`
+        })
+        : 'Current WR: `No run yet`';
+
     const template = [
         '## New Map Of the Week: [%MAPNAME%](<%MAPURL%>) By: %CREATOR%',
-        (wrEntry ? 'Current WR: `%WRTIME%` by: [%WRUSER%](<%WRUSERURL%>)' : 'Current WR: `No run yet`'),
+        '%WRLINE%',
         '-# _Submit your best run this week - points are awarded when the next Map of the Week rotation happens._'
     ].join('\n');
 
@@ -18,71 +25,24 @@ const buildMotwMessageContent = ({ mapName, steamID, creator, wrEntry }) => {
         MAPNAME: mapName,
         MAPURL: mapUrl,
         CREATOR: creator,
-        WRTIME: msToTime(wrEntry.time),
-        WRUSER: wrEntry.userName,
-        WRUSERURL: `${leaderboardUrl}user/${wrEntry.discordID}`
+        WRLINE: wrLine
     });
 };
 
-const sendNewMotwMessage = async ({ mapName, steamID, creator, wrEntry }) => {
+const sendDiscordMotwMessage = async ({ mapName, steamID, creator, wrEntry }) => {
     const content = buildMotwMessageContent({ mapName, steamID, creator, wrEntry });
-    await sendDiscordMessage(content);
+
+    await fetch('https://discord.com/api/v9/channels/1046110817986293792/messages', {
+        method: 'POST',
+        body: JSON.stringify({
+            content
+        }),
+        headers: {
+            Authorization: process.env.DISCORD_TOKEN,
+            'Content-Type': 'application/json'
+        }
+    });
 };
-
-const sendMotwRecapMessage = async () => {
-    try {
-        // Get the current featured leaderboard (the one that's ending)
-        const currentFeatured = await Leaderboard.findOne({ featured: true });
-
-        if (!currentFeatured) {
-            console.log('No featured leaderboard found for recap');
-            return;
-        }
-
-        // Filter entries submitted in the last 7 days
-        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        const entries = Array.isArray(currentFeatured.entries)
-            ? [...currentFeatured.entries]
-                .filter(entry => entry.submittedAt && new Date(entry.submittedAt) >= sevenDaysAgo)
-                .sort((a, b) => a.time - b.time)
-            : [];
-
-        const participantCount = entries.length;
-        const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
-        const mapUrl = `${leaderboardUrl}${currentFeatured.steamID}`;
-
-        // Build the recap message
-        let podiumContent = '';
-        if (participantCount === 0) {
-            podiumContent = 'No participants this week.';
-        } else if (participantCount === 1) {
-            const first = entries[0];
-            podiumContent = `🥇 ${first.userName} - \`${msToTime(first.time)}\``;
-        } else if (participantCount === 2) {
-            const first = entries[0];
-            const second = entries[1];
-            podiumContent = `🥇 ${first.userName} - \`${msToTime(first.time)}\`\n🥈 ${second.userName} - \`${msToTime(second.time)}\``;
-        } else {
-            // 3 or more participants
-            const first = entries[0];
-            const second = entries[1];
-            const third = entries[2];
-            podiumContent = `🥇 ${first.userName} - \`${msToTime(first.time)}\`\n🥈 ${second.userName} - \`${msToTime(second.time)}\`\n🥉 ${third.userName} - \`${msToTime(third.time)}\``;
-        }
-
-        const template = [
-            `## Map of the Week Recap: [${currentFeatured.mapName}](${mapUrl})`,
-            `**Participants:** ${participantCount}`,
-            '',
-            '### Top Performers:',
-            podiumContent
-        ].join('\n');
-
-        await sendDiscordMessage(template);
-    } catch (err) {
-        console.log('Failed to send MotW recap message:', err);
-    }
-}
 
 const getRandomLeaderboardWithWr = async () => {
     const response = await Leaderboard.aggregate([{ $sample: { size: 1 } }]);
@@ -133,8 +93,7 @@ const newFeaturedLeaderboard = async (req, res) => {
     await Leaderboard.findOneAndUpdate({ _id: selectedMap._id }, {featured: true});
 
     try {
-        await sendMotwRecapMessage();
-        await sendNewMotwMessage({
+        await sendDiscordMotwMessage({
             mapName: selectedMap.mapName,
             steamID: selectedMap.steamID,
             creator: selectedMap.creator,
