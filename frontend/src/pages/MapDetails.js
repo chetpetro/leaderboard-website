@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import {Link, useParams} from "react-router-dom";
 import CreateEntryForm from "../components/CreateEntryForm";
-import '../styles/LeaderboardDetails.css'
+import '../styles/MapDetails.css'
 import { msToTime } from "../timeUtils";
 
-const LeaderboardDetails = ({user}) => {
+const MapDetails = ({user}) => {
     const { steamID } = useParams()
     const [map, setMap] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -33,6 +33,7 @@ const LeaderboardDetails = ({user}) => {
                             <div className="map-image media-container">
                                 <img src={map.previewImage} alt={`${map.mapName} preview`} />
                             </div>
+                            <img src={map.previewImage} alt={""} className={"bg-blurred-img"}/>
                             <div className={"map-info"}>
                                 <h1 className="details-map-name">{map.mapName || 'Unknown'}</h1>
                                 <span className={"map-creator"}>By: { map.creator }</span>
@@ -112,4 +113,4 @@ const LeaderboardDetails = ({user}) => {
     );
 }
  
-export default LeaderboardDetails;
+export default MapDetails;

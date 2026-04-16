@@ -5,7 +5,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from "./pages/Login"
 import Signup from './pages/Signup';
-import LeaderboardDetails from './pages/LeaderboardDetails';
+import MapDetails from './pages/MapDetails';
 import { useState, useEffect } from 'react';
 import User from './pages/User';
 import PointsLeaderboard from './pages/PointsLeaderboard';
@@ -42,7 +42,7 @@ function App() {
         <div className="pages">
           <Routes>
             <Route exact path='/' element={<Home motw={motw}/>} />
-            <Route path='/:steamID' element={<LeaderboardDetails user={user} />} />
+            <Route path='/:steamID' element={<MapDetails user={user} />} />
             <Route path='/user/:discordID' element={<User />}/>
             <Route path='/login' element={<Login setUser={setUser}/>} />
             <Route path='/sign-up' element={<Signup setUser={setUser}/>} />
