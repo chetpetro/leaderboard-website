@@ -5,19 +5,41 @@ const {msToTime} = require("../utils/timeUtil");
 const { sendDiscordMessage } = require('../utils/discordUtil');
 require('dotenv').config()
 
-const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID }) => {
+const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID, wrContext }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const userUrl = `${leaderboardUrl}user/${discordID}`;
     const mapUrl = `${leaderboardUrl}${steamID}`;
-    const template = [
-        'New PB for <@%DISCORDID%>',
-        '',
-        '**PB:** `%PBTIME%`',
-        '**By:** [%USERNAME%](<%USERURL%>)',
-        '**Map:** [%MAPNAME%](<%MAPURL%>)',
-        '',
-        '**More on:** [Pogostuck Leaderboards](<%LEADERBOARDURL%>)'
-    ].join('\n');
+    const oldWrTime = wrContext?.oldWrTime;
+    const hasOldWrTime = Number.isFinite(oldWrTime);
+    const isNewWr = wrContext?.isNewWr === true;
+
+    const template = isNewWr
+        ? [
+            wrContext?.isSelfWrImprovement || !hasOldWrTime
+                ? 'New WR by <@%DISCORDID%>'
+                : 'New WR by <@%DISCORDID%> dethroning `%OLDWRTIME%` by %OLDWRHOLDER%',
+            '',
+            hasOldWrTime
+                ? '`%OLDWRTIME%` -> `%PBTIME%` (`%TIMEDIFF%`)'
+                : '**WR:** `%PBTIME%`',
+            '**By:** [%USERNAME%](<%USERURL%>)',
+            '**Map:** [%MAPNAME%](<%MAPURL%>)',
+            '',
+            '**More on:** [Pogostuck Leaderboards](<%LEADERBOARDURL%>)'
+        ].join('\n')
+        : [
+            'New PB for <@%DISCORDID%>',
+            '',
+            '**PB:** `%PBTIME%`',
+            '**By:** [%USERNAME%](<%USERURL%>)',
+            '**Map:** [%MAPNAME%](<%MAPURL%>)',
+            '',
+            '**More on:** [Pogostuck Leaderboards](<%LEADERBOARDURL%>)'
+        ].join('\n');
+
+    const wrImprovement = hasOldWrTime ? oldWrTime - time : null;
+    const oldWrHolder = wrContext?.oldWrHolder
+        || (wrContext?.oldWrHolderDiscordID ? `<@${wrContext.oldWrHolderDiscordID}>` : 'unknown');
 
     const content = replaceTemplateKeywords(template, {
         DISCORDID: discordID,
@@ -26,7 +48,10 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamI
         USERURL: userUrl,
         MAPNAME: mapName,
         MAPURL: mapUrl,
-        LEADERBOARDURL: leaderboardUrl
+        LEADERBOARDURL: leaderboardUrl,
+        OLDWRTIME: hasOldWrTime ? msToTime(oldWrTime) : '',
+        OLDWRHOLDER: oldWrHolder,
+        TIMEDIFF: wrImprovement !== null ? msToTime(wrImprovement) : ''
     });
 
     await sendDiscordMessage(content);
@@ -104,59 +129,89 @@ const createLeaderboard = async (req, res) => {
 }
 
 const createEntry = async (req, res) => {
+    try {
+        const { steamID } = req.params;
 
-    const { steamID } = req.params;
+        const map = await Leaderboard.findOne({ steamID });
+        if (!map) return res.status(404).json({error: "No leadearboard found"});
 
-    const map = await Leaderboard.findOne({ steamID });
-    if (!map) return res.status(404).json({error: "No leadearboard found"});
+        let entries = map.entries
+        const submissionDate = new Date();
+        const oldWrEntry = entries.reduce((best, entry) => {
+            if (!entry || !Number.isFinite(entry.time)) return best;
+            if (!best || entry.time < best.time) return entry;
+            return best;
+        }, null);
+        const submittedTime = Number(req.body.time);
 
-    let entries = map.entries
-    const submissionDate = new Date();
-
-    for(let i = 0; i < entries.length; i++){
-        if (req.body.time && entries[i].discordID === req.body.discordID){
-            if (entries[i].time >= req.body.time) {
-                entries[i] = { ...req.body, submittedAt: submissionDate };
-                const update = await Leaderboard.findOneAndUpdate(
-                    { steamID },
-                    { entries, lastSubmissionAt: submissionDate },
-                    { new: true }
-                );
-
-
-                await sendDiscordPbMessage({
-                    discordID: req.body.discordID,
-                    userName: req.body.userName,
-                    time: req.body.time,
-                    mapName: map.mapName,
-                    steamID: map.steamID
-                });
-
-                res.status(200).json(update);
-            } else {
-                res.status(200).json({msg: 'Posting slower time, time not updated!'});
+        const getWrContext = () => {
+            if (!Number.isFinite(submittedTime)) return { isNewWr: false };
+            if (!oldWrEntry) {
+                return {
+                    isNewWr: true,
+                    isSelfWrImprovement: true,
+                    oldWrTime: null,
+                    oldWrHolder: null,
+                    oldWrHolderDiscordID: null
+                };
             }
-            return;
+
+            const isNewWr = submittedTime < oldWrEntry.time;
+            return {
+                isNewWr,
+                isSelfWrImprovement: isNewWr && oldWrEntry.discordID === req.body.discordID,
+                oldWrTime: oldWrEntry.time,
+                oldWrHolder: oldWrEntry.userName,
+                oldWrHolderDiscordID: oldWrEntry.discordID
+            };
+        };
+
+        const discordPayload = {
+            discordID: req.body.discordID,
+            userName: req.body.userName,
+            time: req.body.time,
+            mapName: map.mapName,
+            steamID: map.steamID,
+            wrContext: getWrContext()
+        };
+
+        const existingEntryIndex = entries.findIndex(
+            (entry) => req.body.time && entry.discordID === req.body.discordID
+        );
+
+        let responsePayload;
+
+        if (existingEntryIndex !== -1) {
+            if (entries[existingEntryIndex].time < req.body.time) {
+                return res.status(200).json({msg: 'Posting slower time, time not updated!'});
+            }
+
+            entries[existingEntryIndex] = { ...req.body, submittedAt: submissionDate };
+            responsePayload = await Leaderboard.findOneAndUpdate(
+                { steamID },
+                { entries, lastSubmissionAt: submissionDate },
+                { new: true }
+            );
+        } else {
+            responsePayload = await Leaderboard.updateOne(
+                { steamID },
+                {
+                    $push: { entries: { ...req.body, submittedAt: submissionDate } },
+                    $set: { lastSubmissionAt: submissionDate }
+                }
+            );
         }
+
+        try {
+            await sendDiscordPbMessage(discordPayload);
+        } catch (discordError) {
+            console.error('Failed to send Discord PB message:', discordError);
+        }
+
+        return res.status(200).json(responsePayload)
+    } catch (err) {
+        return res.status(400).json({error: err.message});
     }
-
-    await sendDiscordPbMessage({
-        discordID: req.body.discordID,
-        userName: req.body.userName,
-        time: req.body.time,
-        mapName: map.mapName,
-        steamID: map.steamID
-    });
-
-    const response = await Leaderboard.updateOne(
-        { steamID },
-        {
-            $push: { entries: { ...req.body, submittedAt: submissionDate } },
-            $set: { lastSubmissionAt: submissionDate }
-        }
-    );
-
-    res.status(200).json(response)
 }
 
 const getMOTW = async (req, res) => {
