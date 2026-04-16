@@ -139,34 +139,36 @@ const Home = ({motw}) => {
                         </div>
                         <div    className={'search-bar placeholder-target ' + (searchBarFocused ? 'focused' : '') + (mapsInitialized ? '' : ' maps-not-initialized is-loading')}
                                 onClick={handleSearchBarClick} onFocus={() => setSearchBarFocused(true)}>
-                            <div className="input-with-icon-cnt">
-                                <button className="media-container btn-clear">
-                                    <img src="/search-icon.svg" alt="search-icon" />
-                                </button>
-                                <input type="text" placeholder="Search for a map..." onChange={(e) => {
-                                    setQuery(e.target.value);
-                                }} value={query} ref={searchInputRef} id={"search"}/>
-                            </div>
-                            <div className={"search-results"} ref={searchResultRef}
-                                 style={{'--search-result-height': -1 * searchResultHeight + 'px'}}>
-                                <div className={"maps"}>
-                                    {maps
-                                        .filter((el) => el.mapName.toLowerCase()
-                                            .includes(query.toLowerCase()) ||
-                                            el.creator.toLowerCase().includes(query.toLowerCase()))
-                                        .slice(0, 6)
-                                        .map(map => (
-                                            <Link to={`/${map.steamID}`} className="result-map" key={map._id} title={`${map.mapName}`}>
-                                                <div className="media-container">
-                                                    <img src={map.previewImage} alt={`${map.mapName} preview`} />
-                                                </div>
-                                                <div className={"result-map-info"}>
-                                                    {map.featured && <span className="map-name text-gradient">{ map.mapName }</span>}
-                                                    {!map.featured && <span className={"map-name"}>{ map.mapName }</span>}
-                                                    <span className={"creator"}>By: { map.creator }</span>
-                                                </div>
-                                            </Link>
-                                        ))}
+                            <div className="search-inside">
+                                <div className="input-with-icon-cnt">
+                                    <button className="media-container btn-clear">
+                                        <img src="/search-icon.svg" alt="search-icon" />
+                                    </button>
+                                    <input type="text" placeholder="Search for a map..." onChange={(e) => {
+                                        setQuery(e.target.value);
+                                    }} value={query} ref={searchInputRef} id={"search"}/>
+                                </div>
+                                <div className={"search-results"} ref={searchResultRef}
+                                     style={{'--search-result-height': -1 * searchResultHeight + 'px'}}>
+                                    <div className={"maps"}>
+                                        {maps
+                                            .filter((el) => el.mapName.toLowerCase()
+                                                    .includes(query.toLowerCase()) ||
+                                                el.creator.toLowerCase().includes(query.toLowerCase()))
+                                            .slice(0, 6)
+                                            .map(map => (
+                                                <Link to={`/${map.steamID}`} className="result-map" key={map._id} title={`${map.mapName}`}>
+                                                    <div className="media-container">
+                                                        <img src={map.previewImage} alt={`${map.mapName} preview`} />
+                                                    </div>
+                                                    <div className={"result-map-info"}>
+                                                        {map.featured && <span className="map-name text-gradient">{ map.mapName }</span>}
+                                                        {!map.featured && <span className={"map-name"}>{ map.mapName }</span>}
+                                                        <span className={"creator"}>By: { map.creator }</span>
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>

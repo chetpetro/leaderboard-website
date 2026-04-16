@@ -133,11 +133,13 @@
 /* placeholder loading styling */
 .teaser .search-bar-with-placeholder-wrapper {
     .search-bar {
-        transition: 1s ease-in opacity, 1s ease-in height, .3s ease outline-color;
-        overflow: hidden;
+        .search-inside {
+            transition: 1s ease-in opacity, 1s ease-in height, .3s ease outline-color;
+            overflow: hidden;
 
-        .search-results {
-            transition: .75s ease;
+            .search-results {
+                transition: .75s ease;
+            }
         }
 
         &:not(.focused) .search-results {
@@ -181,4 +183,49 @@
         }
 
     }
+}
+
+.teaser .search-bar-with-placeholder-wrapper .search-bar:not(.is-loading) {
+    --flamingo-queen-1: var(--color-surface-100);
+    --flamingo-queen-2: var(--primary);
+    --flamingo-queen-3: var(--color-surface-100);
+    position: relative;
+
+    &::before,
+    &::after {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: inherit;
+        z-index: -1;
+        background-image: conic-gradient(
+                from var(--angle),
+                var(--flamingo-queen-1) .01turn,
+                var(--flamingo-queen-2) .98turn,
+                var(--flamingo-queen-3) 1turn
+        );
+        animation: spin 4s ease-out forwards, hide reverse .5s ease, hide 1s forwards 1.25s ease-out;
+    }
+
+    &::after {
+        filter: blur(14px);
+    }
+}
+
+@keyframes hide {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes spin {
+    100% {
+        --angle: 500deg;
+    }
+}
+
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
 }

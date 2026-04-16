@@ -8,7 +8,7 @@ body:has(.teaser) {
     min-height: calc(100dvh);
     display: grid;
     align-items: start;
-    padding-block-start: 5rem;
+    padding-block-start: 2rem;
 
     .inside {
         display: grid;
@@ -74,5 +74,17 @@ body:has(.teaser) {
         h1 .text-gradient {
             text-wrap: nowrap;
         }
+    }
+}
+
+@media (min-width: 768px) {
+    .teaser {
+        padding-block-start: 5rem;
+    }
+}
+
+@media (min-width: 2000px) {
+    .teaser {
+        padding-block-start: 10rem;
     }
 }
