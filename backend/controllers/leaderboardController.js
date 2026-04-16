@@ -17,10 +17,10 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamI
         ? [
             wrContext?.isSelfWrImprovement || !hasOldWrTime
                 ? 'New WR by <@%DISCORDID%>'
-                : 'New WR by <@%DISCORDID%> dethroning `%OLDWRTIME%` by %OLDWRHOLDER%',
+                : 'New WR by <@%DISCORDID%> dethroning %OLDWRHOLDER%\'s `%OLDWRTIME%`',
             '',
             hasOldWrTime
-                ? '`%OLDWRTIME%` -> `%PBTIME%` (`%TIMEDIFF%`)'
+                ? '**WR:** `%PBTIME%` (`-%TIMEDIFF%`)'
                 : '**WR:** `%PBTIME%`',
             '**By:** [%USERNAME%](<%USERURL%>)',
             '**Map:** [%MAPNAME%](<%MAPURL%>)',
