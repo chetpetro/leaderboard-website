@@ -3,7 +3,7 @@ body:has(.teaser) {
 }
 .teaser {
     margin-inline: auto;
-    margin-block-start: 0;
+    margin-block-start: 0!important;
     text-align: center;
     min-height: calc(100dvh);
     display: grid;
@@ -69,7 +69,7 @@ body:has(.teaser) {
     }
 }
 
-@media (min-width: 350px) {
+@media (min-width: 400px) {
     .teaser {
         h1 .text-gradient {
             text-wrap: nowrap;
