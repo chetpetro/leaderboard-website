@@ -41,6 +41,8 @@ const MapDetails = ({user}) => {
 
     const handleDeleteEntry = async (entry) => {
         if (!user?.token) return;
+        const confirmed = window.confirm(`Are you sure you want to delete this entry?\n${entry.userName} - ${msToTime(entry.time)}`);
+        if (!confirmed) return;
 
         try {
             const response = await fetch(`${API_BASE_URL}/admin/leaderboards/${map.steamID}/entries/${entry.discordID}`, {
