@@ -83,8 +83,10 @@ body:has(.teaser) {
     }
 }
 
-@media (min-width: 2000px) {
+@media (min-width: 1600px) {
     .teaser {
-        padding-block-start: 10rem;
+        align-items: center;
+        padding-block-start: 0;
+        margin-block-start: -5rem!important;
     }
 }
