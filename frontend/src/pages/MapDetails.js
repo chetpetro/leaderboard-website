@@ -32,7 +32,6 @@ const MapDetails = ({user}) => {
 
 
     useEffect(() => {
-        setIsLoading(true);
         fetchMap();
     }, [fetchMap])
 
