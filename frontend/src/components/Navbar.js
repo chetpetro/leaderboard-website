@@ -4,7 +4,6 @@ import {useEffect, useRef, useState} from "react";
 import '../styles/components/Navbar.css';
 
 const Navbar = ({ user, setUser, motw }) => {
-    console.log(JSON.stringify(user))
     const headerRef = useRef(null);
     const menuButtonRef = useRef(null);
     const firstMobileLinkRef = useRef(null);
