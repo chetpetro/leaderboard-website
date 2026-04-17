@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {Link, useParams} from "react-router-dom";
 import CreateEntryForm from "../components/CreateEntryForm";
 import '../styles/MapDetails.css'
@@ -11,29 +11,30 @@ const MapDetails = ({user}) => {
     const [isLoading, setIsLoading] = useState(true);
     const { showError } = useError();
 
+    const fetchMap = useCallback(async () => {
+        try {
+            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + steamID)
+            const json = await response.json();
+
+            if (!response.ok) {
+                showError('Failed to load map details');
+                setIsLoading(false);
+                return;
+            }
+
+            setMap(json[0]);
+            setIsLoading(false);
+        } catch (error) {
+            showError(error.message || 'Failed to load map details. Please try again.');
+            setIsLoading(false);
+        }
+    }, [steamID, showError]);
+
 
     useEffect(() => {
-        const fetchMap = async () => {
-            try {
-                const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + steamID)
-                const json = await response.json();
-
-                if (!response.ok) {
-                    showError('Failed to load map details');
-                    setIsLoading(false);
-                    return;
-                }
-
-                setMap(json[0]);
-                setIsLoading(false);
-            } catch (error) {
-                showError(error.message || 'Failed to load map details. Please try again.');
-                setIsLoading(false);
-            }
-        }
-
+        setIsLoading(true);
         fetchMap();
-    }, [steamID, showError])
+    }, [fetchMap])
 
     return (
         <div className="map-details">
@@ -84,7 +85,7 @@ const MapDetails = ({user}) => {
                 </div>
                 <div className="col-right">
                     <div className="submit-entry card">
-                        {user.userName && <CreateEntryForm steamID={ map.steamID } user={user}/>}
+                        {user.userName && <CreateEntryForm steamID={ map.steamID } user={user} onEntrySaved={fetchMap} />}
                         {!user.userName && <h2>Login to Submit Entry</h2>}
                     </div>
                     <div className="map-details-placeholder placeholder-wrapper">

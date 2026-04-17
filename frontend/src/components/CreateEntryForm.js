@@ -1,7 +1,7 @@
 import { useState } from "react";
 import '../styles/components/CreateEntryForm.css';
 import {useError} from "../context/ErrorContext";
-const CreateEntryForm = ({ steamID, user }) => {
+const CreateEntryForm = ({ steamID, user, onEntrySaved }) => {
     const { showError } = useError();
 
     const [time, setTime] = useState('00:00:00.000');
@@ -21,19 +21,28 @@ const CreateEntryForm = ({ steamID, user }) => {
         if (errorMsg) {console.error("Error during entry submission:", errorMsg); showError(errorMsg); return;}
         const msTime = Number(splitTime[3]) + Number(splitTime[2]) * 1000 + Number(splitTime[1]) * 60000 + Number(splitTime[0]) * 3600000
 
-        fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + steamID, {
-            method: 'PATCH',
-            body: JSON.stringify({ userName: user.userName, discordID: user.discordID, time: msTime }),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
+        try {
+            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + steamID, {
+                method: 'PATCH',
+                body: JSON.stringify({ userName: user.userName, discordID: user.discordID, time: msTime }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json().catch(() => null);
+                showError(errorBody?.error || 'Failed to submit entry.');
+                return;
             }
-        }).then(() => {
+
             setTime('00:00:00.000');
-        }).catch((err) => {
+            onEntrySaved?.();
+        } catch (err) {
             console.log(err);
-            showError(err);
-        });
+            showError(err.message || 'Failed to submit entry.');
+        }
     }
 
     return (

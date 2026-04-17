@@ -8,6 +8,7 @@ export const ErrorProvider = ({ children }) => {
   const showError = (message) => {
     const id = `${Date.now()}-${Math.floor(Math.random()*1000)}`;
     setErrors((prev) => [...prev, { id, message }]);
+    setTimeout(() => clearError(id), 5000);
     return id;
   };
 
