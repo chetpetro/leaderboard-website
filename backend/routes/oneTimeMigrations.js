@@ -4,4 +4,6 @@ const {oneTimeMigrate} = require("../controllers/one-time-migrations-controller"
 
 const router = express.Router();
 
-router.get("/oTMigrate", oneTimeMigrate);
+router.get("/", oneTimeMigrate);
+
+module.exports = router;

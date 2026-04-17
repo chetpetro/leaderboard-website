@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const leaderboardRoutes = require('../routes/leaderboard');
 const userRoutes = require('../routes/user');
 const cronRoutes = require('../routes/cron')
+const oTMigrationRoutes = require('../routes/oneTimeMigrations')
 const cors = require('cors');
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use("/api/leaderboards" , leaderboardRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/cron", cronRoutes);
+app.use("/api/oTMigrate", oTMigrationRoutes);
 app.get("/", (req, res) => res.status(200).json({ message: process.env.PORT}));
 
 const PORT = process.env.PORT;
