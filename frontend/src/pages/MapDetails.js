@@ -85,6 +85,11 @@ const MapDetails = ({user}) => {
                                 <h1 className="details-map-name">{map.mapName || 'Unknown'}</h1>
                                 <span className={"map-creator"}>By: { map.creator }</span>
                             </div>
+                            <a className="steam-btn btn btn-small" title={`View ${map.mapName} on Steam`} href={`https://steamcommunity.com/sharedfiles/filedetails/?id=${map.steamID}`} target="_blank" rel="noopener noreferrer">
+                                <div className="media-container">
+                                    <img src={"/Steam.svg"} alt="Steam Icon" className="steam-icon" />
+                                </div>
+                            </a>
                         </div>
                         <div className={"placeholder" + (isLoading ? ' is-loading' : '')}>
                             <div className={"placeholder-image"}>

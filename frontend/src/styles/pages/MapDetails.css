@@ -61,6 +61,41 @@
                         background: linear-gradient(to bottom, transparent 50%, var(--color-surface-100));
                     }
                 }
+                .steam-btn {
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
+                    background: linear-gradient(
+                            to bottom,
+                            #111d2e 0%,
+                            #051839 21.2%,
+                            #0a1b48 40.7%,
+                            #132e62 58.1%,
+                            #144b7e 73.8%,
+                            #136497 87.3%,
+                            #1387b8 100%
+                    );
+                    border: none;
+                    padding: 0 .1rem 0 0;
+                    border-radius: 100%;
+                    .media-container {
+                        max-height: 1.5rem;
+                        max-width: 1.5rem;
+                        width: 100%;
+                        img {
+                            height: 100%;
+                            width: 100%;
+                        }
+                    }
+                    transition-property: transform, box-shadow;
+                    transition-duration: 0.15s;
+                    transition-timing-function: ease;
+                    box-shadow: var(--shadow-sm);
+                    &:hover {
+                        transform: scale(1.015) translateY(-1px);
+                        box-shadow: var(--shadow-lg);
+                    }
+                }
             }
         }
 
