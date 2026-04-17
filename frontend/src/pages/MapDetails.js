@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {Link, useParams} from "react-router-dom";
 import CreateEntryForm from "../components/CreateEntryForm";
-import '../styles/MapDetails.css'
+import '../styles/pages/MapDetails.css'
 import { msToTime } from "../timeUtils";
 import { useError } from '../context/ErrorContext';
 

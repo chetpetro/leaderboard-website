@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PlayerPodium from "../components/PlayerPodium";
-import '../styles/pointsLeaderboard/PointsLeaderboard.css';
+import '../styles/pages/PointsLeaderboard.css';
 import {Link} from "react-router-dom";
 
 const PointsLeaderboard = () => {

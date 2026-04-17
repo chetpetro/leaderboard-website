@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import '../styles/Signup.css'
+import '../styles/pages/Signup.css'
 import { useError } from '../context/ErrorContext';
 
 const Login = ({ setUser }) => {

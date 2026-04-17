@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef, useMemo} from "react";
 import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
-import '../styles/home/Home.css'
+import '../styles/pages/Home.css'
 import {Link} from "react-router-dom";
 import ActiveMaps from "../components/ActiveMaps";
 import PlayerPodium from "../components/PlayerPodium";
