@@ -6,7 +6,9 @@ const LogoutButton = ({ setUser}) => {
     const handleClick = () => {
         setUser({ 
             userName: '',
-            discordID: ''
+            discordID: '',
+            token: '',
+            isAdmin: false
         });
 
         localStorage.removeItem('user')

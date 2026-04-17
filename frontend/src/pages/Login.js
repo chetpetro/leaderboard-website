@@ -50,7 +50,7 @@ const Login = ({ setUser }) => {
             .then(response => response.json())
             .then(json => {
                 localStorage.setItem('user', JSON.stringify(json));
-                setUser({userName: json.userName, discordID: json.discordID, token: json.token})
+                setUser({userName: json.userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin})
                 navigate('/');
             })
             .catch((error) => {
