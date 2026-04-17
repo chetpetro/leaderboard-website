@@ -214,6 +214,38 @@ const createEntry = async (req, res) => {
     }
 }
 
+const deleteEntryByMapAndDiscord = async (req, res) => {
+    try {
+        const { steamID, discordID } = req.params;
+
+        const map = await Leaderboard.findOne({ steamID });
+        if (!map) return res.status(404).json({ error: 'No leadearboard found' });
+
+        const filteredEntries = map.entries.filter((entry) => entry.discordID !== discordID);
+        if (filteredEntries.length === map.entries.length) {
+            return res.status(404).json({ error: 'No entry found for this map and discordID' });
+        }
+
+        const lastSubmissionAt = filteredEntries.reduce((latest, entry) => {
+            if (!entry?.submittedAt) return latest;
+
+            const submittedAt = new Date(entry.submittedAt);
+            if (Number.isNaN(submittedAt.getTime())) return latest;
+
+            if (!latest || submittedAt > latest) return submittedAt;
+            return latest;
+        }, null);
+
+        map.entries = filteredEntries;
+        map.lastSubmissionAt = lastSubmissionAt;
+        await map.save();
+
+        return res.status(200).json({ success: true });
+    } catch (err) {
+        return res.status(400).json({ error: err.message });
+    }
+}
+
 const getMOTW = async (req, res) => {
     const response = await Leaderboard.findOne({ featured: true });
 
@@ -226,6 +258,7 @@ module.exports = {
     getLeaderboard,
     createLeaderboard,
     createEntry,
+    deleteEntryByMapAndDiscord,
     getMOTW,
     getRecentLeaderboards
 }
