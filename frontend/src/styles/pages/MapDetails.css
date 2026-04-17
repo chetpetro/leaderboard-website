@@ -267,6 +267,6 @@
 @media (min-width: 300px) {
     .map-details .inside .col-left .leaderboard .leaderboard-entry {
         align-items: center;
-        grid-template-columns: 3ch 1fr auto auto;
+        grid-template-columns: 1ch 1fr auto auto;
     }
 }
