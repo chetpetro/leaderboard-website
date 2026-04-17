@@ -9,6 +9,7 @@ import MapDetails from './pages/MapDetails';
 import { useState, useEffect } from 'react';
 import User from './pages/User';
 import PointsLeaderboard from './pages/PointsLeaderboard';
+import ErrorMessageDisplay from "./components/ErrorMessageDisplay";
 
 function App() {
 
@@ -38,6 +39,7 @@ function App() {
 
   return (
     <div className="App">
+      <ErrorMessageDisplay/>
       <BrowserRouter>
         <Navbar user={user} setUser={setUser} motw={motw}/>
         <div className="pages">

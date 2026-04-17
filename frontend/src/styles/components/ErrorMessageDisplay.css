@@ -1,0 +1,21 @@
+.error-message-display  {
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+    inset: 0;
+    padding-block: 10px;
+    overflow: hidden;
+
+    .message {
+        margin-inline: auto;
+        width: min(100%, 400px);
+        padding: .5rem 1rem;
+        border-radius: var(--border-radius);
+        font-size: .8rem;
+        box-shadow: var(--shadow-lg);
+    }
+    .error-message {
+        background-color: #b50000;
+        border: 1px solid #d36464;
+    }
+}
