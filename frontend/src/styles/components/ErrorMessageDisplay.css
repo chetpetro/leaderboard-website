@@ -3,7 +3,7 @@
     z-index: 1000;
     pointer-events: none;
     inset: 0;
-    padding-block: 10px;
+    padding-block: 20px;
     overflow: hidden;
 
     .message {
@@ -12,10 +12,22 @@
         padding: .5rem 1rem;
         border-radius: var(--border-radius);
         font-size: .8rem;
-        box-shadow: var(--shadow-lg);
+        box-shadow: var(--shadow-sm), var(--shadow-lg);
+        pointer-events: auto;
+        &.fade-out {
+            outline: rebeccapurple 2px dashed;
+            animation: fadeout 750ms ease forwards;
+        }
     }
     .error-message {
         background-color: #b50000;
         border: 1px solid #d36464;
+    }
+}
+
+@keyframes fadeout {
+    to {
+        opacity: 0;
+        transform: translateY(-40px);
     }
 }

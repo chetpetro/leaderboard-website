@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/Signup.css'
+import { useError } from '../context/ErrorContext';
 
 const Signup = ({ setUser }) => {
     const [userName, setUserName] = useState('')
     const [discordID, setDiscordID] = useState('')
     const [password, setPassword] = useState('')
+    const { showError } = useError();
 
 
     const navigate = useNavigate();
@@ -13,21 +15,28 @@ const Signup = ({ setUser }) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/sign-up', {
-            method:"POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({userName, discordID, password, isAdmin: false})
-        });
-        const json = await response.json()
+        try {
+            const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/sign-up', {
+                method:"POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({userName, discordID, password, isAdmin: false})
+            });
+            const json = await response.json()
 
-        if (!response.ok) throw Error(json.error);
-        
-        // Store user in local storage
-        localStorage.setItem('user', JSON.stringify(json));
-        
-        setUser({userName, discordID, token: json.token, isAdmin: json.isAdmin});
+            if (!response.ok) {
+                showError(json.error || 'Sign up failed');
+                return;
+            }
 
-        navigate('/');
+            // Store user in local storage
+            localStorage.setItem('user', JSON.stringify(json));
+
+            setUser({userName, discordID, token: json.token, isAdmin: json.isAdmin});
+
+            navigate('/');
+        } catch (error) {
+            showError(error.message || 'Sign up failed. Please try again.');
+        }
     }
 
     useEffect(() => {
@@ -46,9 +55,12 @@ const Signup = ({ setUser }) => {
                 setUser({userName: json.userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin});
                 navigate('/');
             })
-            .catch((error) => console.log("Sign Up Discord Error: " + error))
+            .catch((error) => {
+                showError(error.message || 'Discord sign up failed. Please try again.');
+                console.log("Sign Up Discord Error: " + error)
+            })
         }
-    }, [navigate, setUser])
+    }, [navigate, setUser, showError])
 
     return (
         <div className="signup">

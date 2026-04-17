@@ -183,7 +183,7 @@ const createEntry = async (req, res) => {
 
         if (existingEntryIndex !== -1) {
             if (entries[existingEntryIndex].time < req.body.time) {
-                return res.status(200).json({msg: 'Posting slower time, time not updated!'});
+                return res.status(400).json({msg: 'Posting slower time, time not updated!'});
             }
 
             entries[existingEntryIndex] = { ...req.body, submittedAt: submissionDate };

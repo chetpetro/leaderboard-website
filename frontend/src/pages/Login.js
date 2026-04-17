@@ -1,31 +1,40 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/Signup.css'
+import { useError } from '../context/ErrorContext';
 
 const Login = ({ setUser }) => {
     const [userName, setUserName] = useState('')
     const [password, setPassword] = useState('')
+    const { showError } = useError();
 
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        
-        const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/login', {
-            method:"POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({userName, password})
-        });
-        const json = await response.json()
 
-        if (!response.ok) throw Error(json.error);
-        
-        // Store user in local storage
-        localStorage.setItem('user', JSON.stringify(json));
-        
-        setUser({userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin});
+        try {
+            const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/login', {
+                method:"POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({userName, password})
+            });
+            const json = await response.json()
 
-        navigate('/');
+            if (!response.ok) {
+                showError(json.error || 'Login failed');
+                return;
+            }
+
+            // Store user in local storage
+            localStorage.setItem('user', JSON.stringify(json));
+
+            setUser({userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin});
+
+            navigate('/');
+        } catch (error) {
+            showError(error.message || 'Login failed. Please try again.');
+        }
     }
 
     useEffect(() => {
@@ -44,9 +53,12 @@ const Login = ({ setUser }) => {
                 setUser({userName: json.userName, discordID: json.discordID, token: json.token})
                 navigate('/');
             })
-            .catch((error) => console.log("Login Discord Error: " + error))
+            .catch((error) => {
+                showError(error.message || 'Discord login failed. Please try again.');
+                console.log("Login Discord Error: " + error)
+            })
         }
-    }, [navigate, setUser]);
+    }, [navigate, setUser, showError]);
 
     return (
         <div className="login">

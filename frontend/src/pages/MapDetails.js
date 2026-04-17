@@ -3,26 +3,37 @@ import {Link, useParams} from "react-router-dom";
 import CreateEntryForm from "../components/CreateEntryForm";
 import '../styles/MapDetails.css'
 import { msToTime } from "../timeUtils";
+import { useError } from '../context/ErrorContext';
 
 const MapDetails = ({user}) => {
     const { steamID } = useParams()
     const [map, setMap] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const { showError } = useError();
 
 
     useEffect(() => {
         const fetchMap = async () => {
-            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + steamID)
-            const json = await response.json();
+            try {
+                const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + steamID)
+                const json = await response.json();
 
-            if (response.ok) {
+                if (!response.ok) {
+                    showError('Failed to load map details');
+                    setIsLoading(false);
+                    return;
+                }
+
                 setMap(json[0]);
+                setIsLoading(false);
+            } catch (error) {
+                showError(error.message || 'Failed to load map details. Please try again.');
                 setIsLoading(false);
             }
         }
 
         fetchMap();
-    }, [steamID])
+    }, [steamID, showError])
 
     return (
         <div className="map-details">

@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import User from './pages/User';
 import PointsLeaderboard from './pages/PointsLeaderboard';
 import ErrorMessageDisplay from "./components/ErrorMessageDisplay";
+import { ErrorProvider } from './context/ErrorContext';
 
 function App() {
 
@@ -38,22 +39,24 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <ErrorMessageDisplay/>
-      <BrowserRouter>
-        <Navbar user={user} setUser={setUser} motw={motw}/>
-        <div className="pages">
-          <Routes>
-            <Route exact path='/' element={<Home motw={motw}/>} />
-            <Route path='/:steamID' element={<MapDetails user={user} />} />
-            <Route path='/user/:discordID' element={<User />}/>
-            <Route path='/login' element={<Login setUser={setUser}/>} />
-            <Route path='/sign-up' element={<Signup setUser={setUser}/>} />
-            <Route path='/points-leaderboard' element={<PointsLeaderboard />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
-    </div>
+    <ErrorProvider>
+      <div className="App">
+        <ErrorMessageDisplay/>
+        <BrowserRouter>
+          <Navbar user={user} setUser={setUser} motw={motw}/>
+          <div className="pages">
+            <Routes>
+              <Route exact path='/' element={<Home motw={motw}/>} />
+              <Route path='/:steamID' element={<MapDetails user={user} />} />
+              <Route path='/user/:discordID' element={<User />}/>
+              <Route path='/login' element={<Login setUser={setUser}/>} />
+              <Route path='/sign-up' element={<Signup setUser={setUser}/>} />
+              <Route path='/points-leaderboard' element={<PointsLeaderboard />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </div>
+    </ErrorProvider>
   );
 }
 
