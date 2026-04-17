@@ -4,12 +4,16 @@ import CreateEntryForm from "../components/CreateEntryForm";
 import '../styles/pages/MapDetails.css'
 import { msToTime } from "../timeUtils";
 import { useError } from '../context/ErrorContext';
+import useAdminAuthorization from '../hooks/useAdminAuthorization';
+
+const API_BASE_URL = 'https://leaderboard-website-api.vercel.app/api';
 
 const MapDetails = ({user}) => {
     const { steamID } = useParams()
     const [map, setMap] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const { showError } = useError();
+    const { isAuthorized: isAdminAuthorized } = useAdminAuthorization(user);
 
     const fetchMap = useCallback(async () => {
         try {
@@ -34,6 +38,36 @@ const MapDetails = ({user}) => {
     useEffect(() => {
         fetchMap();
     }, [fetchMap])
+
+    const handleDeleteEntry = async (entry) => {
+        if (!user?.token) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/admin/leaderboards/${map.steamID}/entries/${entry.discordID}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${user.token}`
+                }
+            });
+
+            const json = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                showError(json?.error || 'Failed to delete entry.');
+                return;
+            }
+
+            setMap((prev) => {
+                const newMap = {
+                    ...prev,
+                    entries: (prev.entries || []).filter((entryEl) => entryEl.discordID !== entry.discordID)
+                };
+                return newMap;
+            });
+        } catch (error) {
+            showError(error.message || 'Failed to delete entry.');
+        }
+    };
+
 
     return (
         <div className="map-details">
@@ -74,10 +108,15 @@ const MapDetails = ({user}) => {
                     </div>
                     <div className="leaderboard map-rankings">
                         {map && map.entries.sort((a, b) => a.time - b.time).map((entry, index) => (
-                            <div className={"leaderboard-entry"}>
+                            <div key={entry.discordID} className={"leaderboard-entry" + (isAdminAuthorized ? ' admin-view' : '')}>
                                 <span className={"placing"}>{index + 1}</span>
                                 <Link to={`/user/${entry.discordID}`}>{ entry.userName }</Link>
                                 <span>{ msToTime(entry.time) }</span>
+                                { isAdminAuthorized &&
+                                    <button type={"button"} onClick={() => handleDeleteEntry(entry)}
+                                            className={"delete-btn btn btn-ghost btn-small"}>
+                                        -</button>
+                                }
                             </div>
                         ))}
                     </div>
