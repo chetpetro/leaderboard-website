@@ -5,24 +5,27 @@ const ErrorContext = createContext(null);
 export const ErrorProvider = ({ children }) => {
   const [errors, setErrors] = useState([]);
 
-  const showError = (message) => {
-    const id = `${Date.now()}-${Math.floor(Math.random()*1000)}`;
-    setErrors((prev) => [...prev, { id, message }]);
-    setTimeout(() => clearError(id), 5000);
-    return id;
-  };
 
-  const clearError = (id) => {
-      document.querySelector(`.error-message#error-id-${id}`)?.classList.add('fade-out');
-      setTimeout(() => setErrors((prev) => prev.filter((error) => error.id !== id)), 1000);
-  };
-
-  const clearAllErrors = () => {
-    setErrors([]);
-  };
 
   const value = useMemo(
-    () => ({ errors, showError, clearError, clearAllErrors }),
+    () => {
+      const showError = (message) => {
+        const id = `${Date.now()}-${Math.floor(Math.random()*1000)}`;
+        setErrors((prev) => [...prev, { id, message }]);
+        setTimeout(() => clearError(id), 5000);
+        return id;
+      };
+
+      const clearError = (id) => {
+        document.querySelector(`.error-message#error-id-${id}`)?.classList.add('fade-out');
+        setTimeout(() => setErrors((prev) => prev.filter((error) => error.id !== id)), 1000);
+      };
+
+      const clearAllErrors = () => {
+        setErrors([]);
+      };
+      return {errors, showError, clearError, clearAllErrors}
+    },
     [errors]
   );
 
