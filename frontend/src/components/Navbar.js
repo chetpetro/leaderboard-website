@@ -112,8 +112,7 @@ const Navbar = ({ user, setUser, motw }) => {
                 <ul className="desktop-nav-links">
                     <li><Link to="/points-leaderboard">Leaderboard</Link></li>
                     <li><Link to={mapOfTheWeekPath}>Map of the Week</Link></li>
-                    {user.isAdmin && <li><Link to="/admin">Admin</Link></li>}
-                    {user.userName && <li className={user.isAdmin ? 'admin' : 'default-user'}><Link to={`/user/${user.discordID}`}>{ user.userName }</Link></li>}
+                    {user.userName && <li><Link to={`/user/${user.discordID}`}>{ user.userName }</Link></li>}
                     {!user.userName && <li><Link to="/login"><button className='btn btn-ghost btn-header'>Login</button></Link></li>}
                     {!user.userName && <li><Link to="/sign-up"><button className='btn btn-primary btn-header'>Sign Up</button></Link></li>}
                     {user.userName && <li><LogoutButton setUser={setUser} /></li>}

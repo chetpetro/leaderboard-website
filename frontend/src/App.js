@@ -9,7 +9,6 @@ import MapDetails from './pages/MapDetails';
 import { useState, useEffect } from 'react';
 import User from './pages/User';
 import PointsLeaderboard from './pages/PointsLeaderboard';
-import AdminPanel from './pages/AdminPanel';
 import ErrorMessageDisplay from "./components/ErrorMessageDisplay";
 import { ErrorProvider } from './context/ErrorContext';
 
@@ -53,10 +52,6 @@ function App() {
               <Route path='/login' element={<Login setUser={setUser}/>} />
               <Route path='/sign-up' element={<Signup setUser={setUser}/>} />
               <Route path='/points-leaderboard' element={<PointsLeaderboard />} />
-              <Route
-                path='/admin'
-                element={user.userName && user.isAdmin ? <AdminPanel user={user} /> : <Navigate to='/' replace />}
-              />
             </Routes>
           </div>
         </BrowserRouter>

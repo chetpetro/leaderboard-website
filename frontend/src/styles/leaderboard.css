@@ -5,6 +5,8 @@
     .leaderboard-entry {
         display: grid;
         text-wrap: nowrap;
+        column-gap: 2ch;
+        row-gap: .5rem;
         padding: .5rem 1rem;
         position: relative;
         &:first-child {
@@ -59,6 +61,6 @@
 
 @media (min-width: 300px) {
     .leaderboard .leaderboard-entry {
-        grid-template-columns: 3ch 1fr auto;
+        grid-template-columns: 1ch 1fr auto;
     }
 }
