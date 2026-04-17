@@ -15,7 +15,8 @@ function App() {
   const [user, setUser] = useState({ 
     userName: '',
     discordID: '',
-    token: ''
+    token: '',
+    isAdmin: false,
   })
   const [motw, setMOTW] = useState('');
 

@@ -14,7 +14,7 @@ const loginUser = async (req, res) => {
 
         const token = createToken(user._id);
 
-        res.status(200).json({userName, discordID: user.discordID, token})
+        res.status(200).json({userName, discordID: user.discordID, token, isAdmin: user.isAdmin})
     } catch (err) {
         res.status(400).json({error: err.message})
     }
@@ -28,7 +28,7 @@ const loginUserDiscord = async (req, res) => {
 
         const token = createToken(user._id);
 
-        res.status(200).json({userName: user.userName, discordID: user.discordID, token})
+        res.status(200).json({userName: user.userName, discordID: user.discordID, token, isAdmin: user.isAdmin})
     } catch (err) {
         res.status(400).json({error: err.message})
     }
@@ -42,7 +42,7 @@ const signupUser = async (req, res) => {
 
         const token = createToken(user._id);
 
-        res.status(200).json({userName, discordID: user.discordID, token})
+        res.status(200).json({userName, discordID: user.discordID, token, isAdmin: user.isAdmin})
     } catch (err) {
         res.status(400).json({error: err.message})
     }
@@ -56,7 +56,7 @@ const signupUserDiscord = async (req, res) => {
 
         const token = createToken(user._id);
 
-        res.status(200).json({userName: user.userName, discordID: user.discordID, token})
+        res.status(200).json({userName: user.userName, discordID: user.discordID, token, isAdmin: user.isAdmin})
     } catch (err) {
         res.status(400).json({error: err.message})
     }

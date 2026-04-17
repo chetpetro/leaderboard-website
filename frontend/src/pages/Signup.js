@@ -16,7 +16,7 @@ const Signup = ({ setUser }) => {
         const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/sign-up', {
             method:"POST",
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({userName, discordID, password})
+            body: JSON.stringify({userName, discordID, password, isAdmin: false})
         });
         const json = await response.json()
 
@@ -25,7 +25,7 @@ const Signup = ({ setUser }) => {
         // Store user in local storage
         localStorage.setItem('user', JSON.stringify(json));
         
-        setUser({userName, discordID, token: json.token});
+        setUser({userName, discordID, token: json.token, isAdmin: json.isAdmin});
 
         navigate('/');
     }
@@ -43,7 +43,7 @@ const Signup = ({ setUser }) => {
             .then(response => response.json())
             .then(json => {
                 localStorage.setItem('user', JSON.stringify(json));
-                setUser({userName: json.userName, discordID: json.discordID, token: json.token})
+                setUser({userName: json.userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin});
                 navigate('/');
             })
             .catch((error) => console.log("Sign Up Discord Error: " + error))

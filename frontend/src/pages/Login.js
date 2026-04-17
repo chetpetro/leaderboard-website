@@ -23,7 +23,7 @@ const Login = ({ setUser }) => {
         // Store user in local storage
         localStorage.setItem('user', JSON.stringify(json));
         
-        setUser({userName, discordID: json.discordID, token: json.token});
+        setUser({userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin});
 
         navigate('/');
     }
@@ -60,7 +60,7 @@ const Login = ({ setUser }) => {
                     <input type="text" onChange={(e) => setPassword(e.target.value)} value={password}/>
                     <div className="btn-container justify-start">
                         <button className="btn btn-ghost btn-form">Login</button>
-                        <a className="btn btn-discord btn-form" href="https://discord.com/oauth2/authorize?client_id=1263159916512677918&response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogin&scope=identify">
+                        <a className="btn btn-discord btn-form" href="https://discord.com/oauth2/authorize?client_id=1263159916512677918&response_type=token&redirect_uri=https%3A%2F%2Fpogostuckleaderboards.vercel.app%2Flogin&scope=identify">
                             <span className="inside">
                                 <span className="btn-text">Login with Discord</span>
                                 <span className="media-container"><img className="discord-icon" alt="discord icon"
