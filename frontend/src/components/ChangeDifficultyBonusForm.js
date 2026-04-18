@@ -4,9 +4,9 @@ import '../styles/components/ChangeDifficultyBonusForm.css';
 
 const API_BASE_URL = 'https://leaderboard-website-api.vercel.app/api';
 
-const ChangeDifficultyBonusForm = ({ steamID, user, onDifficultyChanged }) => {
+const ChangeDifficultyBonusForm = ({ steamID, user, onDifficultyChanged, map }) => {
     const { showError } = useError();
-    const [difficultyBonus, setDifficultyBonus] = useState('0');
+    const [difficultyBonus, setDifficultyBonus] = useState(map.difficultyBonus);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -37,8 +37,6 @@ const ChangeDifficultyBonusForm = ({ steamID, user, onDifficultyChanged }) => {
                 showError(json?.error || 'Failed to update difficulty bonus.');
                 return;
             }
-
-            setDifficultyBonus('0');
             onDifficultyChanged?.();
         } catch (err) {
             showError(err.message || 'Failed to update difficulty bonus.');

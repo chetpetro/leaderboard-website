@@ -42,11 +42,48 @@
                         line-height: .8;
                         text-shadow: 0 0px 20px rgba(0, 0, 0, 1);
                     }
-                    .map-creator {
-                        font-size: .8rem;
-                        color: var(--color-surface-700);
+                    .details{
+                        width: calc(100% - .75rem);
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: space-between;
+                        align-items: end;
                         text-shadow: 0 0px 20px rgba(0, 0, 0, 1);
+                        .map-creator {
+                            color: var(--color-surface-700);
+                            font-size: .8rem;
+                            text-wrap: nowrap;
+                            max-width: 100%;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                        .difficulty-bonus-cnt {
+                            flex: 1;
+                            display: flex;
+                            justify-content: end;
+                            filter: drop-shadow(#ff7f00 0px 0px 3px);
+                            .hot_pepper.media-container {
+                                max-height: 1.25rem;
+                                aspect-ratio: 1;
+                            }
+                            .bonus {
+                                font-weight: 500;
+                                font-style: italic;
+                                text-align: end;
+                                /* gradient "flame" so red orange yellow*/
+                                background: linear-gradient(200deg,
+                                        #ffff00 40%,
+                                        #ff7f00 60%,
+                                        #ff0000 100%
+                                );
+                                background-clip: text;
+                                -webkit-background-clip: text;
+                                color: transparent;
+                            }
+                        }
+
                     }
+
 
                     z-index: 2;
 

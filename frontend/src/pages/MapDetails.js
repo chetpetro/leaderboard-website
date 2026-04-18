@@ -83,7 +83,12 @@ const MapDetails = ({user}) => {
                             <img src={map.previewImage} alt={""} className={"bg-blurred-img"}/>
                             <div className={"map-info"}>
                                 <h1 className="details-map-name">{map.mapName || 'Unknown'}</h1>
-                                <span className={"map-creator"}>By: { map.creator }</span>
+                                <div className="details">
+                                    <span className={"map-creator"}>By: { map.creator }</span>
+                                    {map.difficultyBonus > 0 && (<div className="difficulty-bonus-cnt">
+                                        <div className="hot_pepper media-container"><img src="/hot_pepper.png"/></div><span className="bonus">+{map.difficultyBonus}</span>
+                                    </div>)}
+                                </div>
                             </div>
                             <a className="steam-btn btn btn-small" title={`View ${map.mapName} on Steam`} href={`https://steamcommunity.com/sharedfiles/filedetails/?id=${map.steamID}`} target="_blank" rel="noopener noreferrer">
                                 <div className="media-container">
@@ -131,7 +136,7 @@ const MapDetails = ({user}) => {
                 <div className="col-right">
                     { isAdminAuthorized &&
                         <div className="admin-panel card">
-                            <ChangeDifficultyBonusForm steamID={map.steamID} user={user} onDifficultyChanged={fetchMap} />
+                            <ChangeDifficultyBonusForm steamID={map.steamID} user={user} onDifficultyChanged={fetchMap} map={map} />
                         </div>
                     }
                     <div className="submit-entry card">
