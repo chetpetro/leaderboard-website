@@ -110,7 +110,7 @@ const Navbar = ({ user, setUser, motw }) => {
                 </button>
                 <ul className="desktop-nav-links">
                     <li><Link to="/points-leaderboard">Leaderboard</Link></li>
-                    {user.userName && <li><Link to={`/user/${user.discordID}`}>
+                    {user.userName && <li><Link to={`/user/${user.discordID}`} title={user.userName}>
                         <div className="user-icon media-container">
                             <img src="/user.svg" alt="user" />
                         </div>
