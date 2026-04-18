@@ -39,7 +39,7 @@ body:has(.teaser) {
             justify-content: center;
             align-items: start;
             gap: 1rem;
-            .hardest-maps,
+            .hardest-maps-card,
             .map-of-the-week {
                 margin-block: .5rem;
                 display: flex;

@@ -1,4 +1,13 @@
+body:has(.hardest-maps) {
+    background: var(--color-surface-100) radial-gradient(circle at center 10rem, rgba(255, 255, 255, 8%), transparent 25rem) top center;
+    background-repeat: no-repeat;
+}
 .hardest-maps {
+    .heading {
+        margin-bottom: .75rem;
+        text-align: center;
+    }
+    min-height: calc(100dvh - var(--header-height) - 2px); /* not sure where the 2px come from. but otherwise the scrollbar shows immediately*/
     .maps-container {
         display: grid;
         grid-template-columns: 1fr auto auto;
@@ -16,6 +25,18 @@
                 color: var(--row-color, #5b0f0f); /* set in HardestMaps.js*/
                 filter: brightness(1.75); /* i could change the color of the gradient but im lazy*/
             }
+            > * {
+                opacity: 0;
+                animation: fade-in-top .5s forwards ease;
+                animation-delay: var(--animation-delay, 0s);
+                &:nth-child(2) {
+                    animation-delay: calc(var(--animation-delay, 0s) + 50ms);
+                }
+                &:nth-child(3) {
+                    animation-delay: calc(var(--animation-delay, 0s) + 75ms);
+                }
+            }
+
         }
         .clears, .bonus {
             text-align: center;
@@ -24,5 +45,19 @@
         & > * {
             display: contents;
         }
+    }
+}
+
+@keyframes fade-in-top {
+    from {
+        opacity: 0;
+        transform: translateY(-100%)
+    }
+    50% {
+        opacity: 1;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

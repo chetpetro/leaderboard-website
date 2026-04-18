@@ -63,7 +63,7 @@ const Home = ({motw}) => {
 
             if (response.ok) {
                 setMaps(json.sort((a, b) => b.entries.length - a.entries.length));
-                requestAnimationFrame(() => setTimeout(() => setMapsInitialized(true), 1500))
+                requestAnimationFrame(() => setTimeout(() => setMapsInitialized(true), 750))
             }
         }
 
@@ -199,7 +199,7 @@ const Home = ({motw}) => {
                                 </div>
                             </span>
                         </Link>
-                        <Link to={`/hardest-maps`} className={'card hardest-maps animate-hover ' + (motw ? '' : 'hidden')}>
+                        <Link to={`/hardest-maps`} className={'card hardest-maps-card animate-hover ' + (motw ? '' : 'hidden')}>
                             <span className="icon-cnt text-gradient media-container">
                                 <div className={"media-container"}>
                                      <img src="/hot_pepper.png" alt="hot pepper" />

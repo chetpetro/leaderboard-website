@@ -102,16 +102,19 @@ const HardestMaps = ({}) => {
     return (
         <div className="hardest-maps">
             <div className="inside">
-                <h1><span className="text-gradient">Hardest</span> Maps</h1>
+                <h1 className="heading"><span className="text-gradient">Hardest</span> Maps</h1>
                 <div className={`maps-container`}>
                     <div className="maps-header">
-                        <span>Map</span><span>Bonus</span><span>Clears</span>
+                        <span>Map</span><span>Bonus <small style={{fontStyle: 'italic'}}>PTS</small></span><span>Clears</span>
                     </div>
                     {maps.map((map, index) => (
                         <div
                             key={map.steamID}
                             className="map-row"
-                            style={{ '--row-color': getMapRowColor(index, map.difficultyBonus, minBonus, maxBonus) }}
+                            style={{
+                                '--row-color': getMapRowColor(index, map.difficultyBonus, minBonus, maxBonus),
+                                '--animation-delay': 20*index + 'ms'
+                            }}
                         >
                             <Link className="name" to={`/${map.steamID}`} title={map.mapName}>
                                 {map.mapName}

@@ -81,12 +81,6 @@ header {
     }
 }
 
-.App:not(:has(.pages>.signup)):not(:has(.pages>.login)):not(:has(.pages>.home)):not(:has(.pages>.user)) {
-    header {
-        background-color: color-mix(in srgb, var(--color-surface-100) 95%, transparent);
-    }
-}
-
 @media (max-width: 850px) {
     header {
         nav {
