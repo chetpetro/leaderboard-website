@@ -16,6 +16,10 @@
     }
 }
 
+a.card:hover {
+    text-decoration: none;
+}
+
 .card.hidden {
     opacity: 0;
     pointer-events: none;
