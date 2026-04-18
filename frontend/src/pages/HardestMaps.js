@@ -79,7 +79,7 @@ const getMapRowColor = (index, difficultyBonus, minBonus, maxBonus) => {
     return getGradientColor(progress);
 };
 
-const HardestMaps = ({}) => {
+const HardestMaps = () => {
     const [maps, setMaps] = useState([]);
     const { min: minBonus, max: maxBonus } = getDifficultyBonusRange(maps);
 
