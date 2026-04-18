@@ -38,7 +38,8 @@ body:has(.teaser) {
             flex-direction: row;
             justify-content: center;
             align-items: start;
-            gap: 1rem;
+            column-gap: 1rem;
+            flex-wrap: wrap;
             .hardest-maps-card,
             .map-of-the-week {
                 margin-block: .5rem;
