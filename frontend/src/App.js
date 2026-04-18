@@ -20,7 +20,7 @@ function App() {
     discordID: '',
     token: '',
     isAdmin: false,
-    newPoints: 0,
+    newPoints: [],
   })
   const [motw, setMOTW] = useState('');
 
@@ -28,7 +28,7 @@ function App() {
     const user = localStorage.getItem('user')
     if (user) {
       const parsedUser = JSON.parse(user);
-      setUser({ ...parsedUser, newPoints: parsedUser.newPoints ?? 0 });
+      setUser({ ...parsedUser, newPoints: Array.isArray(parsedUser.newPoints) ? parsedUser.newPoints : [] });
     }
 
     const fetchMOTW = async () => {

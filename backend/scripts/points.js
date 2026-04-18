@@ -7,3 +7,7 @@ function calculatePoints(submittedTimesAmnt, placement, difficultyBonus) {
     const base = basePoints * (submittedTimesAmnt - placement) / Math.max(submittedTimesAmnt-1, 1)
     return (base + top3Bonus) * competitivePoints * .15 + difficultyBonus;
 }
+
+module.exports = {
+    calculatePoints
+}

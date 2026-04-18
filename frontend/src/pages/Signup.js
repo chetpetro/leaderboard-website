@@ -31,7 +31,7 @@ const Signup = ({ setUser }) => {
             // Store user in local storage
             localStorage.setItem('user', JSON.stringify(json));
 
-            setUser({userName, discordID, token: json.token, isAdmin: json.isAdmin, newPoints: json.newPoints ?? 0});
+            setUser({userName, discordID, token: json.token, isAdmin: json.isAdmin, newPoints: Array.isArray(json.newPoints) ? json.newPoints : []});
 
             navigate('/');
         } catch (error) {
@@ -52,7 +52,7 @@ const Signup = ({ setUser }) => {
             .then(response => response.json())
             .then(json => {
                 localStorage.setItem('user', JSON.stringify(json));
-                setUser({userName: json.userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin, newPoints: json.newPoints ?? 0});
+                setUser({userName: json.userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin, newPoints: Array.isArray(json.newPoints) ? json.newPoints : []});
                 navigate('/');
             })
             .catch((error) => {
