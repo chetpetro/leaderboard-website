@@ -39,7 +39,7 @@ const LeaderboardDetails = () => {
                             <span className={"map-placing map-pos-" + map.pos}>
                                 { map.pos }
                             </span>
-                            <Link to={`/${map.steamID}`}>{ map.mapName }</Link>
+                            <Link to={`/${map.steamID}`} className="map-link">{ map.mapName }</Link>
                             <span className="time">{ msToTime(map.entry.time) }</span>
                         </div>
                     ))}

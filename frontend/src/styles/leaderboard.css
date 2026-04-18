@@ -2,6 +2,10 @@
     .inside {
         max-width: 800px;
     }
+    .leaderboard-entry a:hover,
+    a.leaderboard-entry:hover {
+        text-decoration: none;
+    }
     .leaderboard-entry {
         display: grid;
         text-wrap: nowrap;
