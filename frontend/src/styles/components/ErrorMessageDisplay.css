@@ -15,7 +15,6 @@
         box-shadow: var(--shadow-sm), var(--shadow-lg);
         pointer-events: auto;
         &.fade-out {
-            outline: rebeccapurple 2px dashed;
             animation: fadeout 750ms ease forwards;
         }
     }
