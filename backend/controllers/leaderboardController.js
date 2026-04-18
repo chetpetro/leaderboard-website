@@ -330,5 +330,6 @@ module.exports = {
     createOrEditEntry,
     deleteEntryByMapAndDiscord,
     getMOTW,
-    getRecentLeaderboards
+    getRecentLeaderboards,
+    recalculatePointsForMap
 }
