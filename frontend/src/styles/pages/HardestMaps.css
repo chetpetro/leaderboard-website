@@ -13,7 +13,7 @@
         .map-row {
             > .name,
             > .bonus {
-                color: var(--row-color, #5b0f0f);
+                color: var(--row-color, #5b0f0f); /* set in HardestMaps.js*/
                 filter: brightness(1.75); /* i could change the color of the gradient but im lazy*/
             }
         }
