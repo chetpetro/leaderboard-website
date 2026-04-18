@@ -11,6 +11,7 @@ import User from './pages/User';
 import PointsLeaderboard from './pages/PointsLeaderboard';
 import ErrorMessageDisplay from "./components/ErrorMessageDisplay";
 import { ErrorProvider } from './context/ErrorContext';
+import HardestMaps from "./pages/HardestMaps";
 
 function App() {
 
@@ -52,6 +53,7 @@ function App() {
               <Route path='/login' element={<Login setUser={setUser}/>} />
               <Route path='/sign-up' element={<Signup setUser={setUser}/>} />
               <Route path='/points-leaderboard' element={<PointsLeaderboard />} />
+              <Route path='/hardest-maps' element={<HardestMaps />} />
             </Routes>
           </div>
         </BrowserRouter>

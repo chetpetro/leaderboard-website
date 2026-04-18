@@ -92,8 +92,8 @@ const Navbar = ({ user, setUser, motw }) => {
     return (
         <header ref={headerRef}>
             <nav>
-                <Link to="/">
-                    <span className="logo">Pogostuck Leaderboards</span>
+                <Link to="/" className="logo">
+                    Pogostuck Leaderboards
                 </Link>
                 <button
                     ref={menuButtonRef}

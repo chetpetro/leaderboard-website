@@ -182,22 +182,40 @@ const Home = ({motw}) => {
                         Can't find a Map? Submit the Map here!
                     </button>
                     <CreateLeaderboardForm show={showCreateLeaderboard}/>
-                    <Link to={`/${motw.steamID}`} className={'card map-of-the-week animate-hover ' + (motw ? '' : 'hidden')}>
-                        <span className="icon-cnt text-gradient media-container">
-                            <div className={"media-container"}>
-                                 <img src="/crown.svg" alt="crown" />
+                    <div className="cards">
+                        <Link to={`/${motw.steamID}`} className={'card map-of-the-week animate-hover ' + (motw ? '' : 'hidden')}>
+                            <span className="icon-cnt text-gradient media-container">
+                                <div className={"media-container"}>
+                                     <img src="/crown.svg" alt="crown" />
+                                </div>
+                            </span>
+                            <div className="card-content">
+                                <h2>Map of the Week</h2>
+                                <p>{motw.mapName || "No map selected"}</p>
                             </div>
-                        </span>
-                        <div className="card-content">
-                            <h2>Map of the Week</h2>
-                            <p>{motw.mapName || "No map selected"}</p>
-                        </div>
-                        <span className="card-link">
-                            <div className={"media-container"}>
-                                <img src="/arrow-right.svg" alt="arrow-right" />
+                            <span className="card-link">
+                                <div className={"media-container"}>
+                                    <img src="/arrow-right.svg" alt="arrow-right" />
+                                </div>
+                            </span>
+                        </Link>
+                        <Link to={`/hardest-maps`} className={'card hardest-maps animate-hover ' + (motw ? '' : 'hidden')}>
+                            <span className="icon-cnt text-gradient media-container">
+                                <div className={"media-container"}>
+                                     <img src="/hot_pepper.png" alt="hot pepper" />
+                                </div>
+                            </span>
+                            <div className="card-content">
+                                <h2>Hardest Maps</h2>
+                                <p>Good luck o7</p>
                             </div>
-                        </span>
-                    </Link>
+                            <span className="card-link">
+                                <div className={"media-container"}>
+                                    <img src="/arrow-right.svg" alt="arrow-right" />
+                                </div>
+                            </span>
+                        </Link>
+                    </div>
                 </div>
             </div>
             <PlayerPodium players={top3Players.map(player => ({

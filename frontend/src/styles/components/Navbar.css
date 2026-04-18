@@ -18,13 +18,9 @@ header {
 
     .logo {
         text-transform: uppercase;
+        text-decoration: none!important;
         font-weight: 700;
         font-size: 1rem;
-    }
-
-    a {
-        color: #ffffff;
-        text-decoration: none;
     }
 
     nav {

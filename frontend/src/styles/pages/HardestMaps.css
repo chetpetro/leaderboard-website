@@ -1,0 +1,28 @@
+.hardest-maps {
+    .maps-container {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        column-gap: 1rem;
+        row-gap: .1rem;
+
+        .maps-header > span {
+            color: var(--color-surface-600);
+            font-weight: 500;
+        }
+
+        .map-row {
+            > .name,
+            > .bonus {
+                color: var(--row-color, #5b0f0f);
+                filter: brightness(1.75); /* i could change the color of the gradient but im lazy*/
+            }
+        }
+        .clears, .bonus {
+            text-align: center;
+        }
+
+        & > * {
+            display: contents;
+        }
+    }
+}

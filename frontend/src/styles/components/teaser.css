@@ -33,36 +33,43 @@ body:has(.teaser) {
                 text-decoration: underline;
             }
         }
-        .map-of-the-week {
-            margin-block: .5rem;
+        .cards {
             display: flex;
-            width: fit-content;
-            margin-inline: auto;
-            .icon-cnt,
-            .card-link {
-                display: grid;
-                place-items: center;
-                padding-inline: .75rem .75rem;
-                .media-container {
-                    max-height: 1.5rem;
-                    aspect-ratio: 1;
-                }
-            }
-
-            .card-link {
-                transition: transform 0.15s ease;
-                padding-inline-start: .8rem;
-                .media-container {max-height: 1.25rem}
-                svg {
-                    aspect-ratio: 1;
-                    width: 1rem;
-                    height: auto;
-                }
-            }
-
-            &:focus, &:hover {
+            flex-direction: row;
+            justify-content: center;
+            align-items: start;
+            gap: 1rem;
+            .hardest-maps,
+            .map-of-the-week {
+                margin-block: .5rem;
+                display: flex;
+                width: fit-content;
+                .icon-cnt,
                 .card-link {
-                    transform: translateX(2px);
+                    display: grid;
+                    place-items: center;
+                    padding-inline: .75rem .75rem;
+                    .media-container {
+                        max-height: 1.5rem;
+                        aspect-ratio: 1;
+                    }
+                }
+
+                .card-link {
+                    transition: transform 0.15s ease;
+                    padding-inline-start: .8rem;
+                    .media-container {max-height: 1.25rem}
+                    svg {
+                        aspect-ratio: 1;
+                        width: 1rem;
+                        height: auto;
+                    }
+                }
+
+                &:focus, &:hover {
+                    .card-link {
+                        transform: translateX(2px);
+                    }
                 }
             }
         }
