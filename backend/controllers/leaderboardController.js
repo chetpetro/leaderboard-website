@@ -130,9 +130,10 @@ const createMapLeaderboard = async (req, res) => {
 
 const changeMapDifficultyBonus = async (req, res) => {
     const { steamID, difficultyBonusStr } = req.params;
-    const difficultyBonus = Number.parseInt(difficultyBonusStr, 10);
+    const difficultyBonusRaw = req.body?.difficultyBonus ?? difficultyBonusStr;
+    const difficultyBonus = Number.parseInt(difficultyBonusRaw, 10);
     if (Number.isNaN(difficultyBonus)) {
-        return res.status(400).json({ error: 'Invalid difficulty bonus value' });
+        return res.status(400).json({ error: `Invalid difficulty bonus value. difficultyBonusStr: ${difficultyBonusStr}, parsed: ${difficultyBonus}` });
     }
     const map = await Leaderboard.findOne({ steamID });
     if (!map) return res.status(404).json({error: "No leadearboard found"});

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {Link, useParams} from "react-router-dom";
 import CreateEntryForm from "../components/CreateEntryForm";
+import ChangeDifficultyBonusForm from "../components/ChangeDifficultyBonusForm";
 import '../styles/pages/MapDetails.css'
 import { msToTime } from "../timeUtils";
 import { useError } from '../context/ErrorContext';
@@ -59,11 +60,10 @@ const MapDetails = ({user}) => {
             }
 
             setMap((prev) => {
-                const newMap = {
+                return {
                     ...prev,
                     entries: (prev.entries || []).filter((entryEl) => entryEl.discordID !== entry.discordID)
                 };
-                return newMap;
             });
         } catch (error) {
             showError(error.message || 'Failed to delete entry.');
@@ -129,6 +129,11 @@ const MapDetails = ({user}) => {
                     </div>
                 </div>
                 <div className="col-right">
+                    { isAdminAuthorized &&
+                        <div className="admin-panel card">
+                            <ChangeDifficultyBonusForm steamID={map.steamID} user={user} onDifficultyChanged={fetchMap} />
+                        </div>
+                    }
                     <div className="submit-entry card">
                         {user.userName && <CreateEntryForm steamID={ map.steamID } user={user} onEntrySaved={fetchMap} />}
                         {!user.userName && <h2>Login to Submit Entry</h2>}
