@@ -20,13 +20,15 @@ function App() {
     discordID: '',
     token: '',
     isAdmin: false,
+    newPoints: 0,
   })
   const [motw, setMOTW] = useState('');
 
   useEffect(() => {
     const user = localStorage.getItem('user')
     if (user) {
-      setUser(JSON.parse(user));
+      const parsedUser = JSON.parse(user);
+      setUser({ ...parsedUser, newPoints: parsedUser.newPoints ?? 0 });
     }
 
     const fetchMOTW = async () => {

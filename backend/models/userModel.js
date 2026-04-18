@@ -21,6 +21,10 @@ const userSchema = new Schema({
         type: Number,
         default: 0
     },
+    newPoints: {
+        type: Number,
+        default: 0
+    },
     isAdmin: {
         type: Boolean,
         default: false
@@ -90,9 +94,7 @@ userSchema.statics.loginDiscord = async function(tokenType, accessToken) {
     const json = await response.json();
     const discordID = json.id;
 
-    const user = await this.findOne({ discordID });
-
-    return user;
+    return await this.findOne({discordID});
 }
 
 module.exports = mongoose.model('User', userSchema);
