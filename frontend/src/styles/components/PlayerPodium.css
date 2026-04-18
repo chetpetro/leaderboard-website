@@ -38,6 +38,9 @@
             }
 
             .player {
+                &:hover {
+                    text-decoration: none;
+                }
                 display: grid;
                 gap: .25rem;
                 max-width: fit-content;
