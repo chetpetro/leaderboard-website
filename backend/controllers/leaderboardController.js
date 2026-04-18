@@ -83,7 +83,7 @@ const getLeaderboard = async (req, res) =>  {
     res.status(200).json(response);
 }
 
-const createLeaderboard = async (req, res) => {
+const createMapLeaderboard = async (req, res) => {
     const getID = (url) => {
         const match = /(?<=id=)\d*/.exec(url)
         return match ? match[0] : null;
@@ -128,7 +128,20 @@ const createLeaderboard = async (req, res) => {
     }
 }
 
-const createEntry = async (req, res) => {
+const changeMapDifficultyBonus = async (req, res) => {
+    const { steamID, difficultyBonusStr } = req.params;
+    const difficultyBonus = Number.parseInt(difficultyBonusStr, 10);
+    if (Number.isNaN(difficultyBonus)) {
+        return res.status(400).json({ error: 'Invalid difficulty bonus value' });
+    }
+    const map = await Leaderboard.findOne({ steamID });
+    if (!map) return res.status(404).json({error: "No leadearboard found"});
+    map.difficultyBonus = difficultyBonus;
+    await map.save();
+    res.status(200).json(map);
+}
+
+const createOrEditEntry = async (req, res) => {
     try {
         const { steamID } = req.params;
 
@@ -137,14 +150,14 @@ const createEntry = async (req, res) => {
 
         let entries = map.entries
         const submissionDate = new Date();
-        const oldWrEntry = entries.reduce((best, entry) => {
-            if (!entry || !Number.isFinite(entry.time)) return best;
-            if (!best || entry.time < best.time) return entry;
-            return best;
-        }, null);
-        const submittedTime = Number(req.body.time);
 
         const getWrContext = () => {
+            const oldWrEntry = entries.reduce((best, entry) => {
+                if (!entry || !Number.isFinite(entry.time)) return best;
+                if (!best || entry.time < best.time) return entry;
+                return best;
+            }, null);
+            const submittedTime = Number(req.body.time);
             if (!Number.isFinite(submittedTime)) return { isNewWr: false };
             if (!oldWrEntry) {
                 return {
@@ -256,8 +269,9 @@ const getMOTW = async (req, res) => {
 module.exports = {
     getLeaderboards,
     getLeaderboard,
-    createLeaderboard,
-    createEntry,
+    createMapLeaderboard,
+    changeMapDifficultyBonus,
+    createOrEditEntry,
     deleteEntryByMapAndDiscord,
     getMOTW,
     getRecentLeaderboards

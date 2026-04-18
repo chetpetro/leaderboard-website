@@ -33,6 +33,10 @@ const leaderboardSchema = new Schema({
         default: null,
         index: true
     },
+    difficultyBonus: {
+        type: Number,
+        default: 0
+    },
     entries: [{
         userName: {
             type: String,
