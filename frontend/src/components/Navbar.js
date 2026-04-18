@@ -139,7 +139,7 @@ const Navbar = ({ user, setUser, motw }) => {
                 <nav aria-label="Mobile">
                     <ul>
                         <li><Link ref={firstMobileLinkRef} to="/points-leaderboard" onClick={closeMenu}>Leaderboard</Link></li>
-                        {user.userName && <li><Link to={`/user/${user.discordID}`}>
+                        {user.userName && <li><Link to={`/user/${user.discordID}`} title={user.userName}>
                             <div className="user-icon media-container">
                                 <img src="/user.svg" alt="user" />
                             </div>
