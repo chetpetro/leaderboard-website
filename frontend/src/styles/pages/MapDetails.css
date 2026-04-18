@@ -15,10 +15,10 @@
 
                 .map-image {
                     aspect-ratio: 16/9;
-                    display: grid;
-                    place-items: center;
+                    height: 100%;
                     img {
                         object-fit: contain;
+                        height: 100%;
                     }
                 }
                 .bg-blurred-img {

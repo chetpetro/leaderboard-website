@@ -42,9 +42,12 @@ const ActiveMaps = () => {
                 <div className="maps">
                         {leaderboards.map((leaderboard) => (
                             <Link to={`/${leaderboard.steamID}`} className="map" key={leaderboard._id}>
-                                <span className="media-container">
+                                <div className="map-blurred-bg media-container">
+                                    <img src={leaderboard.previewImage} alt="" />
+                                </div>
+                                <div className="map-img-cnt media-container">
                                     <img src={leaderboard.previewImage} alt={`${leaderboard.mapName} preview`} />
-                                </span>
+                                </div>
                                 <div className="map-info">
                                     <h3>{leaderboard.mapName}</h3>
                                     <p className="playerAmount">👤 {leaderboard.entries.length}</p>

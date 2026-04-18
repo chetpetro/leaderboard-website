@@ -7,9 +7,11 @@
     position: relative;
     overflow: hidden;
     aspect-ratio: 16/9;
-    .media-container {
+    .map-img-cnt.media-container {
         flex: 1;
         position: relative;
+        height: 100%;
+        width: 100%;
         &::after {
             content: "";
             position: absolute;
@@ -46,6 +48,16 @@
         }
         p {
             font-size: .6667rem;
+        }
+    }
+    .map-blurred-bg.media-container {
+        position: absolute;
+        inset: 0;
+        filter: blur(10px);
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
     }
     outline: transparent 2px solid;
