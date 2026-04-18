@@ -86,7 +86,7 @@ const MapDetails = ({user}) => {
                                 <div className="details">
                                     <span className={"map-creator"}>By: { map.creator }</span>
                                     {map.difficultyBonus > 0 && (<div className="difficulty-bonus-cnt">
-                                        <div className="hot_pepper media-container"><img src="/hot_pepper.png"/></div><span className="bonus">+{map.difficultyBonus}</span>
+                                        <div className="hot_pepper media-container"><img src="/hot_pepper.png" alt=""/></div><span className="bonus">+{map.difficultyBonus}</span>
                                     </div>)}
                                 </div>
                             </div>

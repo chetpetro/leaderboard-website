@@ -10,10 +10,8 @@ header {
 
     border-radius: 0 0 8px 8px;
 
-    padding-block: .75rem;
     &.scrolled {
         box-shadow: var(--shadow-sm);
-        padding-block: 0;
         background-color: color-mix(in srgb, var(--color-surface-100) 90%, transparent);
         backdrop-filter: blur(15px);
     }
@@ -59,6 +57,31 @@ header {
     .mobile-overlay,
     .mobile-drawer {
         display: none;
+    }
+    li:has(.user-icon)> a,
+    .logout-btn {
+        display: grid;
+        place-items: center;
+        .user-icon,
+        .media-container {
+            height: 1rem;
+            width: 1rem;
+            img,
+            svg {
+                height: 100%;
+                object-fit: contain;
+                .arrow {
+                    transition: transform .15s ease
+                }
+            }
+        }
+        &:hover {
+            svg {
+                .arrow {
+                    transform: translateX(2px);
+                }
+            }
+        }
     }
 }
 
@@ -140,7 +163,7 @@ header {
             top: 0;
             right: 0;
             display: block;
-            width: min(320px, 85vw);
+            width: min(11rem, 50vw);
             height: 100vh;
             padding: 72px 20px 24px;
             background-color: color-mix(in srgb, var(--color-surface-100) 90%, transparent);

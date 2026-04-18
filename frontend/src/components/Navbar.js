@@ -88,7 +88,6 @@ const Navbar = ({ user, setUser, motw }) => {
     }, [isMenuOpen]);
 
     const closeMenu = () => setIsMenuOpen(false);
-    const mapOfTheWeekPath = motw?.steamID ? `/${motw.steamID}` : '/';
 
     return (
         <header ref={headerRef}>
@@ -111,8 +110,11 @@ const Navbar = ({ user, setUser, motw }) => {
                 </button>
                 <ul className="desktop-nav-links">
                     <li><Link to="/points-leaderboard">Leaderboard</Link></li>
-                    <li><Link to={mapOfTheWeekPath}>Map of the Week</Link></li>
-                    {user.userName && <li><Link to={`/user/${user.discordID}`}>{ user.userName }</Link></li>}
+                    {user.userName && <li><Link to={`/user/${user.discordID}`}>
+                        <div className="user-icon media-container">
+                            <img src="/user.svg" alt="user" />
+                        </div>
+                    </Link></li>}
                     {!user.userName && <li><Link to="/login"><button className='btn btn-ghost btn-header'>Login</button></Link></li>}
                     {!user.userName && <li><Link to="/sign-up"><button className='btn btn-primary btn-header'>Sign Up</button></Link></li>}
                     {user.userName && <li><LogoutButton setUser={setUser} /></li>}
@@ -137,9 +139,11 @@ const Navbar = ({ user, setUser, motw }) => {
                 <nav aria-label="Mobile">
                     <ul>
                         <li><Link ref={firstMobileLinkRef} to="/points-leaderboard" onClick={closeMenu}>Leaderboard</Link></li>
-                        <li><Link to={mapOfTheWeekPath} onClick={closeMenu}>Map of the Week</Link></li>
-                        {user.isAdmin && <li><Link to="/admin" onClick={closeMenu}>Admin</Link></li>}
-                        {user.userName && <li><Link to={`/user/${user.discordID}`} onClick={closeMenu}>{ user.userName }</Link></li>}
+                        {user.userName && <li><Link to={`/user/${user.discordID}`}>
+                            <div className="user-icon media-container">
+                                <img src="/user.svg" alt="user" />
+                            </div>
+                        </Link></li>}
                         {!user.userName && <li><Link to="/login" onClick={closeMenu}>Login</Link></li>}
                         {!user.userName && <li><Link to="/sign-up" onClick={closeMenu}>Sign Up</Link></li>}
                         {user.userName && <li><LogoutButton setUser={setUser} /></li>}
