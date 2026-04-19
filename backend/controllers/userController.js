@@ -82,7 +82,7 @@ const getUser = async (req, res) => {
         return res.status(200).json(userWithEntries);
     } catch (error) {
         console.error('getUser failed:', error);
-        return res.status(500).json({ error: 'Failed to fetch user data' });
+        return res.status(500).json({ error: 'Failed to fetch user data: ' + error });
     }
 }
 
