@@ -91,7 +91,7 @@ const updateUserPoints = async (req, res) => {
 
         const mapsWithUser = await Leaderboard.find(
             { 'entries.discordID': user.discordID },
-            { mapName: 1, steamID: 1, entries: 1 }
+            { mapName: 1, steamID: 1, entries: 1, difficultyBonus: 1 }
         ).lean();
         mapsWithUser.forEach((map) => map.entries.sort((a, b) => a.time - b.time));
 
@@ -129,8 +129,14 @@ async function updateUserPointsIfCalculationMethodChanged(user, mapsWithUser) {
     user.mapPoints = [];
 
     mapsWithUser.forEach((map) => {
+        if (!Array.isArray(map.entries) || map.entries.length === 0) return;
+
         const userRank = map.entries.findIndex((entry) => entry.discordID === user.discordID) + 1;
-        const newPoints = calculatePoints(map.entries.length, userRank, map.difficultyBonus);
+        if (userRank <= 0) return;
+
+        const difficultyBonus = Number.isFinite(map.difficultyBonus) ? map.difficultyBonus : 0;
+        const newPoints = calculatePoints(map.entries.length, userRank, difficultyBonus);
+        if (!Number.isFinite(newPoints)) return;
 
         // Update the user object
         user.mapPoints.push({ points: newPoints, mapSteamID: map.steamID });
@@ -142,7 +148,7 @@ async function updateUserPointsIfCalculationMethodChanged(user, mapsWithUser) {
             entryCount: map.entries.length,
             userRank: userRank,
             newPoints: newPoints,
-            difficultyBonus: map.difficultyBonus
+            difficultyBonus
         });
     });
 
