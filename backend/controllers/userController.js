@@ -66,16 +66,23 @@ const signupUserDiscord = async (req, res) => {
 const getUser = async (req, res) => {
     const { id } = req.params;
 
-    let user;
     try {
-        user = await User.findOne({ discordID: id })
-        user.password = ""
+        const user = await User.findOne({ discordID: id }).lean();
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        delete user.password;
+
+        const mapsWithUser = await Leaderboard.find(
+            { 'entries.discordID': user.discordID },
+            { mapName: 1, steamID: 1, entries: 1 }
+        ).lean();
+
+        const userWithEntries = getUserWithEntries(user, mapsWithUser);
+        return res.status(200).json(userWithEntries);
     } catch (error) {
-        return res.status(400).json({error: "User not found"})
+        console.error('getUser failed:', error);
+        return res.status(500).json({ error: 'Failed to fetch user data' });
     }
-    const mapsWithUser = await Leaderboard.find({entries: {$elemMatch: {discordID: user.discordID}}})
-    const userWithEntries = await getUserWithEntries(user, mapsWithUser);
-    res.status(200).json({...userWithEntries})
 }
 
 async function updateUserPointsIfCalculationMethodChanged(user, mapsWithUser) {
@@ -106,12 +113,24 @@ async function updateUserPointsIfCalculationMethodChanged(user, mapsWithUser) {
     return debugLog;
 }
 
-async function getUserWithEntries(user, userMapEntries) {
-    let userWithEntries = {user, entries: []}
+function getUserWithEntries(user, userMapEntries) {
+    const userWithEntries = { user, entries: [] };
 
-    userMapEntries.forEach((leaderboard) => leaderboard.forEach((entry, index) => {
-        if (entry.discordID === user.discordID) userWithEntries.entries.push({mapName: leaderboard.mapName, steamID: leaderboard.steamID, pos: index + 1, entry})
-    }))
+    userMapEntries.forEach((leaderboard) => {
+        if (!Array.isArray(leaderboard.entries)) return;
+
+        leaderboard.entries.forEach((entry, index) => {
+            if (entry?.discordID === user.discordID) {
+                userWithEntries.entries.push({
+                    mapName: leaderboard.mapName,
+                    steamID: leaderboard.steamID,
+                    pos: index + 1,
+                    entry
+                });
+            }
+        });
+    });
+
     return userWithEntries;
 }
 
