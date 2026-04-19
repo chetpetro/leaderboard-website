@@ -77,11 +77,8 @@ const getUser = async (req, res) => {
             { mapName: 1, steamID: 1, entries: 1 }
         ).lean();
         mapsWithUser.forEach((map) => map.entries.sort((a, b) => a.time - b.time))
-        const values = await Promise.all([
-            updateUserPointsIfCalculationMethodChanged(user, mapsWithUser),
-            getUserWithEntries(user, mapsWithUser)
-        ])
-        res.status(200).json(values[1]);
+        const userWithEntries = getUserWithEntries(user, mapsWithUser);
+        return res.status(200).json(userWithEntries);
     } catch (error) {
         console.error('getUser failed:', error);
         return res.status(500).json({ error: 'Failed to fetch user data: ' + error });
