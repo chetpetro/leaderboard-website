@@ -70,7 +70,7 @@ async function fetchUserMapEntries(discordID) {
     if (response.ok) {
         return json.entries;
     } else {
-        console.error("Failed to fetch user data for discordID:", discordID);
+        console.error("Failed to fetch entries for discordID:", discordID);
         return null;
     }
 }
@@ -81,7 +81,14 @@ async function updateUserPoints(discordID) {
     if (response.ok) {
         return json.user;
     } else {
-        console.error("Failed to fetch user data for discordID:", discordID);
+        console.error("Failed to fetch user points:", {
+            discordID,
+            status: response.status,
+            error: json?.error,
+            message: json?.message,
+            endpoint: json?.endpoint,
+            stack: json?.stack
+        });
         return null;
     }
 }
