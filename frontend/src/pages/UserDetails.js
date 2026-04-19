@@ -6,8 +6,9 @@ import '../styles/pages/UserDetails.css'
 
 const UserDetails = () => {
     const { discordID } = useParams()
-    const [entries, setEntries] = useState('');
+    const [entries, setEntries] = useState([]);
     const [user, setUser] = useState('');
+    // const [calculatedPoints, setCalculatedPoints] = useState(0);
 
     useEffect(() => {
         const fetchEntries = async () => {
@@ -15,8 +16,10 @@ const UserDetails = () => {
             const json = await response.json();
 
             if (response.ok) {
-                setEntries(json.entries)
+                const entries = json.entries.sort((a, b) => a.pos - b.pos)
+                setEntries(entries)
                 setUser(json.user)
+                // const points = json.user.newPoints.reduceRight((acc, cur) => acc + cur.points, 0)
             }
         }
 
@@ -34,7 +37,7 @@ const UserDetails = () => {
             </div>
             <div className="leaderboad-entries">
                 <div className="inside leaderboard">
-                    {entries && entries.sort((a,b) => a.pos - b.pos).map((map) => (
+                    {entries.map((map) => (
                         <div className="leaderboard-entry" key={map.steamID}>
                             <span className={"map-placing map-pos-" + map.pos}>
                                 { map.pos }
