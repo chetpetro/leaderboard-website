@@ -7,8 +7,8 @@ const createToken = (_id) => {
     return jwt.sign({_id}, process.env.SECRET, { expiresIn: '3d' });
 }
 
-function return200AndUseWithToken(res, username, user, token) {
-    res.status(200).json({username, discordID: user.discordID, token, isAdmin: user.isAdmin, mapPoints: (user.mapPoints ? user.mapPoints : [])})
+function return200AndUseWithToken(res, userName, user, token) {
+    res.status(200).json({userName, discordID: user.discordID, token, isAdmin: user.isAdmin, mapPoints: (user.mapPoints ? user.mapPoints : [])})
 }
 
 const loginUser = async (req, res) => {
