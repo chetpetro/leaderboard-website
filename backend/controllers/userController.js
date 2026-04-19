@@ -76,6 +76,7 @@ const getUser = async (req, res) => {
             { 'entries.discordID': user.discordID },
             { mapName: 1, steamID: 1, entries: 1 }
         ).lean();
+        mapsWithUser.forEach((map) => map.entries.sort((a, b) => a.time - b.time))
 
         const userWithEntries = getUserWithEntries(user, mapsWithUser);
         return res.status(200).json(userWithEntries);
