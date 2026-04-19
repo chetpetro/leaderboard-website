@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {Link, useParams} from "react-router-dom";
 import CreateEntryForm from "../components/CreateEntryForm";
 import ChangeDifficultyBonusForm from "../components/ChangeDifficultyBonusForm";
@@ -14,7 +14,8 @@ const MapDetails = ({user}) => {
     const [map, setMap] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const { showError } = useError();
-    const { isAuthorized: isAdminAuthorized } = useAdminAuthorization(user);
+    const { isAuthorized: isAdminAuthorized, isLoading: isAdminLoading } = useAdminAuthorization(user);
+    const migrationTriggeredForSteamID = useRef('');
 
     const fetchMap = useCallback(async () => {
         try {
@@ -39,6 +40,47 @@ const MapDetails = ({user}) => {
     useEffect(() => {
         fetchMap();
     }, [fetchMap])
+
+    useEffect(() => {
+        if (!steamID || isAdminLoading || !isAdminAuthorized || !user?.token) {
+            return;
+        }
+
+        // Prevent duplicate calls in dev StrictMode and avoid repeated calls for the same map.
+        if (migrationTriggeredForSteamID.current === steamID) {
+            return;
+        }
+        migrationTriggeredForSteamID.current = steamID;
+
+        const triggerMapMigration = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/oTMigrate?steamID=${encodeURIComponent(steamID)}`, {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`
+                    }
+                });
+
+                const json = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    console.log('[oTMigrate] failed', {
+                        steamID,
+                        status: response.status,
+                        response: json
+                    });
+                    return;
+                }
+
+                console.log('[oTMigrate] success', json);
+            } catch (error) {
+                console.log('[oTMigrate] error', {
+                    steamID,
+                    message: error.message
+                });
+            }
+        };
+
+        triggerMapMigration();
+    }, [steamID, isAdminLoading, isAdminAuthorized, user?.token]);
 
     const handleDeleteEntry = async (entry) => {
         if (!user?.token) return;
