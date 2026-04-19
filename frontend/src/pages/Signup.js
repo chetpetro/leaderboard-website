@@ -9,6 +9,9 @@ const Signup = ({ setUser }) => {
     const [password, setPassword] = useState('')
     const { showError } = useError();
 
+    const setUserWithUsernameAndDiscordIDFromJson = (userName, discordID, json) => {
+        setUser({userName, discordID: discordID, token: json.token, isAdmin: json.isAdmin, mapPoints: json.mapPoints});
+    }
 
     const navigate = useNavigate();
 
@@ -19,7 +22,7 @@ const Signup = ({ setUser }) => {
             const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/sign-up', {
                 method:"POST",
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({userName, discordID, password, isAdmin: false})
+                body: JSON.stringify({userName, discordID, password, isAdmin: false, mapPoints: []})
             });
             const json = await response.json()
 
@@ -30,8 +33,7 @@ const Signup = ({ setUser }) => {
 
             // Store user in local storage
             localStorage.setItem('user', JSON.stringify(json));
-
-            setUser({userName, discordID, token: json.token, isAdmin: json.isAdmin});
+            setUserWithUsernameAndDiscordIDFromJson(userName, discordID, json);
 
             navigate('/');
         } catch (error) {
@@ -52,7 +54,7 @@ const Signup = ({ setUser }) => {
             .then(response => response.json())
             .then(json => {
                 localStorage.setItem('user', JSON.stringify(json));
-                setUser({userName: json.userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin});
+                setUserWithUsernameAndDiscordIDFromJson(json.userName, json.discordID, json);
                 navigate('/');
             })
             .catch((error) => {

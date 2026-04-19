@@ -9,6 +9,7 @@ const LogoutButton = ({ setUser}) => {
             discordID: '',
             token: '',
             isAdmin: false,
+            mapPoints: []
         });
 
         localStorage.removeItem('user')

@@ -19,6 +19,7 @@ function App() {
     discordID: '',
     token: '',
     isAdmin: false,
+    mapPoints: [],
   })
   const [motw, setMOTW] = useState('');
 

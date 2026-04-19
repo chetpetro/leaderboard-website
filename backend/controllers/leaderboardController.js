@@ -230,10 +230,6 @@ const createOrEditEntry = async (req, res) => {
     }
 }
 
-async function recalculatePointsForMap(map) {
-
-}
-
 const deleteEntryByMapAndDiscord = async (req, res) => {
     try {
         const { steamID, discordID } = req.params;

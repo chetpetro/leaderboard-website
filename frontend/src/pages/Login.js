@@ -10,6 +10,10 @@ const Login = ({ setUser }) => {
 
     const navigate = useNavigate();
 
+    const setUserWithUsernameFromJson = (userName, json) => {
+        setUser({userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin, mapPoints: json.mapPoints});
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -29,7 +33,7 @@ const Login = ({ setUser }) => {
             // Store user in local storage
             localStorage.setItem('user', JSON.stringify(json));
 
-            setUser({userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin});
+            setUserWithUsernameFromJson(userName, json);
 
             navigate('/');
         } catch (error) {
@@ -50,7 +54,7 @@ const Login = ({ setUser }) => {
             .then(response => response.json())
             .then(json => {
                 localStorage.setItem('user', JSON.stringify(json));
-                setUser({userName: json.userName, discordID: json.discordID, token: json.token, isAdmin: json.isAdmin})
+                setUserWithUsernameFromJson(json.userName, json);
                 navigate('/');
             })
             .catch((error) => {

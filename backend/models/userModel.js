@@ -21,6 +21,20 @@ const userSchema = new Schema({
         type: Number,
         default: 0
     },
+    pointCalculationMethod: {
+        type: String,
+        default: ''
+    },
+    mapPoints: [{
+        points: {
+            type: Number,
+            required: true
+        },
+        mapSteamID: {
+            type: String,
+            required: true
+        }
+    }],
     isAdmin: {
         type: Boolean,
         default: false
@@ -40,9 +54,7 @@ userSchema.statics.signup = async function(userName, discordID, password) {
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(password, salt);
 
-    const user = await this.create({ userName, discordID, password: hash });
-
-    return user;
+    return await this.create({userName, discordID, password: hash});
 }
 
 userSchema.statics.signupDiscord = async function(tokenType, accessToken) {
@@ -62,9 +74,7 @@ userSchema.statics.signupDiscord = async function(tokenType, accessToken) {
     const discordIDCheck = await this.findOne({ discordID });
     if (discordIDCheck) throw Error('Discord ID already exists.');
 
-    const user = await this.create({ userName, discordID });
-
-    return user;
+    return await this.create({userName, discordID});
 }
 
 userSchema.statics.login = async function(userName, password) {
