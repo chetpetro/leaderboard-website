@@ -19,7 +19,6 @@ const UserDetails = () => {
                 const entries = json.entries.sort((a, b) => a.pos - b.pos)
                 setEntries(entries)
                 setUser(json.user)
-                // const points = json.user.newPoints.reduceRight((acc, cur) => acc + cur.points, 0)
             }
         }
 

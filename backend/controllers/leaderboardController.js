@@ -218,8 +218,6 @@ const createOrEditEntry = async (req, res) => {
             );
         }
 
-        await recalculatePointsForMap(map)
-
         try {
             await sendDiscordPbMessage(discordPayload);
         } catch (discordError) {
@@ -233,45 +231,7 @@ const createOrEditEntry = async (req, res) => {
 }
 
 async function recalculatePointsForMap(map) {
-    if (!map || !Array.isArray(map.entries) || map.entries.length === 0) {
-        return;
-    }
 
-    const sortedEntries = [...map.entries].sort((a, b) => a.time - b.time);
-    const submittedTimesAmnt = sortedEntries.length;
-
-    for (let i = 0; i < sortedEntries.length; i++) {
-        const entry = sortedEntries[i];
-        const user = await User.findOne({ discordID: entry.discordID });
-
-        if (!user) {
-            continue;
-        }
-
-        // Calculate new points for this entry
-        const newPointsValue = calculatePoints(submittedTimesAmnt, i, map.difficultyBonus);
-        const newPointsEntry = {
-            points: Math.floor(newPointsValue),
-            steamID: map.steamID,
-            mapName: map.mapName,
-            addedAt: new Date()
-        };
-
-        // Find if there's already a newPoints entry for this map
-        const existingIndex = user.newPoints.findIndex(
-            (np) => np.steamID === map.steamID
-        );
-
-        if (existingIndex !== -1) {
-            // Replace existing entry
-            user.newPoints[existingIndex] = newPointsEntry;
-        } else {
-            // Push new entry
-            user.newPoints.push(newPointsEntry);
-        }
-
-        await user.save();
-    }
 }
 
 const deleteEntryByMapAndDiscord = async (req, res) => {
@@ -299,15 +259,6 @@ const deleteEntryByMapAndDiscord = async (req, res) => {
         map.entries = filteredEntries;
         map.lastSubmissionAt = lastSubmissionAt;
         await map.save();
-
-        // Remove entry from user's newPoints list
-        const user = await User.findOne({ discordID });
-        if (user && Array.isArray(user.newPoints)) {
-            user.newPoints = user.newPoints.filter(
-                (np) => np.steamID !== steamID
-            );
-            await user.save();
-        }
 
         return res.status(200).json({ success: true });
     } catch (err) {

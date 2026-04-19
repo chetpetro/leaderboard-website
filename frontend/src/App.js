@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-// pages
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from "./pages/Login"
@@ -13,15 +12,6 @@ import ErrorMessageDisplay from "./components/ErrorMessageDisplay";
 import { ErrorProvider } from './context/ErrorContext';
 import HardestMaps from "./pages/HardestMaps";
 
-const normalizeUser = (userData = {}) => ({
-  userName: '',
-  discordID: '',
-  token: '',
-  isAdmin: false,
-  ...userData,
-  newPoints: Array.isArray(userData.newPoints) ? userData.newPoints : [],
-});
-
 function App() {
 
   const [user, setUser] = useState({ 
@@ -29,7 +19,6 @@ function App() {
     discordID: '',
     token: '',
     isAdmin: false,
-    newPoints: [],
   })
   const [motw, setMOTW] = useState('');
 
@@ -44,39 +33,7 @@ function App() {
         localStorage.removeItem('user');
         parsedUser = null;
       }
-
-      if (parsedUser) {
-        const normalizedUser = normalizeUser(parsedUser);
-
-        if (!Array.isArray(parsedUser.newPoints) && parsedUser.discordID) {
-          const fetchUser = async () => {
-            try {
-              const response = await fetch(`https://leaderboard-website-api.vercel.app/api/user/${parsedUser.discordID}`);
-              const json = await response.json();
-
-              if (!response.ok) {
-                setUser(normalizedUser);
-                return;
-              }
-
-              const updatedUser = normalizeUser({
-                ...normalizedUser,
-                ...json.user,
-                token: parsedUser.token,
-              });
-
-              setUser(updatedUser);
-              localStorage.setItem('user', JSON.stringify(updatedUser));
-            } catch (error) {
-              setUser(normalizedUser);
-            }
-          }
-
-          fetchUser();
-        } else {
-          setUser(normalizedUser);
-        }
-      }
+      setUser(parsedUser)
     }
 
     const fetchMOTW = async () => {

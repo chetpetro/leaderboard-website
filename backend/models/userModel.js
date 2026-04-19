@@ -21,23 +21,6 @@ const userSchema = new Schema({
         type: Number,
         default: 0
     },
-    newPoints: [{
-        points: {
-            type: Number,
-            required: true
-        },
-        steamID: {
-            type: String,
-            required: true
-        },
-        mapName: {
-            type: String
-        },
-        addedAt: {
-            type: Date,
-            default: Date.now
-        }
-    }],
     isAdmin: {
         type: Boolean,
         default: false

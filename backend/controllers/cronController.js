@@ -115,12 +115,6 @@ const newFeaturedLeaderboard = async (req, res) => {
                 if (user) {
                     const earnedPoints = Math.floor(100 / ((0.4 * i) + 1));
                     user.points = earnedPoints + user.points;
-                    user.newPoints.push({
-                        points: earnedPoints,
-                        steamID: current.steamID,
-                        mapName: current.mapName,
-                        addedAt: new Date()
-                    });
                     user.save()
                 }
             }
