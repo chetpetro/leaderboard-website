@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import '../styles/pages/User.css'
 import { msToTime } from "../timeUtils";
+import '../styles/pages/UserDetails.css'
 
 
-const LeaderboardDetails = () => {
+const UserDetails = () => {
     const { discordID } = useParams()
     const [entries, setEntries] = useState('');
     const [user, setUser] = useState('');
@@ -49,4 +49,4 @@ const LeaderboardDetails = () => {
     );
 }
  
-export default LeaderboardDetails;
+export default UserDetails;

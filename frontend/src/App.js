@@ -7,7 +7,7 @@ import Login from "./pages/Login"
 import Signup from './pages/Signup';
 import MapDetails from './pages/MapDetails';
 import { useState, useEffect } from 'react';
-import User from './pages/User';
+import User from './pages/UserDetails';
 import PointsLeaderboard from './pages/PointsLeaderboard';
 import ErrorMessageDisplay from "./components/ErrorMessageDisplay";
 import { ErrorProvider } from './context/ErrorContext';
