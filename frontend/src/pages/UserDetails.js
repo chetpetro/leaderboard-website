@@ -28,7 +28,7 @@ const UserDetails = () => {
     // TODO manche mappoints werden falsch berechnet (siehe har) & refactor of method generation string (automatisch)
     useEffect(() => {
         console.log("mapPoints", user.mapPoints)
-        console.log(user)
+        console.log("user", user)
     }, [user]);
 
 

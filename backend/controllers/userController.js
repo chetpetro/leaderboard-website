@@ -74,6 +74,7 @@ const getUser = async (req, res) => {
         return res.status(400).json({error: "User not found"})
     }
     const mapsWithUser = await Leaderboard.find({entries: {$elemMatch: {discordID: user.discordID}}})
+    mapsWithUser.forEach((map) => map.entries.sort((a, b) => a.time - b.time))
     const recalculated = await updateUserPointsIfCalculationMethodChanged(user, mapsWithUser);
     const userWithEntries = await getUserWithEntries(user, mapsWithUser);
     res.status(200).json({...userWithEntries, recalculated})
@@ -110,7 +111,7 @@ async function updateUserPointsIfCalculationMethodChanged(user, mapsWithUser) {
 async function getUserWithEntries(user, userMapEntries) {
     let userWithEntries = {user, entries: []}
 
-    userMapEntries.forEach((leaderboard) => leaderboard.entries.sort((a, b) => a.time - b.time).forEach((entry, index) => {
+    userMapEntries.forEach((leaderboard) => leaderboard.forEach((entry, index) => {
         if (entry.discordID === user.discordID) userWithEntries.entries.push({mapName: leaderboard.mapName, steamID: leaderboard.steamID, pos: index + 1, entry})
     }))
     return userWithEntries;
