@@ -74,9 +74,9 @@ const getUser = async (req, res) => {
         return res.status(400).json({error: "User not found"})
     }
     const mapsWithUser = await Leaderboard.find({entries: {$elemMatch: {discordID: user.discordID}}})
-    const recalculated = await updateUserPointsIfCalculationMethodChanged(user, mapsWithUser);
+    updateUserPointsIfCalculationMethodChanged(user, mapsWithUser);
     const userWithEntries = await getUserWithEntries(user, mapsWithUser);
-    res.status(200).json({...userWithEntries, recalculated})
+    res.status(200).json({...userWithEntries})
 }
 
 async function updateUserPointsIfCalculationMethodChanged(user, mapsWithUser) {
