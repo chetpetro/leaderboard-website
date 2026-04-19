@@ -72,16 +72,44 @@ const getUser = async (req, res) => {
 
         delete user.password;
 
+        return res.status(200).json({
+            user: user,
+            shouldUpdatePoints: user.pointCalculationMethod !== currentPointCalculationMethod()
+        });
+    } catch (error) {
+        console.error('getUser failed:', error);
+        return res.status(500).json({ error: 'Failed to fetch user data: ' + error });
+    }
+}
+
+const updateUserPoints = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const user = await User.findOne({ discordID: id });
+        if (!user) return res.status(404).json({ error: "User not found" });
+
         const mapsWithUser = await Leaderboard.find(
             { 'entries.discordID': user.discordID },
             { mapName: 1, steamID: 1, entries: 1 }
         ).lean();
-        mapsWithUser.forEach((map) => map.entries.sort((a, b) => a.time - b.time))
-        const userWithEntries = getUserWithEntries(user, mapsWithUser);
-        return res.status(200).json(userWithEntries);
+        mapsWithUser.forEach((map) => map.entries.sort((a, b) => a.time - b.time));
+
+        if (user.pointCalculationMethod !== currentPointCalculationMethod()) {
+            await updateUserPointsIfCalculationMethodChanged(user, mapsWithUser);
+        }
+
+        const refreshedUser = await User.findOne({ discordID: id }).lean();
+        delete refreshedUser.password;
+        const userWithEntries = await getUserWithEntries(refreshedUser, mapsWithUser);
+
+        return res.status(200).json({
+            ...userWithEntries,
+            shouldUpdatePoints: false
+        });
     } catch (error) {
-        console.error('getUser failed:', error);
-        return res.status(500).json({ error: 'Failed to fetch user data: ' + error });
+        console.error('updateUserPoints failed:', error);
+        return res.status(500).json({ error: 'Failed to update user points: ' + error });
     }
 }
 
@@ -146,6 +174,7 @@ module.exports = {
     loginUser,
     signupUser,
     getUser,
+    updateUserPoints,
     getUsers,
     signupUserDiscord,
     loginUserDiscord

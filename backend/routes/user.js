@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, signupUser, getUser, getUsers, signupUserDiscord, loginUserDiscord } = require('../controllers/userController');
+const { loginUser, signupUser, getUser, updateUserPoints, getUsers, signupUserDiscord, loginUserDiscord } = require('../controllers/userController');
 
 const router = express.Router();
 
@@ -20,6 +20,10 @@ router.get('/', getUsers)
 
 // Get user info
 router.get('/:id', getUser);
+
+// Refresh user points if the calculation method changed
+router.get('/:id/update-points', updateUserPoints);
+router.post('/:id/update-points', updateUserPoints);
 
 
 module.exports = router;

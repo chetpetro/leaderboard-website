@@ -6,7 +6,8 @@ const {
     createMapLeaderboard,
     getMOTW,
     getRecentLeaderboards,
-    changeMapDifficultyBonus
+    changeMapDifficultyBonus,
+    getEntriesByUser
 } = require("../controllers/leaderboardController");
 const requireAuth = require('../middleware/requireAuth');
 const requireAdmin = require('../middleware/requireAdmin');
@@ -15,6 +16,7 @@ const router = express.Router();
 router.get('/', getLeaderboards); // GET all leaderboards
 router.get('/motw', getMOTW); // GET Map of the Week
 router.get('/recent', getRecentLeaderboards); // GET the 10 most recently updated leaderboards
+router.get('/entries', getEntriesByUser); // GET all entries for a user
 router.get('/:steamID', getLeaderboard); // GET one leaderboard by name
 router.post('/', createMapLeaderboard); // POST new leaderboard
 

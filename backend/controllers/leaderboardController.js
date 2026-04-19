@@ -74,6 +74,44 @@ const getRecentLeaderboards = async (req, res) =>  {
     res.status(200).json(response);
 }
 
+const getEntriesByUser = async (req, res) => {
+    const { user: discordID } = req.query;
+
+    if (!discordID) {
+        return res.status(400).json({ error: 'Missing user query parameter' });
+    }
+
+    try {
+        const mapsWithUser = await Leaderboard.find(
+            { 'entries.discordID': discordID },
+            { mapName: 1, steamID: 1, entries: 1 }
+        ).lean();
+
+        mapsWithUser.forEach((map) => map.entries.sort((a, b) => a.time - b.time));
+
+        const entries = [];
+        mapsWithUser.forEach((leaderboard) => {
+            if (!Array.isArray(leaderboard.entries)) return;
+
+            leaderboard.entries.forEach((entry, index) => {
+                if (entry?.discordID === discordID) {
+                    entries.push({
+                        mapName: leaderboard.mapName,
+                        steamID: leaderboard.steamID,
+                        pos: index + 1,
+                        entry
+                    });
+                }
+            });
+        });
+
+        return res.status(200).json({ entries });
+    } catch (error) {
+        console.error('getEntriesByUser failed:', error);
+        return res.status(500).json({ error: 'Failed to fetch entries: ' + error });
+    }
+}
+
 const getLeaderboard = async (req, res) =>  {
     const { steamID } = req.params;
     const response = await Leaderboard.find({ steamID })
@@ -275,5 +313,6 @@ module.exports = {
     createOrEditEntry,
     deleteEntryByMapAndDiscord,
     getMOTW,
-    getRecentLeaderboards
+    getRecentLeaderboards,
+    getEntriesByUser
 }
