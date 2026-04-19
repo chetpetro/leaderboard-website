@@ -1,35 +1,27 @@
-const User = require('../models/userModel');
 const Leaderboard = require('../models/LeaderboardModel');
 const { recalculatePointsForMap } = require('./leaderboardController');
 
 async function oneTimeMigrate(req, res) {
     try {
-        // Get all leaderboards
-        const maps = await Leaderboard.find({});
+        const steamID = String(req.query?.steamID || '').trim();
 
-        if (!maps || maps.length === 0) {
-            return res.status(200).json({ message: 'No maps found to migrate' });
+        if (!steamID) {
+            return res.status(400).json({ error: 'steamID query parameter is required' });
         }
 
-        let processedCount = 0;
-        let errorCount = 0;
+        const map = await Leaderboard.findOne({ steamID });
 
-        // Process each map
-        for (const map of maps) {
-            try {
-                await recalculatePointsForMap(map);
-                processedCount++;
-            } catch (error) {
-                console.error(`Error processing map ${map.steamID}:`, error);
-                errorCount++;
-            }
+        if (!map) {
+            return res.status(404).json({ error: `No map found for steamID: ${steamID}` });
         }
+
+        await recalculatePointsForMap(map);
 
         return res.status(200).json({
             message: 'Migration completed',
-            processedMaps: processedCount,
-            errors: errorCount,
-            totalMaps: maps.length
+            steamID: map.steamID,
+            mapName: map.mapName,
+            processedEntries: Array.isArray(map.entries) ? map.entries.length : 0
         });
     } catch (error) {
         console.error('Migration error:', error);
