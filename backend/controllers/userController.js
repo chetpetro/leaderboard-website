@@ -87,6 +87,8 @@ async function updateUserPointsIfCalculationMethodChanged(user, mapsWithUser) {
         const newPoints = calculatePoints(map.entries.length, userRank, map.difficultyBonus)
         user.mapPoints.push( { points: newPoints, mapSteamID: map.steamID})
     })
+    user.pointCalculationMethod = currentPointCalculationMethod();
+    await user.save();
     return true;
 }
 

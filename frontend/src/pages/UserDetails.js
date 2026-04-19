@@ -23,10 +23,7 @@ const UserDetails = () => {
 
         fetchEntries();
     }, [discordID])
-    // TODO manche mappoints werden falsch berechnet (siehe har) & refactor of method generation string (automatisch)
-    //    useEffect(() => {
-    //         console.log("mapPoints", user.mapPoints)
-    //     }, [user]);
+
 
 
     return (
