@@ -46,7 +46,7 @@ async function loadUserAndMapSubmission(discordID, setEntries, setUser) {
         setEntries(entries);
     })
 
-    if (shouldUpdatePoints || true) {
+    if (shouldUpdatePoints) {
         const updatedUser = await updateUserPoints(discordID);
         if (updatedUser) setUser(updatedUser);
     }
@@ -79,7 +79,6 @@ async function updateUserPoints(discordID) {
     const response = await fetch(`https://leaderboard-website-api.vercel.app/api/user/${discordID}/update-points`);
     const json = await response.json();
     if (response.ok) {
-        console.log("userpoints: ", json.user)
         return json.user;
     } else {
         console.error("Failed to fetch user points:", {
@@ -88,7 +87,6 @@ async function updateUserPoints(discordID) {
             error: json?.error,
             message: json?.message,
             endpoint: json?.endpoint,
-            stack: json?.stack
         });
         return null;
     }

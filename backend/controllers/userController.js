@@ -95,9 +95,9 @@ const updateUserPoints = async (req, res) => {
         ).lean();
         mapsWithUser.forEach((map) => map.entries.sort((a, b) => a.time - b.time));
 
-        //if (user.pointCalculationMethod !== currentPointCalculationMethod()) {
+        if (user.pointCalculationMethod !== currentPointCalculationMethod()) {
             await updateUserPointsIfCalculationMethodChanged(user, mapsWithUser);
-        //}
+        }
 
         const refreshedUser = await User.findOne({ discordID: id }).lean();
         delete refreshedUser.password;
@@ -115,10 +115,6 @@ const updateUserPoints = async (req, res) => {
             discordID: id,
             endpoint: '/api/user/:id/update-points'
         };
-
-        if (process.env.NODE_ENV !== 'production') {
-            responsePayload.stack = error?.stack;
-        }
 
         return res.status(500).json(responsePayload);
     }
