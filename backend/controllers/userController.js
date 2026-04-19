@@ -80,16 +80,31 @@ const getUser = async (req, res) => {
 }
 
 async function updateUserPointsIfCalculationMethodChanged(user, mapsWithUser) {
-    if (user.pointCalculationMethod === currentPointCalculationMethod()) return false;
-    user.mapPoints = []
+    const debugLog = [];
+    user.mapPoints = [];
+
     mapsWithUser.forEach((map) => {
         const userRank = map.entries.findIndex((entry) => entry.discordID === user.discordID) + 1;
-        const newPoints = calculatePoints(map.entries.length, userRank, map.difficultyBonus)
-        user.mapPoints.push( { points: newPoints, mapSteamID: map.steamID})
-    })
+        const newPoints = calculatePoints(map.entries.length, userRank, map.difficultyBonus);
+
+        // Update the user object
+        user.mapPoints.push({ points: newPoints, mapSteamID: map.steamID });
+
+        // Collect debug data
+        debugLog.push({
+            mapName: map.mapName,
+            steamID: map.steamID,
+            entryCount: map.entries.length,
+            userRank: userRank,
+            newPoints: newPoints,
+            difficultyBonus: map.difficultyBonus
+        });
+    });
+
     user.pointCalculationMethod = currentPointCalculationMethod();
     await user.save();
-    return true;
+
+    return debugLog;
 }
 
 async function getUserWithEntries(user, userMapEntries) {

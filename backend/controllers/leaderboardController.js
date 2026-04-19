@@ -1,10 +1,8 @@
 const Leaderboard = require('../models/LeaderboardModel');
-const User = require('../models/userModel');
 const { getAverageColor } = require('fast-average-color-node');
 const { replaceTemplateKeywords } = require('../utils/templateReplacer');
 const {msToTime} = require("../utils/timeUtil");
 const { sendDiscordMessage } = require('../utils/discordUtil');
-const { calculatePoints } = require('../scripts/points');
 require('dotenv').config()
 
 const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID, wrContext }) => {

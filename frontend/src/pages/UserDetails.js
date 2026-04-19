@@ -18,12 +18,18 @@ const UserDetails = () => {
                 const entries = json.entries.sort((a, b) => a.pos - b.pos)
                 setEntries(entries)
                 setUser(json.user)
+                console.log("recalculated:", json.recalculated, "\n\n")
+                console.log(json)
             }
         }
 
         fetchEntries();
     }, [discordID])
-
+    // TODO manche mappoints werden falsch berechnet (siehe har) & refactor of method generation string (automatisch)
+    useEffect(() => {
+        console.log("mapPoints", user.mapPoints)
+        console.log(user)
+    }, [user]);
 
 
     return (
