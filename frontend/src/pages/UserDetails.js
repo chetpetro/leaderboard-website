@@ -8,7 +8,6 @@ const UserDetails = () => {
     const { discordID } = useParams()
     const [entries, setEntries] = useState([]);
     const [user, setUser] = useState('');
-    // const [calculatedPoints, setCalculatedPoints] = useState(0);
 
     useEffect(() => {
         const fetchEntries = async () => {
@@ -24,6 +23,10 @@ const UserDetails = () => {
 
         fetchEntries();
     }, [discordID])
+    // TODO manche mappoints werden falsch berechnet (siehe har) & refactor of method generation string (automatisch)
+    //    useEffect(() => {
+    //         console.log("mapPoints", user.mapPoints)
+    //     }, [user]);
 
 
     return (
