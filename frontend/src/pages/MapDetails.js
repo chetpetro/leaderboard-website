@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {Link, useParams} from "react-router-dom";
 import CreateEntryForm from "../components/CreateEntryForm";
 import ChangeDifficultyBonusForm from "../components/ChangeDifficultyBonusForm";
@@ -14,7 +14,7 @@ const MapDetails = ({user}) => {
     const [map, setMap] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const { showError } = useError();
-    const { isAuthorized: isAdminAuthorized, isLoading: isAdminLoading } = useAdminAuthorization(user);
+    const { isAuthorized: isAdminAuthorized } = useAdminAuthorization(user);
 
     const fetchMap = useCallback(async () => {
         try {

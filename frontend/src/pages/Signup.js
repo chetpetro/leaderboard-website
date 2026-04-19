@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect, useCallback} from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/pages/Signup.css'
 import { useError } from '../context/ErrorContext';
@@ -9,9 +9,9 @@ const Signup = ({ setUser }) => {
     const [password, setPassword] = useState('')
     const { showError } = useError();
 
-    const setUserWithUsernameAndDiscordIDFromJson = (userName, discordID, json) => {
+    const setUserWithUsernameAndDiscordIDFromJson = useCallback((userName, discordID, json) => {
         setUser({userName, discordID: discordID, token: json.token, isAdmin: json.isAdmin, mapPoints: json.mapPoints});
-    }
+    }, [setUser]);
 
     const navigate = useNavigate();
 
@@ -62,7 +62,7 @@ const Signup = ({ setUser }) => {
                 console.log("Sign Up Discord Error: " + error)
             })
         }
-    }, [navigate, setUser, showError])
+    }, [navigate, setUser, showError, setUserWithUsernameAndDiscordIDFromJson])
 
     return (
         <div className="signup">
