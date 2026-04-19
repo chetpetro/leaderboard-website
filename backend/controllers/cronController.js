@@ -71,7 +71,7 @@ const sendMotwRecapMessage = async () => {
         }
 
         const template = [
-            `## Map of the Week Recap: [${currentFeatured.mapName}](${mapUrl})`,
+            `## Map of the Week Recap: [${currentFeatured.mapName}](<${mapUrl}>)`,
             `**Participants:** ${participantCount}`,
             '',
             '### Top Performers:',
