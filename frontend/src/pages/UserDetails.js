@@ -20,13 +20,13 @@ const UserDetails = () => {
 
                 const entriesPayload = await api.leaderboards.fetchEntriesByUser(discordID);
                 if (entriesPayload?.entries) {
-                    setEntries(entriesPayload.entries);
+                    setEntries(entriesPayload.entries.sort((e1, e2) => e1.pos - e2.pos));
                 }
 
                 if (userPayload.shouldUpdatePoints) {
                     const updatedPayload = await api.user.updatePoints(discordID);
                     if (updatedPayload?.user) setUser(updatedPayload.user);
-                    if (updatedPayload?.entries) setEntries(updatedPayload.entries);
+                    if (updatedPayload?.entries) setEntries(updatedPayload.entries.sort((e1, e2) => e1.pos - e2.pos));
                 }
             } catch (error) {
                 // Errors are already shown by the API layer.

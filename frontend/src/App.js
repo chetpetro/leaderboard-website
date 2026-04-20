@@ -42,7 +42,7 @@ function AppContent() {
       setUser(parsedUser);
 
       try {
-        await api.user.fetchById(parsedUser.discordID);
+        await api.user.updatePoints(parsedUser.discordID);
       } catch (error) {
         // Errors are already shown by the API layer.
       }
