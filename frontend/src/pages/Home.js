@@ -63,7 +63,7 @@ const Home = ({motw}) => {
             try {
                 const json = await api.leaderboards.fetchAll();
                 setMaps((json || []).sort((a, b) => b.entries.length - a.entries.length));
-                requestAnimationFrame(() => setTimeout(() => setMapsInitialized(true), 750))
+                setTimeout(() => setMapsInitialized(true), 750);
             } catch (error) {
                 // Errors are already shown by the API layer.
             }

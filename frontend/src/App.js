@@ -12,6 +12,7 @@ import ErrorMessageDisplay from "./components/ErrorMessageDisplay";
 import { ErrorProvider } from './context/ErrorContext';
 import HardestMaps from "./pages/HardestMaps";
 import useApi from './hooks/useApi';
+import {Footer} from "./components/Footer";
 
 function AppContent() {
   const api = useApi();
@@ -81,6 +82,7 @@ function AppContent() {
             <Route path='/hardest-maps' element={<HardestMaps />} />
           </Routes>
         </div>
+        <Footer/>
       </BrowserRouter>
     </div>
   );

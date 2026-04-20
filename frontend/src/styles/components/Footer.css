@@ -1,0 +1,26 @@
+footer {
+    position: relative;
+    margin-block-start: 4rem;
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(to right,
+        transparent 0%, #5d3663 50%, transparent 100%
+        );
+    }
+    >.inside {
+        display: flex;
+        justify-content: start;
+        font-size: .6667rem;
+        color: var(--color-surface-500);
+        padding-block: 1rem;
+        padding-inline: 4rem;
+        > * {
+            display: grid;
+        }
+    }
+}
