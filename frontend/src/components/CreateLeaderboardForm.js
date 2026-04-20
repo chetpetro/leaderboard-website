@@ -1,23 +1,22 @@
 import { useState } from "react";
 import '../styles/components/CreateLeaderboardForm.css'
+import useApi from "../hooks/useApi";
 
 const CreateLeaderboardForm = ({show}) => {
+    const api = useApi();
     const [url, setURL] = useState('');
     
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (url === '') return;
 
-        fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/', {
-            method: "POST",
-            body: JSON.stringify({url}),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(() => {
+        try {
+            await api.leaderboards.createMapLeaderboard(url);
             setURL('');
             window.location.reload();
-        }).catch((err) => console.log(err));
+        } catch (err) {
+            // Errors are already shown by the API layer.
+        }
     }
 
     return (

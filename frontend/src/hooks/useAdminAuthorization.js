@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useError } from '../context/ErrorContext';
-
-const ADMIN_STATUS_URL = 'https://leaderboard-website-api.vercel.app/api/admin/status';
+import useApi from './useApi';
 
 const useAdminAuthorization = (user) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { showError } = useError();
+  const api = useApi();
 
   useEffect(() => {
     let isMounted = true;
@@ -24,15 +22,10 @@ const useAdminAuthorization = (user) => {
       }
 
       try {
-        const response = await fetch(ADMIN_STATUS_URL, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
-
-        updateAuthorizationState(response.ok);
+        const response = await api.admin.fetchStatus(user.token);
+        updateAuthorizationState(Boolean(response?.isAdmin));
       } catch (error) {
-        showError(error.message || 'Could not verify admin access.');
+        // Errors are already shown by the API layer.
         updateAuthorizationState(false);
       }
     };
@@ -42,7 +35,7 @@ const useAdminAuthorization = (user) => {
     return () => {
       isMounted = false;
     };
-  }, [showError, user?.isAdmin, user?.token]);
+  }, [api, user?.isAdmin, user?.token]);
 
   return { isAuthorized, isLoading };
 };

@@ -1,23 +1,25 @@
 import { Link } from "react-router-dom";
 import {useEffect, useState} from "react";
 import '../styles/components/ActiveMaps.css';
+import useApi from "../hooks/useApi";
 
 const ActiveMaps = () => {
+    const api = useApi();
     const [leaderboards, setLeaderboards] = useState([]);
 
     useEffect(() => {
         const fetchLeaderboards = async () => {
-            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/recent?limit=6');
-            const json = await response.json();
-
-            if (response.ok) {
+            try {
+                const json = await api.leaderboards.fetchRecent(6);
                 setLeaderboards(json);
+            } catch (error) {
+                // Errors are already shown by the API layer.
             }
         }
 
         fetchLeaderboards();
 
-    }, [])
+    }, [api])
 
     const scrollToSearchAndClick = () => {
         const search = document.getElementById("search");

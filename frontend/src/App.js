@@ -11,10 +11,12 @@ import PointsLeaderboard from './pages/PointsLeaderboard';
 import ErrorMessageDisplay from "./components/ErrorMessageDisplay";
 import { ErrorProvider } from './context/ErrorContext';
 import HardestMaps from "./pages/HardestMaps";
+import useApi from './hooks/useApi';
 
-function App() {
+function AppContent() {
+  const api = useApi();
 
-  const [user, setUser] = useState({ 
+  const [user, setUser] = useState({
     userName: '',
     discordID: '',
     token: '',
@@ -24,48 +26,70 @@ function App() {
   const [motw, setMOTW] = useState('');
 
   useEffect(() => {
-    const user = localStorage.getItem('user')
-    if (user) {
-      let parsedUser;
+    const initializeUser = async () => {
+      const storedUser = localStorage.getItem('user');
+      if (!storedUser) return;
 
+      let parsedUser;
       try {
-        parsedUser = JSON.parse(user);
+        parsedUser = JSON.parse(storedUser);
       } catch (error) {
         localStorage.removeItem('user');
         parsedUser = null;
       }
-      setUser(parsedUser)
-    }
 
+      if (!parsedUser) return;
+      setUser(parsedUser);
+
+      try {
+        await api.user.fetchById(parsedUser.discordID);
+      } catch (error) {
+        // Errors are already shown by the API layer.
+      }
+    };
+
+    initializeUser();
+  }, [api]);
+
+
+  useEffect(() => {
     const fetchMOTW = async () => {
-      const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/motw');
-      const json = await response.json();
-      
-      if (response.ok) setMOTW(json)
-    }
+      try {
+        const json = await api.leaderboards.fetchMOTW();
+        setMOTW(json);
+      } catch (error) {
+        // Errors are already shown by the API layer.
+      }
+    };
 
-    fetchMOTW()
-  }, []);
+    fetchMOTW();
+  }, [api]);
 
   return (
+    <div className="App">
+      <ErrorMessageDisplay/>
+      <BrowserRouter>
+        <Navbar user={user} setUser={setUser} motw={motw}/>
+        <div className="pages">
+          <Routes>
+            <Route exact path='/' element={<Home motw={motw}/>} />
+            <Route path='/:steamID' element={<MapDetails user={user} />} />
+            <Route path='/user/:discordID' element={<User />}/>
+            <Route path='/login' element={<Login setUser={setUser}/>} />
+            <Route path='/sign-up' element={<Signup setUser={setUser}/>} />
+            <Route path='/points-leaderboard' element={<PointsLeaderboard />} />
+            <Route path='/hardest-maps' element={<HardestMaps />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </div>
+  );
+}
+
+function App() {
+  return (
     <ErrorProvider>
-      <div className="App">
-        <ErrorMessageDisplay/>
-        <BrowserRouter>
-          <Navbar user={user} setUser={setUser} motw={motw}/>
-          <div className="pages">
-            <Routes>
-              <Route exact path='/' element={<Home motw={motw}/>} />
-              <Route path='/:steamID' element={<MapDetails user={user} />} />
-              <Route path='/user/:discordID' element={<User />}/>
-              <Route path='/login' element={<Login setUser={setUser}/>} />
-              <Route path='/sign-up' element={<Signup setUser={setUser}/>} />
-              <Route path='/points-leaderboard' element={<PointsLeaderboard />} />
-              <Route path='/hardest-maps' element={<HardestMaps />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
-      </div>
+      <AppContent />
     </ErrorProvider>
   );
 }

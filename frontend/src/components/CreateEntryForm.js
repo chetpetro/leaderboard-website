@@ -1,8 +1,10 @@
 import { useState } from "react";
 import '../styles/components/CreateEntryForm.css';
 import {useError} from "../context/ErrorContext";
+import useApi from "../hooks/useApi";
 const CreateEntryForm = ({ steamID, user, onEntrySaved }) => {
     const { showError } = useError();
+    const api = useApi();
 
     const [time, setTime] = useState('00:00:00.000');
 
@@ -22,26 +24,16 @@ const CreateEntryForm = ({ steamID, user, onEntrySaved }) => {
         const msTime = Number(splitTime[3]) + Number(splitTime[2]) * 1000 + Number(splitTime[1]) * 60000 + Number(splitTime[0]) * 3600000
 
         try {
-            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + steamID, {
-                method: 'PATCH',
-                body: JSON.stringify({ userName: user.userName, discordID: user.discordID, time: msTime }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}`
-                }
-            });
-
-            if (!response.ok) {
-                const errorBody = await response.json().catch(() => null);
-                showError(errorBody?.error || 'Failed to submit entry.');
-                return;
-            }
+            await api.leaderboards.createOrEditEntry(
+                steamID,
+                { userName: user.userName, discordID: user.discordID, time: msTime },
+                user.token
+            );
 
             setTime('00:00:00.000');
             onEntrySaved?.();
         } catch (err) {
-            console.log(err);
-            showError(err.message || 'Failed to submit entry.');
+            // Errors are already shown by the API layer.
         }
     }
 

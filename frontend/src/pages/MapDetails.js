@@ -6,10 +6,10 @@ import '../styles/pages/MapDetails.css'
 import { msToTime } from "../timeUtils";
 import { useError } from '../context/ErrorContext';
 import useAdminAuthorization from '../hooks/useAdminAuthorization';
-
-const API_BASE_URL = 'https://leaderboard-website-api.vercel.app/api';
+import useApi from '../hooks/useApi';
 
 const MapDetails = ({user}) => {
+    const api = useApi();
     const { steamID } = useParams()
     const [map, setMap] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -18,10 +18,9 @@ const MapDetails = ({user}) => {
 
     const fetchMap = useCallback(async () => {
         try {
-            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards/' + steamID)
-            const json = await response.json();
+            const json = await api.leaderboards.fetchBySteamID(steamID);
 
-            if (!response.ok) {
+            if (!Array.isArray(json) || !json[0]) {
                 showError('Failed to load map details');
                 setIsLoading(false);
                 return;
@@ -30,10 +29,10 @@ const MapDetails = ({user}) => {
             setMap(json[0]);
             setIsLoading(false);
         } catch (error) {
-            showError(error.message || 'Failed to load map details. Please try again.');
+            // Errors are already shown by the API layer.
             setIsLoading(false);
         }
-    }, [steamID, showError]);
+    }, [api, steamID, showError]);
 
 
     useEffect(() => {
@@ -46,18 +45,7 @@ const MapDetails = ({user}) => {
         if (!confirmed) return;
 
         try {
-            const response = await fetch(`${API_BASE_URL}/admin/leaderboards/${map.steamID}/entries/${entry.discordID}`, {
-                method: 'DELETE',
-                headers: {
-                    Authorization: `Bearer ${user.token}`
-                }
-            });
-
-            const json = await response.json().catch(() => ({}));
-            if (!response.ok) {
-                showError(json?.error || 'Failed to delete entry.');
-                return;
-            }
+            await api.admin.deleteEntry(map.steamID, entry.discordID, user.token);
 
             setMap((prev) => {
                 return {
@@ -66,7 +54,7 @@ const MapDetails = ({user}) => {
                 };
             });
         } catch (error) {
-            showError(error.message || 'Failed to delete entry.');
+            // Errors are already shown by the API layer.
         }
     };
 

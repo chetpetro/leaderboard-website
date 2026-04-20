@@ -2,22 +2,24 @@ import { useEffect, useState } from "react";
 import PlayerPodium from "../components/PlayerPodium";
 import '../styles/pages/PointsLeaderboard.css';
 import {Link} from "react-router-dom";
+import useApi from "../hooks/useApi";
 
 const PointsLeaderboard = () => {
+    const api = useApi();
     const [users, setUsers] = useState('')
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/')
-            const json = await response.json();
-
-            if (response.ok) {
+            try {
+                const json = await api.user.fetchAll();
                 setUsers(json);
+            } catch (error) {
+                // Errors are already shown by the API layer.
             }
         }
 
         fetchUsers();
-    }, [])
+    }, [api])
 
     return (
         <div className="points-leaderboard">

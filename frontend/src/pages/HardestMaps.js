@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import '../styles/pages/HardestMaps.css'
 import {Link} from "react-router-dom";
+import useApi from "../hooks/useApi";
 
-const API_BASE_URL = 'https://leaderboard-website-api.vercel.app/api';
 const TOP_MAP_SPECIAL_COLOR = '#a855f7';
 const MAP_DIFFICULTY_GRADIENT = ['#5b0f0f', '#ea580c', '#facc15', '#16a34a'];
 
@@ -80,24 +80,25 @@ const getMapRowColor = (index, difficultyBonus, minBonus, maxBonus) => {
 };
 
 const HardestMaps = () => {
+    const api = useApi();
     const [maps, setMaps] = useState([]);
     const { min: minBonus, max: maxBonus } = getDifficultyBonusRange(maps);
 
     useEffect(() => {
         const fetchMaps = async () => {
-            const response = await fetch(`${API_BASE_URL}/leaderboards`);
-            const json = await response.json();
-
-            if (response.ok) {
+            try {
+                const json = await api.leaderboards.fetchAll();
                 const difficultMaps = json
                     .filter((map) => map.difficultyBonus > 0)
                     .sort((a, b) => b.difficultyBonus - a.difficultyBonus)
                 setMaps(difficultMaps);
+            } catch (error) {
+                // Errors are already shown by the API layer.
             }
         }
 
         fetchMaps();
-    }, [])
+    }, [api])
 
     return (
         <div className="hardest-maps">

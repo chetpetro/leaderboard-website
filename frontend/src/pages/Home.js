@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import ActiveMaps from "../components/ActiveMaps";
 import PlayerPodium from "../components/PlayerPodium";
 import LatestSubmissionsTicker from "../components/LatestSubmissionsTicker.js";
+import useApi from "../hooks/useApi";
 
 const INVALID_SUBMISSION_DAY_END_UTC = Date.UTC(2026, 3, 12, 0, 0, 0, 0);
 
@@ -13,6 +14,7 @@ const isInvalidSubmissionDay = (timestamp) => {
 };
 
 const Home = ({motw}) => {
+    const api = useApi();
 
     const [query, setQuery] = useState('');
     const [maps, setMaps] = useState([]);
@@ -58,17 +60,17 @@ const Home = ({motw}) => {
 
     useEffect(() => {
         const fetchMaps = async () => {
-            const response = await fetch('https://leaderboard-website-api.vercel.app/api/leaderboards');
-            const json = await response.json();
-
-            if (response.ok) {
-                setMaps(json.sort((a, b) => b.entries.length - a.entries.length));
+            try {
+                const json = await api.leaderboards.fetchAll();
+                setMaps((json || []).sort((a, b) => b.entries.length - a.entries.length));
                 requestAnimationFrame(() => setTimeout(() => setMapsInitialized(true), 750))
+            } catch (error) {
+                // Errors are already shown by the API layer.
             }
         }
 
         fetchMaps();
-    }, [])
+    }, [api])
 
     useEffect(() => {
         if (mapsInitialized) return;
@@ -78,16 +80,16 @@ const Home = ({motw}) => {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/')
-            const json = await response.json();
-
-            if (response.ok) {
+            try {
+                const json = await api.user.fetchAll();
                 setTop3Players(json.slice(0, 3));
+            } catch (error) {
+                // Errors are already shown by the API layer.
             }
         }
 
         fetchUsers();
-    }, [])
+    }, [api])
 
     const latestSubmissions = useMemo(() => {
         return maps

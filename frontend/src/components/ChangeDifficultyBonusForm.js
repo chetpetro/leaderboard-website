@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useError } from "../context/ErrorContext";
 import '../styles/components/ChangeDifficultyBonusForm.css';
-
-const API_BASE_URL = 'https://leaderboard-website-api.vercel.app/api';
+import useApi from "../hooks/useApi";
 
 const ChangeDifficultyBonusForm = ({ steamID, user, onDifficultyChanged, map }) => {
+    const api = useApi();
     const { showError } = useError();
     const [difficultyBonus, setDifficultyBonus] = useState(map.difficultyBonus);
 
@@ -23,23 +23,14 @@ const ChangeDifficultyBonusForm = ({ steamID, user, onDifficultyChanged, map }) 
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/leaderboards/${steamID}/difficultyBonus`, {
-                method: 'PATCH',
-                body: JSON.stringify({ difficultyBonus: parsedDifficultyBonus }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {})
-                }
-            });
-
-            const json = await response.json().catch(() => ({}));
-            if (!response.ok) {
-                showError(json?.error || 'Failed to update difficulty bonus.');
-                return;
-            }
+            await api.leaderboards.updateDifficultyBonus(
+                steamID,
+                parsedDifficultyBonus,
+                user?.token
+            );
             onDifficultyChanged?.();
         } catch (err) {
-            showError(err.message || 'Failed to update difficulty bonus.');
+            // Errors are already shown by the API layer.
         }
     };
 

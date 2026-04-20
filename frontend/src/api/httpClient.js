@@ -1,0 +1,57 @@
+const API_BASE_URL = 'https://leaderboard-website-api.vercel.app/api';
+
+const parseResponseBody = async (response) => {
+  const contentType = response.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    return response.json();
+  }
+
+  return response.text().catch(() => null);
+};
+
+export class HttpClient {
+  constructor(showError) {
+    this.showError = showError;
+  }
+
+  async request(path, options = {}) {
+    const {
+      method = 'GET',
+      body,
+      headers = {},
+      token,
+      errorMessage = 'Request failed.'
+    } = options;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}${path}`, {
+        method,
+        headers: {
+          ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...headers
+        },
+        ...(body !== undefined ? { body: JSON.stringify(body) } : {})
+      });
+
+      const payload = await parseResponseBody(response);
+
+      if (!response.ok) {
+        const serverMessage =
+          payload && typeof payload === 'object'
+            ? payload.error || payload.message
+            : null;
+        throw new Error(serverMessage || errorMessage);
+      }
+
+      return payload;
+    } catch (error) {
+      this.showError?.(error.message || errorMessage);
+      throw error;
+    }
+  }
+}
+
+export const createHttpClient = (showError) => new HttpClient(showError);
+

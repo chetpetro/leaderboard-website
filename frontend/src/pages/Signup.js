@@ -1,13 +1,13 @@
 import {useState, useEffect, useCallback} from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/pages/Signup.css'
-import { useError } from '../context/ErrorContext';
+import useApi from "../hooks/useApi";
 
 const Signup = ({ setUser }) => {
+    const api = useApi();
     const [userName, setUserName] = useState('')
     const [discordID, setDiscordID] = useState('')
     const [password, setPassword] = useState('')
-    const { showError } = useError();
 
     const setUserWithUsernameAndDiscordIDFromJson = useCallback((userName, discordID, json) => {
         setUser({userName, discordID: discordID, token: json.token, isAdmin: json.isAdmin, mapPoints: json.mapPoints});
@@ -19,17 +19,7 @@ const Signup = ({ setUser }) => {
         e.preventDefault()
 
         try {
-            const response = await fetch('https://leaderboard-website-api.vercel.app/api/user/sign-up', {
-                method:"POST",
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({userName, discordID, password, isAdmin: false, mapPoints: []})
-            });
-            const json = await response.json()
-
-            if (!response.ok) {
-                showError(json.error || 'Sign up failed');
-                return;
-            }
+            const json = await api.user.signup({userName, discordID, password, isAdmin: false, mapPoints: []});
 
             // Store user in local storage
             localStorage.setItem('user', JSON.stringify(json));
@@ -37,32 +27,29 @@ const Signup = ({ setUser }) => {
 
             navigate('/');
         } catch (error) {
-            showError(error.message || 'Sign up failed. Please try again.');
+            // Errors are already shown by the API layer.
         }
     }
 
     useEffect(() => {
-        const fragment = new URLSearchParams(window.location.hash.slice(1));
-		const [accessToken, tokenType] = [fragment.get('access_token'), fragment.get('token_type')];
+        const signupWithDiscord = async () => {
+            try {
+                const fragment = new URLSearchParams(window.location.hash.slice(1));
+                const [accessToken, tokenType] = [fragment.get('access_token'), fragment.get('token_type')];
 
-        if (accessToken){
-            fetch('https://leaderboard-website-api.vercel.app/api/user/sign-up-discord', {
-                method:"POST",
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({tokenType, accessToken})
-            })
-            .then(response => response.json())
-            .then(json => {
+                if (!accessToken) return;
+
+                const json = await api.user.signupDiscord({ tokenType, accessToken });
                 localStorage.setItem('user', JSON.stringify(json));
                 setUserWithUsernameAndDiscordIDFromJson(json.userName, json.discordID, json);
                 navigate('/');
-            })
-            .catch((error) => {
-                showError(error.message || 'Discord sign up failed. Please try again.');
-                console.log("Sign Up Discord Error: " + error)
-            })
-        }
-    }, [navigate, setUser, showError, setUserWithUsernameAndDiscordIDFromJson])
+            } catch (error) {
+                // Errors are already shown by the API layer.
+            }
+        };
+
+        signupWithDiscord();
+    }, [api, navigate, setUserWithUsernameAndDiscordIDFromJson])
 
     return (
         <div className="signup">
