@@ -350,16 +350,17 @@ const createOrEditEntry = async (req, res) => {
             return res.status(500).json({ error: `Inconsistent state: user has points for a map they have no entry on, if possible write us on discord :) (mapPointsIndex: ${mapPointsIndex}, existingEntryIndex: ${existingEntryIndex})` });
         }
 
-        await Promise.all([
-            recomputeMapPointsForLeaderboard({
-                finalEntries,
-                steamID,
-                difficultyBonus: map.difficultyBonus
-            }),
-            sendDiscordPbMessage(discordPayload)
-        ]).catch(error => {
-            res.status(500).json({ error: error.message });
+        await recomputeMapPointsForLeaderboard({
+            finalEntries,
+            steamID,
+            difficultyBonus: map.difficultyBonus
         });
+
+        try {
+            await sendDiscordPbMessage(discordPayload);
+        } catch (discordError) {
+            console.error('Failed to send Discord PB message:', discordError);
+        }
 
         return res.status(200).json(responsePayload)
     } catch (err) {
