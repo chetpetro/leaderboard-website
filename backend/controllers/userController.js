@@ -190,6 +190,5 @@ module.exports = {
     updateUserPoints,
     getUsers,
     signupUserDiscord,
-    loginUserDiscord,
-    updateUserPointsIfCalculationMethodChanged,
+    loginUserDiscord
 }

@@ -3,8 +3,6 @@ const { getAverageColor } = require('fast-average-color-node');
 const { replaceTemplateKeywords } = require('../utils/templateReplacer');
 const {msToTime} = require("../utils/timeUtil");
 const { sendDiscordMessage } = require('../utils/discordUtil');
-const {updateUserPointsIfCalculationMethodChanged} = require("./userController");
-const {calculatePoints} = require("../scripts/points");
 require('dotenv').config()
 
 const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID, wrContext }) => {
@@ -189,9 +187,6 @@ const createOrEditEntry = async (req, res) => {
         const map = await Leaderboard.findOne({ steamID });
         if (!map) return res.status(404).json({error: "No leadearboard found"});
 
-        const user = User.findOne({ discordID: req.body.discordID });
-        if (!user) return res.status(404).json({error: "No user found"});
-
         let entries = map.entries
         const submissionDate = new Date();
 
@@ -258,15 +253,6 @@ const createOrEditEntry = async (req, res) => {
                 }
             );
         }
-
-        const mapPointsIndex = user.mapPoints.findIndex((entry) => entry.mapSteamID === steamID);
-        // Check for mismatches
-        // there already is an entry in the leaderboard schema but not in the users points (shouldn't happen, bc on login i update user points)
-        if ((mapPointsIndex !== -1 && existingEntryIndex === -1) || (mapPointsIndex === -1 && existingEntryIndex !== -1)) {
-            return res.status(500).json({ error: `Inconsistent state: user has points for a map they have no entry on, if possible write us on discord :) (mapPointsIndex: ${mapPointsIndex}, existingEntryIndex: ${existingEntryIndex})` });
-        }
-
-        // TODO für alle entries der map den score updaten
 
         try {
             await sendDiscordPbMessage(discordPayload);
