@@ -5,6 +5,11 @@
     margin-block: 1rem;
 }
 
+a.btn:hover,
+a.btn:focus {
+    text-decoration: none;
+}
+
 .btn {
     display: inline-block;
     padding: 0.5rem 1rem;
