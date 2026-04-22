@@ -135,13 +135,16 @@
 
 /* placeholder loading styling */
 .teaser .search-bar-with-placeholder-wrapper {
+    --transitionTime: 0s;
     .search-bar {
+        transition-property: opacity;
+        transition-duration: .1s;
+        transition-timing-function: ease-out;
         .search-inside {
-            transition: 1s ease-in opacity, 1s ease-in height, .3s ease outline-color;
             overflow: hidden;
 
             .search-results {
-                transition: .75s ease;
+                transition: var(--transitionTime) ease;
             }
         }
 

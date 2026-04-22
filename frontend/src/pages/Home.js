@@ -63,17 +63,24 @@ const Home = ({motw}) => {
             try {
                 const json = await api.leaderboards.fetchAll();
                 setMaps((json || []).sort((a, b) => b.entries.length - a.entries.length));
-                setTimeout(() => setMapsInitialized(true), 750);
             } catch (error) {
                 // Errors are already shown by the API layer.
             }
         }
 
         fetchMaps();
-    }, [api])
+    }, [api, searchBarRef])
 
     useEffect(() => {
-        if (mapsInitialized) return;
+        if (maps.length === 0) return;
+        setTimeout(() => setMapsInitialized(true), 50); // ik this isnt nice, but request animationFrame sometimes doesn't work here :(
+    }, [maps]);
+
+    useEffect(() => {
+        if (mapsInitialized) {
+            setTimeout(() => searchBarRef.current.style.setProperty('--transitionTime', '.75s'), 50)
+            return;
+        }
         searchBarRef.current.style.setProperty('--search-input-height', searchInputRef.current.offsetHeight + 'px');
 
     }, [mapsInitialized, searchInputRef, searchBarRef]);

@@ -24,10 +24,12 @@
             opacity: 0;
             pointer-events: none;
         }
+        &.is-loading {
+            animation: search-placeholder-pulse 4s ease-in-out infinite;
+        }
         background: radial-gradient(circle, var(--color-surface-300) 30%, var(--color-surface-500));
         background-repeat: repeat;
         background-size: 400%;
-        animation: search-placeholder-pulse 4s ease-in-out infinite;
 
         .placeholder-block {
             position: absolute;
