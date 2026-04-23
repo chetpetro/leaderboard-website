@@ -10,6 +10,9 @@
         &:first-child {
             margin-block-start: .25rem;
         }
+        .map-points {
+            text-align: end;
+        }
     }
     .leaderboard-entry {
         display: grid;

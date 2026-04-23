@@ -4,11 +4,90 @@ import { msToTime } from "../timeUtils";
 import '../styles/pages/UserDetails.css'
 import useApi from "../hooks/useApi";
 
+const MAP_POINTS_GRADIENT = ['#9c27b0', '#cc8dd4', '#e1bbe6'];
+
+const hexToRgb = (hexColor) => {
+    const hex = hexColor.replace('#', '');
+    return {
+        r: parseInt(hex.slice(0, 2), 16),
+        g: parseInt(hex.slice(2, 4), 16),
+        b: parseInt(hex.slice(4, 6), 16)
+    };
+};
+
+const rgbToHex = ({ r, g, b }) => {
+    const toHex = (value) => Math.round(value).toString(16).padStart(2, '0');
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
+const interpolateColor = (startHex, endHex, t) => {
+    const start = hexToRgb(startHex);
+    const end = hexToRgb(endHex);
+
+    return rgbToHex({
+        r: start.r + (end.r - start.r) * t,
+        g: start.g + (end.g - start.g) * t,
+        b: start.b + (end.b - start.b) * t
+    });
+};
+
+const getGradientColor = (progress) => {
+    const clamped = Math.min(1, Math.max(0, progress));
+    const segmentCount = MAP_POINTS_GRADIENT.length - 1;
+    const scaled = clamped * segmentCount;
+    const segment = Math.min(Math.floor(scaled), segmentCount - 1);
+    const segmentProgress = scaled - segment;
+
+    return interpolateColor(
+        MAP_POINTS_GRADIENT[segment],
+        MAP_POINTS_GRADIENT[segment + 1],
+        segmentProgress
+    );
+};
+
+const getMapPointsColor = (points, minPoints, maxPoints) => {
+    const numericPoints = Number(points);
+    if (!Number.isFinite(numericPoints)) {
+        return MAP_POINTS_GRADIENT[0];
+    }
+
+    if (maxPoints <= minPoints) {
+        return MAP_POINTS_GRADIENT[1];
+    }
+
+    const progress = (numericPoints - minPoints) / (maxPoints - minPoints);
+    return getGradientColor(progress);
+};
+
 const UserDetails = () => {
     const api = useApi();
     const { discordID } = useParams()
     const [entries, setEntries] = useState([]);
     const [user, setUser] = useState({});
+
+    const numericMapPoints = (user.mapPoints ?? [])
+        .map((entry) => Number(entry.points))
+        .filter((points) => Number.isFinite(points));
+    const minMapPoints = numericMapPoints.length ? Math.min(...numericMapPoints) : 0;
+    const maxMapPoints = numericMapPoints.length ? Math.max(...numericMapPoints) : 0;
+    const totalMapPoints = numericMapPoints.reduce((sum, points) => sum + points, 0);
+    const getMapPointsForSteamId = (steamID) => {
+        const mapPointsEntry = user.mapPoints?.find((entry) => entry.mapSteamID === steamID);
+        const mapPoints = Number(mapPointsEntry?.points);
+        return Number.isFinite(mapPoints) ? mapPoints : 0;
+    };
+    const sortedEntries = [...entries].sort((entryA, entryB) => {
+        const pointsDiff = getMapPointsForSteamId(entryB.steamID) - getMapPointsForSteamId(entryA.steamID);
+        if (pointsDiff !== 0) {
+            return pointsDiff;
+        }
+
+        if (entryA.pos !== entryB.pos) {
+            return entryA.pos - entryB.pos;
+        }
+
+        return String(entryA.steamID).localeCompare(String(entryB.steamID));
+    });
 
     useEffect(() => {
         const loadUserAndMapSubmission = async () => {
@@ -20,13 +99,13 @@ const UserDetails = () => {
 
                 const entriesPayload = await api.leaderboards.fetchEntriesByUser(discordID);
                 if (entriesPayload?.entries) {
-                    setEntries(entriesPayload.entries.sort((e1, e2) => e1.pos - e2.pos));
+                    setEntries(entriesPayload.entries);
                 }
 
                 if (userPayload.shouldUpdatePoints) {
                     const updatedPayload = await api.user.updatePoints(discordID);
                     if (updatedPayload?.user) setUser(updatedPayload.user);
-                    if (updatedPayload?.entries) setEntries(updatedPayload.entries.sort((e1, e2) => e1.pos - e2.pos));
+                    if (updatedPayload?.entries) setEntries(updatedPayload.entries);
                 }
             } catch (error) {
                 // Errors are already shown by the API layer.
@@ -40,24 +119,29 @@ const UserDetails = () => {
             <div className="hero">
                 <div className="inside">
                     <h1 className="details-map-name text-gradient">{ user.userName }</h1>
-                    <span className="user-points">{user.points}</span>
+                    <span className="user-points">{parseInt(totalMapPoints)}</span>
                 </div>
             </div>
             <div className="leaderboad-entries">
                 <div className="inside leaderboard">
-                    {entries.map((map) => (
-                        <div className="leaderboard-entry-wrapper" key={map.steamID}>
-                            <div className="leaderboard-entry">
-                            <span className={"map-placing map-pos-" + map.pos}>
-                                { map.pos }
-                            </span>
-                                <Link to={`/${map.steamID}`} className="map-link">{ map.mapName }</Link>
-                                <span className="time">{ msToTime(map.entry.time) }</span>
-                            </div>
-                            <span className="map-points">+{parseInt(user.mapPoints.find((entry) => entry.mapSteamID === map.steamID).points)}</span>
-                        </div>
+                    {sortedEntries.map((map) => {
+                        const mapPoints = parseInt(getMapPointsForSteamId(map.steamID));
 
-                    ))}
+                        return (
+                            <div className="leaderboard-entry-wrapper" key={map.steamID}>
+                                <div className="leaderboard-entry">
+                                <span className={"map-placing map-pos-" + map.pos}>
+                                    { map.pos }
+                                </span>
+                                    <Link to={`/${map.steamID}`} className="map-link">{ map.mapName }</Link>
+                                    <span className="time">{ msToTime(map.entry.time) }</span>
+                                </div>
+                                <span className="map-points" style={{ color: getMapPointsColor(mapPoints, minMapPoints, maxMapPoints) }}>
+                                    +{mapPoints}
+                                </span>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>
