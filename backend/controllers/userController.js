@@ -183,6 +183,21 @@ const getUsers = async (req, res) => {
     res.status(200).json(users)
 }
 
+const validateToken = async (req, res) => {
+    const { token } = req.body;
+
+    if (!token) {
+        return res.status(400).json({ error: 'Token is required' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET);
+        return res.status(200).json({ valid: true, decoded });
+    } catch (error) {
+        return res.status(401).json({ valid: false, error: 'Token is invalid or expired' });
+    }
+}
+
 module.exports = {
     loginUser,
     signupUser,
@@ -191,5 +206,5 @@ module.exports = {
     getUsers,
     signupUserDiscord,
     loginUserDiscord,
-    updateUserPointsIfCalculationMethodChanged,
+    validateToken,
 }

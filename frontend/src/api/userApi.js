@@ -21,6 +21,14 @@ export class UserApi {
     });
   }
 
+  validateToken(token) {
+    return this.httpClient.request('/user/validate-token', {
+      method: 'POST',
+      body: { token },
+      errorMessage: 'Token validation failed.'
+    });
+  }
+
   login(credentials) {
     return this.httpClient.request('/user/login', {
       method: 'POST',

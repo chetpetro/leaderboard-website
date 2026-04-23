@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, signupUser, getUser, updateUserPoints, getUsers, signupUserDiscord, loginUserDiscord } = require('../controllers/userController');
+const { loginUser, signupUser, getUser, updateUserPoints, getUsers, signupUserDiscord, loginUserDiscord, validateToken } = require('../controllers/userController');
 
 const router = express.Router();
 
@@ -14,6 +14,9 @@ router.post('/sign-up', signupUser);
 
 // Sign in with Discord 
 router.post('/sign-up-discord', signupUserDiscord);
+
+// Validate token
+router.post('/validate-token', validateToken);
 
 // Get all users
 router.get('/', getUsers)

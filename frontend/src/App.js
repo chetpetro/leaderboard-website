@@ -40,6 +40,23 @@ function AppContent() {
       }
 
       if (!parsedUser) return;
+
+      // Validate JWT token
+      try {
+        await api.user.validateToken(parsedUser.token);
+      } catch (error) {
+        // Token is expired or invalid, clear the user
+        localStorage.removeItem('user');
+        setUser({
+          userName: '',
+          discordID: '',
+          token: '',
+          isAdmin: false,
+          mapPoints: [],
+        });
+        return;
+      }
+
       setUser(parsedUser);
 
       try {
