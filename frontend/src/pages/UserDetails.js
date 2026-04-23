@@ -46,13 +46,17 @@ const UserDetails = () => {
             <div className="leaderboad-entries">
                 <div className="inside leaderboard">
                     {entries.map((map) => (
-                        <div className="leaderboard-entry" key={map.steamID}>
+                        <div className="leaderboard-entry-wrapper" key={map.steamID}>
+                            <div className="leaderboard-entry">
                             <span className={"map-placing map-pos-" + map.pos}>
                                 { map.pos }
                             </span>
-                            <Link to={`/${map.steamID}`} className="map-link">{ map.mapName }</Link>
-                            <span className="time">{ msToTime(map.entry.time) }</span>
+                                <Link to={`/${map.steamID}`} className="map-link">{ map.mapName }</Link>
+                                <span className="time">{ msToTime(map.entry.time) }</span>
+                            </div>
+                            <span className="map-points">+{parseInt(user.mapPoints.find((entry) => entry.mapSteamID === map.steamID).points)}</span>
                         </div>
+
                     ))}
                 </div>
             </div>
