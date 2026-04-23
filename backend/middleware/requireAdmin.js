@@ -3,7 +3,7 @@ const User = require('../models/userModel');
 const requireAdmin = async (req, res, next) => {
     try {
         if (!req.user?._id) {
-            return res.status(401).json({ error: 'request is not authorized' });
+            return res.status(401).json({ error: 'request is not authorized, missing id' });
         }
 
         const user = await User.findById(req.user._id).select('isAdmin');
@@ -13,7 +13,7 @@ const requireAdmin = async (req, res, next) => {
 
         next();
     } catch (error) {
-        return res.status(401).json({ error: 'request is not authorized' });
+        return res.status(401).json({ error: `request is not authorized, error: ${error}` });
     }
 };
 
