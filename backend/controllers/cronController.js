@@ -29,10 +29,8 @@ const sendNewMotwMessage = async ({ mapName, steamID, creator, wrEntry }) => {
     await sendDiscordMessage(content);
 };
 
-const sendMotwRecapMessage = async () => {
+const sendMotwRecapMessage = async (currentFeatured) => {
     try {
-        // Get the current featured leaderboard (the one that's ending)
-        const currentFeatured = await Leaderboard.findOne({ featured: true });
 
         if (!currentFeatured) {
             console.log('No featured leaderboard found for recap');
@@ -118,6 +116,7 @@ const newFeaturedLeaderboard = async (req, res) => {
                     user.save()
                 }
             }
+            await sendMotwRecapMessage(current);
         }
     } catch (err) {
         console.log(err);
@@ -134,7 +133,6 @@ const newFeaturedLeaderboard = async (req, res) => {
     await Leaderboard.findOneAndUpdate({ _id: selectedMap._id }, {featured: true});
 
     try {
-        await sendMotwRecapMessage();
         await sendNewMotwMessage({
             mapName: selectedMap.mapName,
             steamID: selectedMap.steamID,
