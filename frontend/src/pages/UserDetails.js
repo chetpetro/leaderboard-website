@@ -118,8 +118,30 @@ const UserDetails = () => {
         <div className="user">
             <div className="hero">
                 <div className="inside">
-                    <h1 className="details-map-name text-gradient">{ user.userName }</h1>
-                    <span className="user-points">{totalMapPoints}</span>
+                    <div className="points-center-display">
+                        <h1 className="details-map-name text-gradient">{ user.userName }</h1>
+                        <span className="user-points">{totalMapPoints}<small>PTS</small></span>
+                    </div>
+                    <div className="motw-info">
+                        <h2>
+                            Map of the Week
+                        </h2>
+                        <div className="motw-info-content">
+                            <div className="motw-streak">
+                                <h3>streak</h3>
+                                <div>7<span className="flame">🔥</span></div>
+                            </div>
+                            <div className="motw-wins">
+                                <h3>wins</h3>
+                                {user.mapOfTheWeekParticipations && <div>{user.mapOfTheWeekParticipations.filter((entry) => entry.placement === 0).length}</div>}
+                            </div>
+                            <div className="motw-participations">
+                                <h3>participations</h3>
+                                {user.mapOfTheWeekParticipations && <div>{user.mapOfTheWeekParticipations.length}</div>}
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div className="leaderboad-entries">

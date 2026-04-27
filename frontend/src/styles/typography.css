@@ -19,7 +19,10 @@ h2 {
     font-size: 1.5rem;
     line-height: 1.1;
     text-transform: uppercase;
-    margin-bottom: .25rem;
+}
+
+h3 {
+    text-transform: uppercase;
 }
 
 .text-gradient {

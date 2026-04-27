@@ -25,6 +25,16 @@ const userSchema = new Schema({
         type: String,
         default: ''
     },
+    mapOfTheWeekParticipations: [{
+        placement: {
+            type: Number,
+            required: true
+        },
+        motwNumber: {
+            type: Number,
+            required: true
+        }
+    }],
     mapPoints: [{
         points: {
             type: Number,
