@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { msToTime } from "../timeUtils";
 import '../styles/pages/UserDetails.css'
@@ -64,6 +64,7 @@ const UserDetails = () => {
     const { discordID } = useParams()
     const [entries, setEntries] = useState([]);
     const [user, setUser] = useState({});
+    const [currentMotwNumber, setCurrentMotwNumber] = useState(null);
 
     const numericMapPoints = (user.mapPoints ?? [])
         .map((entry) => Number(entry.points))
@@ -76,6 +77,35 @@ const UserDetails = () => {
         const mapPoints = Number(mapPointsEntry?.points);
         return Number.isFinite(mapPoints) ? mapPoints : 0;
     };
+
+    const motwStreak = useMemo(() => {
+        const motwNumber = Number(currentMotwNumber);
+        if (!Number.isFinite(motwNumber) || motwNumber <= 0) {
+            return 0;
+        }
+
+        const participationNumbers = new Set(
+            (user.mapOfTheWeekParticipations ?? [])
+                .map((entry) => Number(entry.motwNumber))
+                .filter((number) => Number.isFinite(number))
+        );
+
+        const startMotwNumber = participationNumbers.has(motwNumber)
+            ? motwNumber
+            : motwNumber - 1;
+
+        if (startMotwNumber <= 0) {
+            return 0;
+        }
+
+        let streak = 0;
+        while (participationNumbers.has(startMotwNumber - streak)) {
+            streak += 1;
+        }
+
+        return streak;
+    }, [currentMotwNumber, user.mapOfTheWeekParticipations]);
+
     const sortedEntries = [...entries].sort((entryA, entryB) => {
         const pointsDiff = getMapPointsForSteamId(entryB.steamID) - getMapPointsForSteamId(entryA.steamID);
         if (pointsDiff !== 0) {
@@ -91,6 +121,15 @@ const UserDetails = () => {
 
     useEffect(() => {
         const loadUserAndMapSubmission = async () => {
+            try {
+                const motwPayload = await api.leaderboards.fetchMOTW();
+                if (motwPayload) {
+                    setCurrentMotwNumber(Number(motwPayload.motwNumber));
+                }
+            } catch (error) {
+                // Errors are already shown by the API layer.
+            }
+
             try {
                 const userPayload = await api.user.fetchById(discordID);
                 if (!userPayload?.user) return;
@@ -129,7 +168,10 @@ const UserDetails = () => {
                         <div className="motw-info-content">
                             <div className="motw-streak">
                                 <h3>streak</h3>
-                                <div>7<span className="flame">🔥</span></div>
+                                <div>
+                                    {motwStreak}
+                                    {motwStreak >= 3 && <span className="flame">🔥</span>}
+                                </div>
                             </div>
                             <div className="motw-wins">
                                 <h3>wins</h3>
