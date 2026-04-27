@@ -30,6 +30,11 @@ const MOCK_RESPONSE_FILES = [
         method: 'DELETE',
         pattern: /^\/admin\/leaderboards\/[^/]+\/entries\/[^/]+$/,
         file: `${MOCK_API_BASE_URL}/admin-delete-entry.json`
+    },
+    {
+        method: 'DELETE',
+        pattern: /^\/admin\/leaderboards\/[^/]+\/motw\/entries\/[^/]+$/,
+        file: `${MOCK_API_BASE_URL}/admin-delete-entry.json`
     }
 ];
 

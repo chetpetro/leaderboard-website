@@ -4,6 +4,7 @@ import CreateEntryForm from "../components/CreateEntryForm";
 import "../styles/pages/MapDetails.css";
 import { msToTime } from "../timeUtils";
 import { useError } from "../context/ErrorContext";
+import useAdminAuthorization from "../hooks/useAdminAuthorization";
 import useApi from "../hooks/useApi";
 
 const MapOfTheWeek = ({ user }) => {
@@ -11,6 +12,7 @@ const MapOfTheWeek = ({ user }) => {
     const [map, setMap] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const { showError } = useError();
+    const { isAuthorized: isAdminAuthorized } = useAdminAuthorization(user);
 
     const fetchMap = useCallback(async () => {
         try {
@@ -44,6 +46,28 @@ const MapOfTheWeek = ({ user }) => {
 
         return [...entries].sort((a, b) => a.time - b.time);
     }, [map]);
+
+    const handleDeleteEntry = async (entry) => {
+        if (!user?.token || !map?.steamID) return;
+
+        const confirmed = window.confirm(`Are you sure you want to delete this entry?\n${entry.userName} - ${msToTime(entry.time)}`);
+        if (!confirmed) return;
+
+        try {
+            await api.admin.deleteMotwEntry(map.steamID, entry.discordID, user.token);
+
+            setMap((prev) => {
+                const prevEntries = Array.isArray(prev?.entries) ? prev.entries : [];
+
+                return {
+                    ...prev,
+                    entries: prevEntries.filter((entryEl) => entryEl.discordID !== entry.discordID)
+                };
+            });
+        } catch (error) {
+            // Errors are already shown by the API layer.
+        }
+    };
 
     return (
         <div className="map-details">
@@ -102,10 +126,19 @@ const MapOfTheWeek = ({ user }) => {
                     </div>
                     <div className="leaderboard map-rankings">
                         {motwEntries.map((entry, index) => (
-                            <div key={entry.discordID} className={"leaderboard-entry"}>
+                            <div key={entry.discordID} className={"leaderboard-entry" + (isAdminAuthorized ? ' admin-view' : '')}>
                                 <span className="placing">{index + 1}</span>
                                 <Link to={`/user/${entry.discordID}`}>{entry.userName}</Link>
                                 <span>{msToTime(entry.time)}</span>
+                                {isAdminAuthorized && (
+                                    <button
+                                        type="button"
+                                        onClick={() => handleDeleteEntry(entry)}
+                                        className="delete-btn btn btn-ghost btn-small"
+                                    >
+                                        -
+                                    </button>
+                                )}
                             </div>
                         ))}
                     </div>

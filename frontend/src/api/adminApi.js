@@ -17,5 +17,13 @@ export class AdminApi {
       errorMessage: 'Failed to delete entry.'
     });
   }
+
+  deleteMotwEntry(steamID, discordID, token) {
+    return this.httpClient.request(`/admin/leaderboards/${steamID}/motw/entries/${discordID}`, {
+      method: 'DELETE',
+      token,
+      errorMessage: 'Failed to delete MOTW entry.'
+    });
+  }
 }
 
