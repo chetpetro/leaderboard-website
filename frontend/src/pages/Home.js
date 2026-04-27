@@ -207,7 +207,7 @@ const Home = () => {
                     </button>
                     <CreateLeaderboardForm show={showCreateLeaderboard}/>
                     <div className="cards">
-                        <Link to={`/${motw.steamID}`} className={'card map-of-the-week animate-hover ' + (motw ? '' : 'hidden')}>
+                        <Link to={'/map-of-the-week'} className={'card map-of-the-week animate-hover ' + (motw ? '' : 'hidden')}>
                             <span className="icon-cnt text-gradient media-container">
                                 <div className={"media-container"}>
                                      <img src="/crown.svg" alt="crown" />

@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Login from "./pages/Login"
 import Signup from './pages/Signup';
 import MapDetails from './pages/MapDetails';
+import MapOfTheWeek from './pages/MapOfTheWeek';
 import { useState, useEffect } from 'react';
 import User from './pages/UserDetails';
 import PointsLeaderboard from './pages/PointsLeaderboard';
@@ -76,6 +77,7 @@ function AppContent() {
         <div className="pages">
           <Routes>
             <Route exact path='/' element={<Home/>} />
+            <Route path='/map-of-the-week' element={<MapOfTheWeek user={user} />} />
             <Route path='/:steamID' element={<MapDetails user={user} />} />
             <Route path='/user/:discordID' element={<User />}/>
             <Route path='/login' element={<Login setUser={setUser}/>} />
