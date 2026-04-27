@@ -5,6 +5,7 @@ const { replaceTemplateKeywords } = require('../utils/templateReplacer');
 const {msToTime} = require("../utils/timeUtil");
 const { sendDiscordMessage } = require('../utils/discordUtil');
 const {calculatePoints} = require("../scripts/points");
+const { getMotwNumber } = require('../scripts/motwNumber');
 require('dotenv').config()
 
 const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID, wrContext }) => {
@@ -403,7 +404,10 @@ const getMOTW = async (req, res) => {
     const response = await Leaderboard.findOne({ featured: true });
 
     if (!response) return res.status(404).json({error: "No featured map"});
-    res.status(200).json(response)
+    res.status(200).json({
+        ...response.toObject(),
+        motwNumber: getMotwNumber()
+    })
 }
 
 module.exports = {

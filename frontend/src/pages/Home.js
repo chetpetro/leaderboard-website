@@ -47,7 +47,11 @@ const Home = () => {
         const fetchMOTW = async () => {
             try {
                 const json = await api.leaderboards.fetchMOTW();
-                setMOTW(json);
+                const { motwNumber: currentMotwNumber, ...motwData } = json || {};
+                setMOTW({
+                    ...motwData,
+                    motwNumber: currentMotwNumber
+                });
             } catch (error) {
                 // Errors are already shown by the API layer.
             }

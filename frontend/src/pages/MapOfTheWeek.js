@@ -1,11 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import CreateEntryForm from "../components/CreateEntryForm";
-import ChangeDifficultyBonusForm from "../components/ChangeDifficultyBonusForm";
 import "../styles/pages/MapDetails.css";
 import { msToTime } from "../timeUtils";
 import { useError } from "../context/ErrorContext";
-import useAdminAuthorization from "../hooks/useAdminAuthorization";
 import useApi from "../hooks/useApi";
 
 const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
@@ -42,7 +40,6 @@ const MapOfTheWeek = ({ user }) => {
     const [map, setMap] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const { showError } = useError();
-    const { isAuthorized: isAdminAuthorized } = useAdminAuthorization(user);
 
     const fetchMap = useCallback(async () => {
         try {
@@ -54,7 +51,11 @@ const MapOfTheWeek = ({ user }) => {
                 return;
             }
 
-            setMap(json);
+            const { motwNumber: currentMotwNumber, ...motwData } = json || {};
+            setMap({
+                ...motwData,
+                motwNumber: currentMotwNumber
+            });
             setIsLoading(false);
         } catch (error) {
             // Errors are already shown by the API layer.
@@ -66,25 +67,6 @@ const MapOfTheWeek = ({ user }) => {
         fetchMap();
     }, [fetchMap]);
 
-    const handleDeleteEntry = async (entry) => {
-        if (!user?.token || !map?.steamID) return;
-
-        const confirmed = window.confirm(`Are you sure you want to delete this entry?\n${entry.userName} - ${msToTime(entry.time)}`);
-        if (!confirmed) return;
-
-        try {
-            await api.admin.deleteEntry(map.steamID, entry.discordID, user.token);
-
-            setMap((prev) => {
-                return {
-                    ...prev,
-                    entries: (prev.entries || []).filter((entryEl) => entryEl.discordID !== entry.discordID)
-                };
-            });
-        } catch (error) {
-            // Errors are already shown by the API layer.
-        }
-    };
 
     const motwEntries = useMemo(() => {
         const entries = Array.isArray(map?.entries) ? map.entries : [];

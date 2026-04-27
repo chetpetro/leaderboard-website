@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const { replaceTemplateKeywords } = require('../utils/templateReplacer');
 const {msToTime} = require("../utils/timeUtil");
 const { sendDiscordMessage } = require('../utils/discordUtil');
+const { getMotwNumber } = require('../scripts/motwNumber');
 
 const buildMotwMessageContent = ({ mapName, steamID, creator, wrEntry }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
@@ -50,7 +51,7 @@ const sendMotwRecapMessage = async (currentFeatured) => {
         const mapUrl = `${leaderboardUrl}${currentFeatured.steamID}`;
 
         // Build the recap message
-        let podiumContent = '';
+        let podiumContent;
         if (participantCount === 0) {
             podiumContent = 'No participants this week.';
         } else if (participantCount === 1) {
@@ -103,6 +104,7 @@ const getRandomLeaderboardWithWr = async () => {
 const newFeaturedLeaderboard = async (req, res) => {
     try{
         const current = await Leaderboard.findOneAndUpdate({ featured: true }, {featured: false});
+        const motwNumber = getMotwNumber();
 
         if (current) {
             const entries = current.entries.sort((a, b) => a.time - b.time)
@@ -114,7 +116,7 @@ const newFeaturedLeaderboard = async (req, res) => {
                     if (!user.mapOfTheWeekParticipations) user.mapOfTheWeekParticipations = [];
                     user.mapOfTheWeekParticipations.push({
                         placement: i,
-                        motwNumber: 0 // TODO calc motwNumber
+                        motwNumber: motwNumber-1 // the old motwNumber
                     });
                     user.save()
                 }
