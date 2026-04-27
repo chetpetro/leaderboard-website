@@ -28,15 +28,15 @@ const PointsLeaderboard = () => {
                 _id: player._id,
                 userName: player.userName,
                 discordID: player.discordID,
-                value: player.points + " pts"
+                value: player.totalMapPoints + " pts"
             }))}/>}
             <div className="leaderboard">
                 <div className="inside">
-                    {users.length > 3 && users.slice(3).filter(user => user.points > 0).map((user, index) => (
+                    {users.length > 3 && users.slice(3).filter(user => user.totalMapPoints > 0).map((user, index) => (
                         <Link to={`/user/${user.discordID}`} className="leaderboard-entry" key={user._id}>
                             <div className="placing">{index + 4}</div>
                             <div className="name">{user.userName}</div>
-                            <div className="points">{user.points} pts</div>
+                            <div className="points">{user.totalMapPoints} pts</div>
                         </Link>
                     ))}
                 </div>

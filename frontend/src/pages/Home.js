@@ -250,7 +250,7 @@ const Home = () => {
                 _id: player._id,
                 userName: player.userName,
                 discordID: player.discordID,
-                value: player.points + " pts"
+                value: player.totalMapPoints + " pts"
             }))}/>
             <div className="see-all-players bg-primary">
                 <div className="inside">

@@ -176,11 +176,25 @@ async function getUserWithEntries(user, userMapEntries) {
 }
 
 const getUsers = async (req, res) => {
-    const users = await User.find({}).sort({points: -1});
+    try {
+        const users = await User.find({}).lean();
 
-    if (!users) return res.status(400).json({error: "No users found"});
+        if (!users) return res.status(400).json({error: "No users found"});
 
-    res.status(200).json(users)
+        // Calculate total mapPoints for each user
+        const usersWithTotal = users.map(user => ({
+            ...user,
+            totalMapPoints: (user.mapPoints || []).reduce((sum, mp) => sum + (mp.points || 0), 0)
+        }));
+
+        // Sort by totalMapPoints descending
+        const sorted = usersWithTotal.sort((a, b) => b.totalMapPoints - a.totalMapPoints);
+
+        res.status(200).json(sorted);
+    } catch (error) {
+        console.error('getUsers failed:', error);
+        return res.status(500).json({error: 'Failed to fetch users: ' + error});
+    }
 }
 
 const getTop3Users = async (req, res) => {
