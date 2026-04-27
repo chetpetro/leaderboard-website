@@ -1,6 +1,6 @@
 const placementBonusValues = [150, 50, 25]
 const basePoints = 50;
-const scaleFactor = .3;
+const scaleFactor = .25;
 
 function currentPointCalculationMethod() {
     return `top3:${placementBonusValues[0]}:${placementBonusValues[1]}:${placementBonusValues[2]};base:${basePoints};comp:sqrt;scale:${scaleFactor}`;
