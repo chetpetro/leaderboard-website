@@ -87,7 +87,7 @@ const updateUserPoints = async (req, res) => {
 
     try {
         const user = await User.findOne({ discordID: id });
-        if (!user) return res.status(404).json({ error: "User not found" });
+        if (!user) return res.status(404).json({ error: "User not found while attempting to update user points" });
 
         const mapsWithUser = await Leaderboard.find(
             { 'entries.discordID': user.discordID },
