@@ -36,7 +36,7 @@ const PointsLeaderboard = () => {
                         <Link to={`/user/${user.discordID}`} className="leaderboard-entry" key={user._id}>
                             <div className="placing">{index + 4}</div>
                             <div className="name">{user.userName}</div>
-                            <div className="points">{user.totalMapPoints} pts</div>
+                            <div className="points">{parseInt(user.totalMapPoints)} pts</div>
                         </Link>
                     ))}
                 </div>
