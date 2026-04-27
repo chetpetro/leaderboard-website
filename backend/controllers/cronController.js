@@ -1,4 +1,5 @@
 const Leaderboard = require('../models/LeaderboardModel');
+const MotwSubmission = require('../models/MotwSubmissionModel');
 const User = require('../models/userModel');
 const { replaceTemplateKeywords } = require('../utils/templateReplacer');
 const {msToTime} = require("../utils/timeUtil");
@@ -8,10 +9,11 @@ const { getMotwNumber } = require('../scripts/motwNumber');
 const buildMotwMessageContent = ({ mapName, steamID, creator, wrEntry }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const mapUrl = `${leaderboardUrl}${steamID}`;
+    const hasWrEntry = Boolean(wrEntry);
 
     const template = [
         '## New Map Of the Week: [%MAPNAME%](<%MAPURL%>) By: %CREATOR%',
-        (wrEntry ? 'Current WR: `%WRTIME%` by: [%WRUSER%](<%WRUSERURL%>)' : 'Current WR: `No run yet`'),
+        (hasWrEntry ? 'Current WR: `%WRTIME%` by: [%WRUSER%](<%WRUSERURL%>)' : 'Current WR: `No run yet`'),
         '-# _Submit your best run this week - points are awarded when the next Map of the Week rotation happens._'
     ].join('\n');
 
@@ -19,9 +21,9 @@ const buildMotwMessageContent = ({ mapName, steamID, creator, wrEntry }) => {
         MAPNAME: mapName,
         MAPURL: mapUrl,
         CREATOR: creator,
-        WRTIME: msToTime(wrEntry.time),
-        WRUSER: wrEntry.userName,
-        WRUSERURL: `${leaderboardUrl}user/${wrEntry.discordID}`
+        WRTIME: hasWrEntry ? msToTime(wrEntry.time) : '',
+        WRUSER: hasWrEntry ? wrEntry.userName : '',
+        WRUSERURL: hasWrEntry ? `${leaderboardUrl}user/${wrEntry.discordID}` : ''
     });
 };
 
@@ -30,7 +32,7 @@ const sendNewMotwMessage = async ({ mapName, steamID, creator, wrEntry }) => {
     await sendDiscordMessage(content);
 };
 
-const sendMotwRecapMessage = async (currentFeatured) => {
+const sendMotwRecapMessage = async (currentFeatured, motwEntries) => {
     try {
 
         if (!currentFeatured) {
@@ -38,12 +40,8 @@ const sendMotwRecapMessage = async (currentFeatured) => {
             return;
         }
 
-        // Filter entries submitted in the last 7 days
-        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        const entries = Array.isArray(currentFeatured.entries)
-            ? [...currentFeatured.entries]
-                .filter(entry => entry.submittedAt && new Date(entry.submittedAt) >= sevenDaysAgo)
-                .sort((a, b) => a.time - b.time)
+        const entries = Array.isArray(motwEntries)
+            ? [...motwEntries].sort((a, b) => a.time - b.time)
             : [];
 
         const participantCount = entries.length;
@@ -105,9 +103,15 @@ const newFeaturedLeaderboard = async (req, res) => {
     try{
         const current = await Leaderboard.findOneAndUpdate({ featured: true }, {featured: false});
         const motwNumber = getMotwNumber();
+        const currentMotwSubmissions = current
+            ? await MotwSubmission.findOne({ steamID: current.steamID })
+            : null;
+        const motwEntries = Array.isArray(currentMotwSubmissions?.entries)
+            ? currentMotwSubmissions.entries
+            : [];
 
         if (current) {
-            const entries = current.entries.sort((a, b) => a.time - b.time)
+            const entries = [...motwEntries].sort((a, b) => a.time - b.time)
 
             for (let i = 0; i < entries.length; i++) {
                 const user = await User.findOne({ discordID: entries[i].discordID });
@@ -121,8 +125,10 @@ const newFeaturedLeaderboard = async (req, res) => {
                     user.save()
                 }
             }
-            await sendMotwRecapMessage(current);
+            await sendMotwRecapMessage(current, motwEntries);
         }
+
+        await MotwSubmission.deleteMany({});
     } catch (err) {
         console.log(err);
     }
@@ -136,6 +142,13 @@ const newFeaturedLeaderboard = async (req, res) => {
     const { selectedMap, wrEntry } = randomLeaderboard;
     console.log(selectedMap.mapName)
     await Leaderboard.findOneAndUpdate({ _id: selectedMap._id }, {featured: true});
+
+    await MotwSubmission.create({
+        mapName: selectedMap.mapName,
+        steamID: selectedMap.steamID,
+        creator: selectedMap.creator,
+        entries: []
+    });
 
     try {
         await sendNewMotwMessage({

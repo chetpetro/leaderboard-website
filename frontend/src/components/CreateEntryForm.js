@@ -2,7 +2,7 @@ import { useState } from "react";
 import '../styles/components/CreateEntryForm.css';
 import {useError} from "../context/ErrorContext";
 import useApi from "../hooks/useApi";
-const CreateEntryForm = ({ steamID, user, onEntrySaved }) => {
+const CreateEntryForm = ({ steamID, user, onEntrySaved, submissionMode = 'normal', syncNormalEntry = false }) => {
     const { showError } = useError();
     const api = useApi();
 
@@ -24,11 +24,26 @@ const CreateEntryForm = ({ steamID, user, onEntrySaved }) => {
         const msTime = Number(splitTime[3]) + Number(splitTime[2]) * 1000 + Number(splitTime[1]) * 60000 + Number(splitTime[0]) * 3600000
 
         try {
-            await api.leaderboards.createOrEditEntry(
-                steamID,
-                { userName: user.userName, discordID: user.discordID, time: msTime },
-                user.token
-            );
+            const submissionPayload = {
+                userName: user.userName,
+                discordID: user.discordID,
+                time: msTime,
+                syncNormalEntry
+            };
+
+            if (submissionMode === 'motw') {
+                await api.leaderboards.createMotwEntry(
+                    steamID,
+                    submissionPayload,
+                    user.token
+                );
+            } else {
+                await api.leaderboards.createOrEditEntry(
+                    steamID,
+                    submissionPayload,
+                    user.token
+                );
+            }
 
             setTime('00:00:00.000');
             onEntrySaved?.();
@@ -39,7 +54,7 @@ const CreateEntryForm = ({ steamID, user, onEntrySaved }) => {
 
     return (
         <form className="create-entry-form" onSubmit={handleSubmit}>
-            <h2>Submit Entry</h2>
+            <h2>{submissionMode === 'motw' ? 'Submit MOTW Entry' : 'Submit Entry'}</h2>
             <label htmlFor="time-input">Time: (HH:mm:ss.mmm)</label>
             <div className={"input-cnt"}>
                 <input id="time-input" type="text" pattern="[0-9]{2,}:[0-5]{1}[0-9]{1}:[0-5]{1}[0-9]{1}\.[0-9]{3}" onChange={(e) => setTime(e.target.value)} value={time}/>

@@ -6,35 +6,6 @@ import { msToTime } from "../timeUtils";
 import { useError } from "../context/ErrorContext";
 import useApi from "../hooks/useApi";
 
-const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
-
-const getCurrentMotwWindowUtc = (now = new Date()) => {
-    const dayOfWeek = now.getUTCDay();
-    const daysSinceMonday = (dayOfWeek + 6) % 7;
-    const weekStartUtc = Date.UTC(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate() - daysSinceMonday,
-        0,
-        0,
-        0,
-        0
-    );
-
-    return {
-        weekStartUtc,
-        weekEndUtc: weekStartUtc + MS_PER_WEEK - 1
-    };
-};
-
-const isWithinCurrentMotwWindow = (submittedAt) => {
-    const submittedTimestamp = submittedAt ? new Date(submittedAt).getTime() : NaN;
-    if (!Number.isFinite(submittedTimestamp)) return false;
-
-    const { weekStartUtc, weekEndUtc } = getCurrentMotwWindowUtc();
-    return submittedTimestamp >= weekStartUtc && submittedTimestamp <= weekEndUtc;
-};
-
 const MapOfTheWeek = ({ user }) => {
     const api = useApi();
     const [map, setMap] = useState("");
@@ -71,9 +42,7 @@ const MapOfTheWeek = ({ user }) => {
     const motwEntries = useMemo(() => {
         const entries = Array.isArray(map?.entries) ? map.entries : [];
 
-        return entries
-            .filter((entry) => isWithinCurrentMotwWindow(entry?.submittedAt))
-            .sort((a, b) => a.time - b.time);
+        return [...entries].sort((a, b) => a.time - b.time);
     }, [map]);
 
     return (
@@ -143,7 +112,15 @@ const MapOfTheWeek = ({ user }) => {
                 </div>
                 <div className="col-right">
                     <div className="submit-entry card">
-                        {user.userName && <CreateEntryForm steamID={map.steamID} user={user} onEntrySaved={fetchMap} />}
+                        {user.userName && (
+                            <CreateEntryForm
+                                steamID={map.steamID}
+                                user={user}
+                                onEntrySaved={fetchMap}
+                                submissionMode="motw"
+                                syncNormalEntry
+                            />
+                        )}
                         {!user.userName && <h2>Login to Submit Entry</h2>}
                     </div>
                     <div className="map-details-placeholder placeholder-wrapper">

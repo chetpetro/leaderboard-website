@@ -9,6 +9,7 @@ const MOCK_RESPONSE_FILES = [
     {method: 'GET', pattern: /^\/leaderboards\/?$/, file: `${MOCK_API_BASE_URL}/leaderboards.json`},
     {method: 'GET', pattern: /^\/leaderboards\/[^/]+$/, file: `${MOCK_API_BASE_URL}/leaderboards-by-steamid.json`},
     {method: 'POST', pattern: /^\/leaderboards\/?$/, file: `${MOCK_API_BASE_URL}/leaderboards-create.json`},
+    {method: 'PATCH', pattern: /^\/leaderboards\/[^/]+\/motw$/, file: `${MOCK_API_BASE_URL}/leaderboards-motw-submit.json`},
     {
         method: 'PATCH',
         pattern: /^\/leaderboards\/[^/]+\/difficultyBonus$/,

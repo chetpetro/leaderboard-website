@@ -4,7 +4,7 @@
     "mapName": "Short Map 2",
     "steamID": "234",
     "creator": "gurg",
-    "featured": "false",
+    "featured": false,
     "description": "description",
     "previewImage": "",
     "colour": "red",

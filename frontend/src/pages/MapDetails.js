@@ -128,7 +128,15 @@ const MapDetails = ({user}) => {
                         </div>
                     }
                     <div className="submit-entry card">
-                        {user.userName && <CreateEntryForm steamID={ map.steamID } user={user} onEntrySaved={fetchMap} />}
+                        {user.userName && (
+                            <CreateEntryForm
+                                steamID={map.steamID}
+                                user={user}
+                                onEntrySaved={fetchMap}
+                                submissionMode={map.featured === true || map.featured === 'true' ? 'motw' : 'normal'}
+                                syncNormalEntry={false}
+                            />
+                        )}
                         {!user.userName && <h2>Login to Submit Entry</h2>}
                     </div>
                     <div className="map-details-placeholder placeholder-wrapper">

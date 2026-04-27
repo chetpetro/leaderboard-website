@@ -1,1 +1,27 @@
-{"steamID":"","mapName":"","motwNumber": 5}
+{
+  "_id": "motw-current",
+  "mapName": "Weekly Wind Tunnel",
+  "steamID": "999999999",
+  "creator": "Map Maker",
+  "featured": true,
+  "description": "Current Map of the Week mock entry.",
+  "previewImage": "/bee.png",
+  "colour": "red",
+  "difficultyBonus": 5,
+  "lastSubmissionAt": "2026-04-27T00:00:00.000Z",
+  "entries": [
+	{
+	  "userName": "RunnerOne",
+	  "discordID": "1111",
+	  "time": 123456,
+	  "submittedAt": "2026-04-27T00:00:00.000Z"
+	},
+	{
+	  "userName": "RunnerTwo",
+	  "discordID": "2222",
+	  "time": 130000,
+	  "submittedAt": "2026-04-27T01:00:00.000Z"
+	}
+  ],
+  "motwNumber": 5
+}
