@@ -134,7 +134,7 @@ const MapDetails = ({user}) => {
                                 user={user}
                                 onEntrySaved={fetchMap}
                                 submissionMode={map.featured === true || map.featured === 'true' ? 'motw' : 'normal'}
-                                syncNormalEntry={false}
+                                syncNormalEntry={map.featured === true || map.featured === 'true'}
                             />
                         )}
                         {!user.userName && <h2>Login to Submit Entry</h2>}
