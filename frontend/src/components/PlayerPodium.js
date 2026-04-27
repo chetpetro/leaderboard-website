@@ -17,7 +17,7 @@ const PlayerPodium = ({ players }) => {
                                     {player.userName}
                                 </div>
                                 <div className="points">
-                                    {player.value}
+                                    {parseInt(player.value)}
                                 </div>
                             </Link>
                         </div>
