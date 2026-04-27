@@ -183,6 +183,30 @@ const getUsers = async (req, res) => {
     res.status(200).json(users)
 }
 
+const getTop3Users = async (req, res) => {
+    try {
+        const users = await User.find({}).lean();
+
+        if (!users) return res.status(400).json({error: "No users found"});
+
+        // Calculate total mapPoints for each user
+        const usersWithTotal = users.map(user => ({
+            ...user,
+            totalMapPoints: (user.mapPoints || []).reduce((sum, mp) => sum + (mp.points || 0), 0)
+        }));
+
+        // Sort by totalMapPoints descending
+        const top3 = usersWithTotal
+            .sort((a, b) => b.totalMapPoints - a.totalMapPoints)
+            .slice(0, 3);
+
+        res.status(200).json(top3);
+    } catch (error) {
+        console.error('getTop3Users failed:', error);
+        return res.status(500).json({ error: 'Failed to fetch top 3 users: ' + error });
+    }
+}
+
 const validateToken = async (req, res) => {
     const { token } = req.body;
 
@@ -204,6 +228,7 @@ module.exports = {
     getUser,
     updateUserPoints,
     getUsers,
+    getTop3Users,
     signupUserDiscord,
     loginUserDiscord,
     validateToken,

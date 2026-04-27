@@ -107,8 +107,8 @@ const Home = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const json = await api.user.fetchAll();
-                setTop3Players(json.slice(0, 3));
+                const json = await api.user.fetchTop3();
+                setTop3Players(json);
             } catch (error) {
                 // Errors are already shown by the API layer.
             }

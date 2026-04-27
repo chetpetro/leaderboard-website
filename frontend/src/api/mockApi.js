@@ -16,9 +16,10 @@ const MOCK_RESPONSE_FILES = [
         file: `${MOCK_API_BASE_URL}/leaderboards-difficulty-bonus.json`
     },
     {method: 'PATCH', pattern: /^\/leaderboards\/[^/]+$/, file: `${MOCK_API_BASE_URL}/leaderboards-entry-update.json`},
-    {method: 'GET', pattern: /^\/user\/?$/, file: `${MOCK_API_BASE_URL}/users.json`},
-    {method: 'GET', pattern: /^\/user\/[^/]+\/update-points$/, file: `${MOCK_API_BASE_URL}/user-update-points.json`},
-    {method: 'GET', pattern: /^\/user\/[^/]+$/, file: `${MOCK_API_BASE_URL}/user-by-id.json`},
+     {method: 'GET', pattern: /^\/user\/?$/, file: `${MOCK_API_BASE_URL}/users.json`},
+     {method: 'GET', pattern: /^\/user\/top3$/, file: `${MOCK_API_BASE_URL}/users-top3.json`},
+     {method: 'GET', pattern: /^\/user\/[^/]+\/update-points$/, file: `${MOCK_API_BASE_URL}/user-update-points.json`},
+     {method: 'GET', pattern: /^\/user\/[^/]+$/, file: `${MOCK_API_BASE_URL}/user-by-id.json`},
     {method: 'POST', pattern: /^\/user\/validate-token$/, file: `${MOCK_API_BASE_URL}/user-validate-token.json`},
     {method: 'POST', pattern: /^\/user\/login$/, file: `${MOCK_API_BASE_URL}/user-login.json`},
     {method: 'POST', pattern: /^\/user\/login-discord$/, file: `${MOCK_API_BASE_URL}/user-login-discord.json`},
