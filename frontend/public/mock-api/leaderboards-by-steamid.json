@@ -1,0 +1,22 @@
+[
+  {
+    "_id": "1234111",
+    "mapName": "Short Map 2",
+    "steamID": "234",
+    "creator": "gurg",
+    "featured": false,
+    "description": "description",
+    "previewImage": "/crown.svg",
+    "colour": "red",
+    "lastSubmissionAt": "03-01-2021",
+    "difficultyBonus": 0,
+    "entries": [
+      {
+        "userName": "gurgy",
+        "discordID": "1234",
+        "time": 1234,
+        "submittedAt": "03-01-2021"
+      }
+    ]
+  }
+]

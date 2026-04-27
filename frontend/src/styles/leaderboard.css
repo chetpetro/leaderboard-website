@@ -6,6 +6,14 @@
     a.leaderboard-entry:hover {
         text-decoration: none;
     }
+    .leaderboard-entry-wrapper {
+        &:first-child {
+            margin-block-start: .25rem;
+        }
+        .map-points {
+            text-align: end;
+        }
+    }
     .leaderboard-entry {
         display: grid;
         text-wrap: nowrap;
@@ -13,9 +21,6 @@
         row-gap: .5rem;
         padding: .5rem 1rem;
         position: relative;
-        &:first-child {
-            margin-block-start: .25rem;
-        }
         .placing {
             font-style: italic;
         }
@@ -64,6 +69,11 @@
 }
 
 @media (min-width: 300px) {
+    .leaderboard-entry-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 4ch;
+        align-items: center;
+    }
     .leaderboard .leaderboard-entry {
         grid-template-columns: 1ch 1fr auto;
     }

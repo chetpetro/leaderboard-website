@@ -9,6 +9,12 @@ export class UserApi {
     });
   }
 
+  fetchTop3() {
+    return this.httpClient.request('/user/top3', {
+      errorMessage: 'Failed to load top 3 users.'
+    });
+  }
+
   fetchById(discordID) {
     return this.httpClient.request(`/user/${discordID}`, {
       errorMessage: 'Failed to load user data.'

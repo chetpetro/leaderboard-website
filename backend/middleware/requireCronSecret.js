@@ -22,6 +22,10 @@ const safeEqual = (provided, expected) => {
 };
 
 const requireCronSecret = (req, res, next) => {
+    if (req.headers['x-vercel-cron']) {
+        return next();
+    }
+
     const expectedSecret = process.env.CRON_SECRET;
 
     if (!expectedSecret) {

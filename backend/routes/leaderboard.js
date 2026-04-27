@@ -3,6 +3,7 @@ const {
     getLeaderboard,
     getLeaderboards,
     createOrEditEntry,
+    createMotwEntry,
     createMapLeaderboard,
     getMOTW,
     getRecentLeaderboards,
@@ -22,6 +23,7 @@ router.post('/', createMapLeaderboard); // POST new leaderboard
 
 // Auth required to add leaderboard entry
 router.use(requireAuth);
+router.patch('/:steamID/motw', createMotwEntry); // PATCH one featured map MOTW entry
 router.patch('/:steamID', createOrEditEntry); // PATCH one leaderboard by name
 
 router.use(requireAdmin);

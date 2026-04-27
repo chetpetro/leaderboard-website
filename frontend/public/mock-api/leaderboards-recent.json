@@ -1,0 +1,102 @@
+[
+  {
+    "_id": "123411111",
+    "mapName": "Short Map",
+    "steamID": "1234",
+    "creator": "gurg",
+    "featured": "false",
+    "description": "description",
+    "previewImage": "/junker.png",
+    "colour": "red",
+    "lastSubmissionAt": "03-01-2021",
+    "difficultyBonus": 0,
+    "entries": [
+      {
+        "userName": "gurgy",
+        "discordID": "1234",
+        "time": 1234,
+        "submittedAt": "03-01-2021"
+      }
+    ]
+  },
+  {
+    "_id": "12341111",
+    "mapName": "Long Map name, wow so long",
+    "steamID": "124",
+    "creator": "gurgy",
+    "featured": "true",
+    "description": "description",
+    "previewImage": "/hot_pepper.png",
+    "colour": "red",
+    "lastSubmissionAt": "02-01-2021",
+    "difficultyBonus": 0,
+    "entries": [
+      {
+        "userName": "har",
+        "discordID": "12345",
+        "time": 12345,
+        "submittedAt": "02-01-2021"
+      }
+    ]
+  },
+  {
+    "_id": "1234111",
+    "mapName": "Short Map 2",
+    "steamID": "234",
+    "creator": "gurg",
+    "featured": "false",
+    "description": "description",
+    "previewImage": "/pogoIcon.png",
+    "colour": "red",
+    "lastSubmissionAt": "03-01-2021",
+    "difficultyBonus": 0,
+    "entries": [
+      {
+        "userName": "gurgy",
+        "discordID": "1234",
+        "time": 1234,
+        "submittedAt": "03-01-2021"
+      }
+    ]
+  },
+  {
+    "_id": "123411",
+    "mapName": "Long Map of doom wow so long",
+    "steamID": "12346",
+    "creator": "gurg",
+    "featured": "false",
+    "description": "description",
+    "previewImage": "/cheeb.png",
+    "colour": "red",
+    "lastSubmissionAt": "03-01-2021",
+    "difficultyBonus": 0,
+    "entries": [
+      {
+        "userName": "gurgy",
+        "discordID": "1234",
+        "time": 1234,
+        "submittedAt": "03-01-2021"
+      }
+    ]
+  },
+  {
+    "_id": "12341",
+    "mapName": "Short Maps collection",
+    "steamID": "12341",
+    "creator": "gurg",
+    "featured": "false",
+    "description": "description",
+    "previewImage": "discord.svg",
+    "colour": "red",
+    "lastSubmissionAt": "03-01-2021",
+    "difficultyBonus": 0,
+    "entries": [
+      {
+        "userName": "gurgy",
+        "discordID": "1234",
+        "time": 1234,
+        "submittedAt": "03-01-2021"
+      }
+    ]
+  }
+]

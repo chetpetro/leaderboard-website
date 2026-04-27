@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, signupUser, getUser, updateUserPoints, getUsers, signupUserDiscord, loginUserDiscord, validateToken } = require('../controllers/userController');
+const { loginUser, signupUser, getUser, updateUserPoints, getUsers, getTop3Users, signupUserDiscord, loginUserDiscord, validateToken } = require('../controllers/userController');
 
 const router = express.Router();
 
@@ -20,6 +20,9 @@ router.post('/validate-token', validateToken);
 
 // Get all users
 router.get('/', getUsers)
+
+// Get top 3 users
+router.get('/top3', getTop3Users)
 
 // Get user info
 router.get('/:id', getUser);

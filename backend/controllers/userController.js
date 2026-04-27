@@ -87,7 +87,7 @@ const updateUserPoints = async (req, res) => {
 
     try {
         const user = await User.findOne({ discordID: id });
-        if (!user) return res.status(404).json({ error: "User not found" });
+        if (!user) return res.status(404).json({ error: "User not found while attempting to update user points" });
 
         const mapsWithUser = await Leaderboard.find(
             { 'entries.discordID': user.discordID },
@@ -176,11 +176,49 @@ async function getUserWithEntries(user, userMapEntries) {
 }
 
 const getUsers = async (req, res) => {
-    const users = await User.find({}).sort({points: -1});
+    try {
+        const users = await User.find({}).lean();
 
-    if (!users) return res.status(400).json({error: "No users found"});
+        if (!users) return res.status(400).json({error: "No users found"});
 
-    res.status(200).json(users)
+        // Calculate total mapPoints for each user
+        const usersWithTotal = users.map(user => ({
+            ...user,
+            totalMapPoints: (user.mapPoints || []).reduce((sum, mp) => sum + (mp.points || 0), 0)
+        }));
+
+        // Sort by totalMapPoints descending
+        const sorted = usersWithTotal.sort((a, b) => b.totalMapPoints - a.totalMapPoints);
+
+        res.status(200).json(sorted);
+    } catch (error) {
+        console.error('getUsers failed:', error);
+        return res.status(500).json({error: 'Failed to fetch users: ' + error});
+    }
+}
+
+const getTop3Users = async (req, res) => {
+    try {
+        const users = await User.find({}).lean();
+
+        if (!users) return res.status(400).json({error: "No users found"});
+
+        // Calculate total mapPoints for each user
+        const usersWithTotal = users.map(user => ({
+            ...user,
+            totalMapPoints: (user.mapPoints || []).reduce((sum, mp) => sum + (mp.points || 0), 0)
+        }));
+
+        // Sort by totalMapPoints descending
+        const top3 = usersWithTotal
+            .sort((a, b) => b.totalMapPoints - a.totalMapPoints)
+            .slice(0, 3);
+
+        res.status(200).json(top3);
+    } catch (error) {
+        console.error('getTop3Users failed:', error);
+        return res.status(500).json({ error: 'Failed to fetch top 3 users: ' + error });
+    }
 }
 
 const validateToken = async (req, res) => {
@@ -204,6 +242,7 @@ module.exports = {
     getUser,
     updateUserPoints,
     getUsers,
+    getTop3Users,
     signupUserDiscord,
     loginUserDiscord,
     validateToken,

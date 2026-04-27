@@ -13,7 +13,7 @@ const isInvalidSubmissionDay = (timestamp) => {
     return timestamp < INVALID_SUBMISSION_DAY_END_UTC;
 };
 
-const Home = ({motw}) => {
+const Home = () => {
     const api = useApi();
 
     const [query, setQuery] = useState('');
@@ -23,6 +23,7 @@ const Home = ({motw}) => {
     const [top3Players, setTop3Players] = useState([]);
     const [searchResultHeight, setSearchResultHeight] = useState(0);
     const [mapsInitialized, setMapsInitialized] = useState(false);
+    const [motw, setMOTW] = useState('');
 
     const searchBarRef = useRef(null);
     const searchResultRef = useRef(null);
@@ -40,6 +41,24 @@ const Home = ({motw}) => {
         };
         document.addEventListener("mousedown", handleClickOutside);
     }, []);
+
+
+    useEffect(() => {
+        const fetchMOTW = async () => {
+            try {
+                const json = await api.leaderboards.fetchMOTW();
+                const { motwNumber: currentMotwNumber, ...motwData } = json || {};
+                setMOTW({
+                    ...motwData,
+                    motwNumber: currentMotwNumber
+                });
+            } catch (error) {
+                // Errors are already shown by the API layer.
+            }
+        };
+
+        fetchMOTW();
+    }, [api]);
 
     useEffect(() => {
         if (!searchResultRef.current) return;
@@ -88,8 +107,8 @@ const Home = ({motw}) => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const json = await api.user.fetchAll();
-                setTop3Players(json.slice(0, 3));
+                const json = await api.user.fetchTop3();
+                setTop3Players(json);
             } catch (error) {
                 // Errors are already shown by the API layer.
             }
@@ -192,7 +211,7 @@ const Home = ({motw}) => {
                     </button>
                     <CreateLeaderboardForm show={showCreateLeaderboard}/>
                     <div className="cards">
-                        <Link to={`/${motw.steamID}`} className={'card map-of-the-week animate-hover ' + (motw ? '' : 'hidden')}>
+                        <Link to={'/map-of-the-week'} className={'card map-of-the-week animate-hover ' + (motw ? '' : 'hidden')}>
                             <span className="icon-cnt text-gradient media-container">
                                 <div className={"media-container"}>
                                      <img src="/crown.svg" alt="crown" />
@@ -231,7 +250,7 @@ const Home = ({motw}) => {
                 _id: player._id,
                 userName: player.userName,
                 discordID: player.discordID,
-                value: player.points + " pts"
+                value: player.totalMapPoints + " pts"
             }))}/>
             <div className="see-all-players bg-primary">
                 <div className="inside">

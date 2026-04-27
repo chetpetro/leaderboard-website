@@ -1,10 +1,12 @@
 const Leaderboard = require('../models/LeaderboardModel');
+const MotwSubmission = require('../models/MotwSubmissionModel');
 const User = require('../models/userModel');
 const { getAverageColor } = require('fast-average-color-node');
 const { replaceTemplateKeywords } = require('../utils/templateReplacer');
 const {msToTime} = require("../utils/timeUtil");
 const { sendDiscordMessage } = require('../utils/discordUtil');
 const {calculatePoints} = require("../scripts/points");
+const { getMotwNumber } = require('../scripts/motwNumber');
 require('dotenv').config()
 
 const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID, wrContext }) => {
@@ -243,6 +245,54 @@ const persistLeaderboardEntry = async ({ steamID, entries, body, submissionDate,
     return { responsePayload, finalEntries };
 };
 
+const persistMotwSubmissionEntry = async ({ steamID, mapName, creator, body, submissionDate }) => {
+    const submittedTime = Number(body.time);
+    if (!Number.isFinite(submittedTime)) {
+        return { error: { status: 400, payload: { error: 'Invalid submission time' } } };
+    }
+
+    const existingSubmission = await MotwSubmission.findOne({ steamID }).lean();
+    const entries = Array.isArray(existingSubmission?.entries) ? [...existingSubmission.entries] : [];
+    const existingEntryIndex = entries.findIndex((entry) => entry.discordID === body.discordID);
+
+    if (existingEntryIndex !== -1 && entries[existingEntryIndex].time <= submittedTime) {
+        return {
+            responsePayload: existingSubmission,
+            finalEntries: entries,
+            updated: false
+        };
+    }
+
+    const updatedEntry = {
+        userName: body.userName,
+        discordID: body.discordID,
+        time: submittedTime,
+        submittedAt: submissionDate
+    };
+
+    if (existingEntryIndex !== -1) {
+        entries[existingEntryIndex] = updatedEntry;
+    } else {
+        entries.push(updatedEntry);
+    }
+
+    const responsePayload = await MotwSubmission.findOneAndUpdate(
+        { steamID },
+        {
+            $set: {
+                mapName,
+                creator,
+                steamID,
+                entries,
+                lastSubmissionAt: submissionDate
+            }
+        },
+        { new: true, upsert: true }
+    );
+
+    return { responsePayload, finalEntries: entries, updated: true };
+};
+
 const hasInconsistentMapPointState = (user, steamID, existingEntryIndex) => {
     const mapPointsIndex = user.mapPoints.findIndex((entry) => entry.mapSteamID === steamID);
     return {
@@ -350,22 +400,114 @@ const createOrEditEntry = async (req, res) => {
             return res.status(500).json({ error: `Inconsistent state: user has points for a map they have no entry on, if possible write us on discord :) (mapPointsIndex: ${mapPointsIndex}, existingEntryIndex: ${existingEntryIndex})` });
         }
 
-        await Promise.all([
-            recomputeMapPointsForLeaderboard({
-                finalEntries,
-                steamID,
-                difficultyBonus: map.difficultyBonus
-            }),
-            sendDiscordPbMessage(discordPayload)
-        ]).catch(error => {
-            res.status(500).json({ error: error.message });
-        });
+        try {
+            await Promise.all([
+                recomputeMapPointsForLeaderboard({
+                    finalEntries,
+                    steamID,
+                    difficultyBonus: map.difficultyBonus
+                }),
+                sendDiscordPbMessage(discordPayload)
+            ]);
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
+        }
 
         return res.status(200).json(responsePayload)
     } catch (err) {
         return res.status(400).json({error: err.message});
     }
 }
+
+const createMotwEntry = async (req, res) => {
+    try {
+        const { steamID } = req.params;
+        const syncNormalEntry = req.body.syncNormalEntry === true || req.body.syncNormalEntry === 'true';
+
+        const map = await Leaderboard.findOne({ steamID });
+        if (!map) return res.status(404).json({ error: 'No leadearboard found' });
+        if (!map.featured) return res.status(400).json({ error: 'Map of the week submissions are only available for the featured map' });
+
+        const user = await User.findOne({ discordID: req.body.discordID }, { mapPoints: 1 }).lean();
+        if (!user) return res.status(404).json({ error: 'No user found' });
+
+        const submissionDate = new Date();
+        const motwResult = await persistMotwSubmissionEntry({
+            steamID,
+            mapName: map.mapName,
+            creator: map.creator,
+            body: req.body,
+            submissionDate
+        });
+
+        if (motwResult.error) {
+            return res.status(motwResult.error.status).json(motwResult.error.payload);
+        }
+
+        const responsePayload = {
+            motw: motwResult.responsePayload,
+            updatedNormalEntry: false
+        };
+
+        if (syncNormalEntry === true) {
+            const entries = Array.isArray(map.entries) ? map.entries : [];
+            const submittedTime = Number(req.body.time);
+            const existingEntryIndex = getEntryIndexForUser(entries, req.body);
+            const currentBestTime = existingEntryIndex !== -1 ? Number(entries[existingEntryIndex].time) : null;
+            const shouldUpdateNormalEntry = Number.isFinite(submittedTime)
+                && (existingEntryIndex === -1 || (Number.isFinite(currentBestTime) && submittedTime < currentBestTime));
+
+            if (shouldUpdateNormalEntry) {
+                const wrContext = buildWrContext(entries, submittedTime, req.body.discordID);
+                const persistResult = await persistLeaderboardEntry({
+                    steamID,
+                    entries,
+                    body: req.body,
+                    submissionDate,
+                    existingEntryIndex
+                });
+
+                if (persistResult.error) {
+                    return res.status(persistResult.error.status).json(persistResult.error.payload);
+                }
+
+                const { finalEntries } = persistResult;
+
+                const { isInconsistent, mapPointsIndex } = hasInconsistentMapPointState(user, steamID, existingEntryIndex);
+                if (isInconsistent) {
+                    return res.status(500).json({ error: `Inconsistent state: user has points for a map they have no entry on, if possible write us on discord :) (mapPointsIndex: ${mapPointsIndex}, existingEntryIndex: ${existingEntryIndex})` });
+                }
+
+                try {
+                    await Promise.all([
+                        recomputeMapPointsForLeaderboard({
+                            finalEntries,
+                            steamID,
+                            difficultyBonus: map.difficultyBonus
+                        }),
+                        sendDiscordPbMessage({
+                            discordID: req.body.discordID,
+                            userName: req.body.userName,
+                            time: submittedTime,
+                            mapName: map.mapName,
+                            steamID: map.steamID,
+                            wrContext
+                        })
+                    ]);
+                } catch (error) {
+                    return res.status(500).json({ error: error.message });
+                }
+
+                responsePayload.updatedNormalEntry = true;
+                responsePayload.normal = persistResult.responsePayload;
+            }
+        }
+
+        return res.status(200).json(responsePayload);
+    } catch (err) {
+        return res.status(400).json({ error: err.message });
+    }
+};
 
 const deleteEntryByMapAndDiscord = async (req, res) => {
     try {
@@ -403,7 +545,12 @@ const getMOTW = async (req, res) => {
     const response = await Leaderboard.findOne({ featured: true });
 
     if (!response) return res.status(404).json({error: "No featured map"});
-    res.status(200).json(response)
+    const motwSubmissions = await MotwSubmission.findOne({ steamID: response.steamID }).lean();
+    res.status(200).json({
+        ...response.toObject(),
+        entries: motwSubmissions?.entries || [],
+        motwNumber: getMotwNumber()
+    })
 }
 
 module.exports = {
@@ -412,6 +559,7 @@ module.exports = {
     createMapLeaderboard,
     changeMapDifficultyBonus,
     createOrEditEntry,
+    createMotwEntry,
     deleteEntryByMapAndDiscord,
     getMOTW,
     getRecentLeaderboards,

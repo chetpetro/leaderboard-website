@@ -50,6 +50,15 @@ export class LeaderboardsApi {
     });
   }
 
+  createMotwEntry(steamID, entry, token) {
+    return this.httpClient.request(`/leaderboards/${steamID}/motw`, {
+      method: 'PATCH',
+      token,
+      body: entry,
+      errorMessage: 'Failed to submit MOTW entry.'
+    });
+  }
+
   updateDifficultyBonus(steamID, difficultyBonus, token) {
     return this.httpClient.request(`/leaderboards/${steamID}/difficultyBonus`, {
       method: 'PATCH',
