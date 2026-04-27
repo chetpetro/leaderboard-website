@@ -24,7 +24,6 @@ function AppContent() {
     isAdmin: false,
     mapPoints: [],
   })
-  const [motw, setMOTW] = useState('');
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -69,28 +68,14 @@ function AppContent() {
     initializeUser();
   }, [api]);
 
-
-  useEffect(() => {
-    const fetchMOTW = async () => {
-      try {
-        const json = await api.leaderboards.fetchMOTW();
-        setMOTW(json);
-      } catch (error) {
-        // Errors are already shown by the API layer.
-      }
-    };
-
-    fetchMOTW();
-  }, [api]);
-
   return (
     <div className="App">
       <ErrorMessageDisplay/>
       <BrowserRouter>
-        <Navbar user={user} setUser={setUser} motw={motw}/>
+        <Navbar user={user} setUser={setUser}/>
         <div className="pages">
           <Routes>
-            <Route exact path='/' element={<Home motw={motw}/>} />
+            <Route exact path='/' element={<Home/>} />
             <Route path='/:steamID' element={<MapDetails user={user} />} />
             <Route path='/user/:discordID' element={<User />}/>
             <Route path='/login' element={<Login setUser={setUser}/>} />

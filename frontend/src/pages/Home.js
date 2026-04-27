@@ -13,7 +13,7 @@ const isInvalidSubmissionDay = (timestamp) => {
     return timestamp < INVALID_SUBMISSION_DAY_END_UTC;
 };
 
-const Home = ({motw}) => {
+const Home = () => {
     const api = useApi();
 
     const [query, setQuery] = useState('');
@@ -23,6 +23,7 @@ const Home = ({motw}) => {
     const [top3Players, setTop3Players] = useState([]);
     const [searchResultHeight, setSearchResultHeight] = useState(0);
     const [mapsInitialized, setMapsInitialized] = useState(false);
+    const [motw, setMOTW] = useState('');
 
     const searchBarRef = useRef(null);
     const searchResultRef = useRef(null);
@@ -40,6 +41,20 @@ const Home = ({motw}) => {
         };
         document.addEventListener("mousedown", handleClickOutside);
     }, []);
+
+
+    useEffect(() => {
+        const fetchMOTW = async () => {
+            try {
+                const json = await api.leaderboards.fetchMOTW();
+                setMOTW(json);
+            } catch (error) {
+                // Errors are already shown by the API layer.
+            }
+        };
+
+        fetchMOTW();
+    }, [api]);
 
     useEffect(() => {
         if (!searchResultRef.current) return;

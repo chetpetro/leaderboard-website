@@ -1,0 +1,62 @@
+[
+  {
+    "userName": "cheeb",
+    "discordID": "1",
+    "password": "1",
+    "points": "1",
+    "pointCalculationMethod": "offline",
+    "mapOfTheWeekParticipations": [
+      {"placement": 0, "motwNumber": 1},
+      {"placement": 2, "motwNumber": 2},
+      {"placement": 10, "motwNumber": 3},
+      {"placement": 2, "motwNumber": 5}
+    ],
+    "mapPoints": [
+      {"points": 200, "mapSteamID": "1"},
+      {"points": 20, "mapSteamID": "2"},
+      {"points": 0, "mapSteamID": "3"},
+      {"points": 52, "mapSteamID": "4"}
+    ],
+    "isAdmin": true
+  },
+  {
+    "userName": "junker",
+    "discordID": "2",
+    "password": "1",
+    "points": "1",
+    "pointCalculationMethod": "offline",
+    "mapOfTheWeekParticipations": [
+      {"placement": 1, "motwNumber": 1},
+      {"placement": 3, "motwNumber": 2},
+      {"placement": 5, "motwNumber": 3},
+      {"placement": 1, "motwNumber": 5}
+    ],
+    "mapPoints": [
+      {"points": 14, "mapSteamID": "1"},
+      {"points": 20, "mapSteamID": "2"},
+      {"points": 0, "mapSteamID": "3"},
+      {"points": 52, "mapSteamID": "4"}
+    ],
+    "isAdmin": true
+  },
+  {
+    "userName": "har",
+    "discordID": "3",
+    "password": "1",
+    "points": "1",
+    "pointCalculationMethod": "offline",
+    "mapOfTheWeekParticipations": [
+      {"placement": 2, "motwNumber": 1},
+      {"placement": 0, "motwNumber": 2},
+      {"placement": 0, "motwNumber": 3},
+      {"placement": 0, "motwNumber": 5}
+    ],
+    "mapPoints": [
+      {"points": 400, "mapSteamID": "1"},
+      {"points": 200, "mapSteamID": "2"},
+      {"points": 10, "mapSteamID": "3"},
+      {"points": 522, "mapSteamID": "4"}
+    ],
+    "isAdmin": false
+  }
+]

@@ -1,3 +1,5 @@
+import { USE_MOCK_API, requestMockResponse } from './mockApi';
+
 const API_BASE_URL = 'https://leaderboard-website-api.vercel.app/api';
 
 const parseResponseBody = async (response) => {
@@ -24,7 +26,11 @@ export class HttpClient {
       errorMessage = 'Request failed.'
     } = options;
 
-    try {
+    const executeRequest = async () => {
+      if (USE_MOCK_API) {
+        return requestMockResponse(method, path, errorMessage);
+      }
+
       const response = await fetch(`${API_BASE_URL}${path}`, {
         method,
         headers: {
@@ -42,14 +48,16 @@ export class HttpClient {
           payload && typeof payload === 'object'
             ? payload.error || payload.message
             : null;
-        throw new Error(serverMessage || errorMessage);
+        return Promise.reject(new Error(serverMessage || errorMessage));
       }
 
       return payload;
-    } catch (error) {
+    };
+
+    return executeRequest().catch((error) => {
       this.showError?.(error.message || errorMessage);
-      throw error;
-    }
+      return Promise.reject(error);
+    });
   }
 }
 

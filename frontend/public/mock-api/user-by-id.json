@@ -1,0 +1,23 @@
+{
+  "user": {
+    "userName": "junker",
+    "discordID": "2",
+    "password": "1",
+    "points": "1",
+    "pointCalculationMethod": "offline",
+    "mapOfTheWeekParticipations": [
+      {"placement": 1, "motwNumber": 1},
+      {"placement": 3, "motwNumber": 2},
+      {"placement": 5, "motwNumber": 3},
+      {"placement": 1, "motwNumber": 5}
+    ],
+    "mapPoints": [
+      {"points": 14, "mapSteamID": 1},
+      {"points": 20, "mapSteamID": 2},
+      {"points": 0, "mapSteamID": 3},
+      {"points": 52, "mapSteamID": 4}
+    ],
+    "isAdmin": true
+  },
+  "shouldUpdatePoints": false
+}

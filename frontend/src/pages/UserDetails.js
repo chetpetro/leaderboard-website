@@ -119,13 +119,13 @@ const UserDetails = () => {
             <div className="hero">
                 <div className="inside">
                     <h1 className="details-map-name text-gradient">{ user.userName }</h1>
-                    <span className="user-points">{parseInt(totalMapPoints)}</span>
+                    <span className="user-points">{totalMapPoints}</span>
                 </div>
             </div>
             <div className="leaderboad-entries">
                 <div className="inside leaderboard">
                     {sortedEntries.map((map) => {
-                        const mapPoints = parseInt(getMapPointsForSteamId(map.steamID));
+                        const mapPoints = getMapPointsForSteamId(map.steamID);
 
                         return (
                             <div className="leaderboard-entry-wrapper" key={map.steamID}>
