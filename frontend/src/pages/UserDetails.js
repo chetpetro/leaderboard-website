@@ -120,7 +120,7 @@ const UserDetails = () => {
                 <div className="inside">
                     <div className="points-center-display">
                         <h1 className="details-map-name text-gradient">{ user.userName }</h1>
-                        <span className="user-points">{totalMapPoints}<small>PTS</small></span>
+                        <span className="user-points">{parseInt(totalMapPoints)}<small>PTS</small></span>
                     </div>
                     <div className="motw-info">
                         <h2>
@@ -134,10 +134,12 @@ const UserDetails = () => {
                             <div className="motw-wins">
                                 <h3>wins</h3>
                                 {user.mapOfTheWeekParticipations && <div>{user.mapOfTheWeekParticipations.filter((entry) => entry.placement === 0).length}</div>}
+                                {!user.mapOfTheWeekParticipations && <div>0</div>}
                             </div>
                             <div className="motw-participations">
                                 <h3>participations</h3>
                                 {user.mapOfTheWeekParticipations && <div>{user.mapOfTheWeekParticipations.length}</div>}
+                                {!user.mapOfTheWeekParticipations && <div>0</div>}
                             </div>
                         </div>
                     </div>
@@ -159,7 +161,7 @@ const UserDetails = () => {
                                     <span className="time">{ msToTime(map.entry.time) }</span>
                                 </div>
                                 <span className="map-points" style={{ color: getMapPointsColor(mapPoints, minMapPoints, maxMapPoints) }}>
-                                    +{mapPoints}
+                                    +{parseInt(mapPoints)}
                                 </span>
                             </div>
                         );

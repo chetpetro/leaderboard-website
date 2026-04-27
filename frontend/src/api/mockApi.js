@@ -1,6 +1,6 @@
 const MOCK_API_BASE_URL = '/mock-api';
 
-export const USE_MOCK_API = true;
+export const USE_MOCK_API = false;
 
 const MOCK_RESPONSE_FILES = [
     {method: 'GET', pattern: /^\/leaderboards\/motw$/, file: `${MOCK_API_BASE_URL}/leaderboards-motw.json`},
