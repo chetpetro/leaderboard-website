@@ -111,8 +111,11 @@ const newFeaturedLeaderboard = async (req, res) => {
                 const user = await User.findOne({ discordID: entries[i].discordID });
 
                 if (user) {
-                    const earnedPoints = Math.floor(100 / ((0.4 * i) + 1));
-                    user.points = earnedPoints + user.points;
+                    if (!user.mapOfTheWeekParticipations) user.mapOfTheWeekParticipations = [];
+                    user.mapOfTheWeekParticipations.push({
+                        placement: i,
+                        motwNumber: 0 // TODO calc motwNumber
+                    });
                     user.save()
                 }
             }
