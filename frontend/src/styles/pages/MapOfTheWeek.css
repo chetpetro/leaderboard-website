@@ -1,0 +1,10 @@
+/* Most styling for this page is in MapDetails, but some stuff is added in here */
+.map-of-the-week {
+    &>.inside > .heading {
+        grid-column: -1 / 1;
+    }
+
+    .card .buttons {
+        margin-top: 1rem;
+    }
+}

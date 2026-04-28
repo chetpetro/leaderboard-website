@@ -133,12 +133,12 @@ const MapDetails = ({user}) => {
                                 steamID={map.steamID}
                                 user={user}
                                 onEntrySaved={fetchMap}
-                                submissionMode={map.featured === true || map.featured === 'true' ? 'motw' : 'normal'}
-                                syncNormalEntry={map.featured === true || map.featured === 'true'}
+                                submissionMode={map.featured === true ? 'motw' : 'normal'}
                             />
                         )}
                         {!user.userName && <h2>Login to Submit Entry</h2>}
                     </div>
+                    {map.featured && (<Link to="/map-of-the-week" className="btn btn-primary btn-small">Visit Map of the Week Leaderboard</Link>)}
                     <div className="map-details-placeholder placeholder-wrapper">
                         <div className={"map-details card placeholder-target" + (isLoading ? ' is-loading' : '')}>
                             <h2 className={"heading-description"}>

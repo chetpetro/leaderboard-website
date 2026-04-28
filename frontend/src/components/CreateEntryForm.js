@@ -2,7 +2,7 @@ import { useState } from "react";
 import '../styles/components/CreateEntryForm.css';
 import {useError} from "../context/ErrorContext";
 import useApi from "../hooks/useApi";
-const CreateEntryForm = ({ steamID, user, onEntrySaved, submissionMode = 'normal', syncNormalEntry = false }) => {
+const CreateEntryForm = ({ steamID, user, onEntrySaved, submissionMode = 'normal' }) => {
     const { showError } = useError();
     const api = useApi();
 
@@ -28,7 +28,7 @@ const CreateEntryForm = ({ steamID, user, onEntrySaved, submissionMode = 'normal
                 userName: user.userName,
                 discordID: user.discordID,
                 time: msTime,
-                syncNormalEntry
+                syncNormalEntry: submissionMode === 'motw'
             };
 
             if (submissionMode === 'motw') {

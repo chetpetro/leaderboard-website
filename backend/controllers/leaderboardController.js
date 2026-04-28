@@ -422,7 +422,6 @@ const createOrEditEntry = async (req, res) => {
 const createMotwEntry = async (req, res) => {
     try {
         const { steamID } = req.params;
-        const syncNormalEntry = req.body.syncNormalEntry === true || req.body.syncNormalEntry === 'true';
 
         const map = await Leaderboard.findOne({ steamID });
         if (!map) return res.status(404).json({ error: 'No leadearboard found' });
@@ -449,58 +448,57 @@ const createMotwEntry = async (req, res) => {
             updatedNormalEntry: false
         };
 
-        if (syncNormalEntry === true) {
-            const entries = Array.isArray(map.entries) ? map.entries : [];
-            const submittedTime = Number(req.body.time);
-            const existingEntryIndex = getEntryIndexForUser(entries, req.body);
-            const currentBestTime = existingEntryIndex !== -1 ? Number(entries[existingEntryIndex].time) : null;
-            const shouldUpdateNormalEntry = Number.isFinite(submittedTime)
-                && (existingEntryIndex === -1 || (Number.isFinite(currentBestTime) && submittedTime < currentBestTime));
+        const entries = Array.isArray(map.entries) ? map.entries : [];
+        const submittedTime = Number(req.body.time);
+        const existingEntryIndex = getEntryIndexForUser(entries, req.body);
+        const currentBestTime = existingEntryIndex !== -1 ? Number(entries[existingEntryIndex].time) : null;
+        const shouldUpdateNormalEntry = Number.isFinite(submittedTime)
+            && (existingEntryIndex === -1 || (Number.isFinite(currentBestTime) && submittedTime < currentBestTime));
 
-            if (shouldUpdateNormalEntry) {
-                const wrContext = buildWrContext(entries, submittedTime, req.body.discordID);
-                const persistResult = await persistLeaderboardEntry({
-                    steamID,
-                    entries,
-                    body: req.body,
-                    submissionDate,
-                    existingEntryIndex
-                });
 
-                if (persistResult.error) {
-                    return res.status(persistResult.error.status).json(persistResult.error.payload);
-                }
+        if (shouldUpdateNormalEntry) {
+            const wrContext = buildWrContext(entries, submittedTime, req.body.discordID);
+            const persistResult = await persistLeaderboardEntry({
+                steamID,
+                entries,
+                body: req.body,
+                submissionDate,
+                existingEntryIndex
+            });
 
-                const { finalEntries } = persistResult;
-
-                const { isInconsistent, mapPointsIndex } = hasInconsistentMapPointState(user, steamID, existingEntryIndex);
-                if (isInconsistent) {
-                    return res.status(500).json({ error: `Inconsistent state: user has points for a map they have no entry on, if possible write us on discord :) (mapPointsIndex: ${mapPointsIndex}, existingEntryIndex: ${existingEntryIndex})` });
-                }
-
-                try {
-                    await Promise.all([
-                        recomputeMapPointsForLeaderboard({
-                            finalEntries,
-                            steamID,
-                            difficultyBonus: map.difficultyBonus
-                        }),
-                        sendDiscordPbMessage({
-                            discordID: req.body.discordID,
-                            userName: req.body.userName,
-                            time: submittedTime,
-                            mapName: map.mapName,
-                            steamID: map.steamID,
-                            wrContext
-                        })
-                    ]);
-                } catch (error) {
-                    return res.status(500).json({ error: error.message });
-                }
-
-                responsePayload.updatedNormalEntry = true;
-                responsePayload.normal = persistResult.responsePayload;
+            if (persistResult.error) {
+                return res.status(persistResult.error.status).json(persistResult.error.payload);
             }
+
+            const { finalEntries } = persistResult;
+
+            const { isInconsistent, mapPointsIndex } = hasInconsistentMapPointState(user, steamID, existingEntryIndex);
+            if (isInconsistent) {
+                return res.status(500).json({ error: `Inconsistent state: user has points for a map they have no entry on, if possible write us on discord :) (mapPointsIndex: ${mapPointsIndex}, existingEntryIndex: ${existingEntryIndex})` });
+            }
+
+            try {
+                await Promise.all([
+                    recomputeMapPointsForLeaderboard({
+                        finalEntries,
+                        steamID,
+                        difficultyBonus: map.difficultyBonus
+                    }),
+                    sendDiscordPbMessage({
+                        discordID: req.body.discordID,
+                        userName: req.body.userName,
+                        time: submittedTime,
+                        mapName: map.mapName,
+                        steamID: map.steamID,
+                        wrContext
+                    })
+                ]);
+            } catch (error) {
+                return res.status(500).json({ error: error.message });
+            }
+
+            responsePayload.updatedNormalEntry = true;
+            responsePayload.normal = persistResult.responsePayload;
         }
 
         return res.status(200).json(responsePayload);
