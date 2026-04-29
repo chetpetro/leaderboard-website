@@ -3,6 +3,7 @@ import PlayerPodium from "../components/PlayerPodium";
 import '../styles/pages/PointsLeaderboard.css';
 import {Link} from "react-router-dom";
 import useApi from "../hooks/useApi";
+import CountUp from "../components/CountUp";
 
 const PointsLeaderboard = () => {
     const api = useApi();
@@ -36,7 +37,12 @@ const PointsLeaderboard = () => {
                         <Link to={`/user/${user.discordID}`} className="leaderboard-entry" key={user._id}>
                             <div className="placing">{index + 4}</div>
                             <div className="name">{user.userName}</div>
-                            <div className="points">{parseInt(user.totalMapPoints)} pts</div>
+                            <div className="points">
+                                <CountUp
+                                    to={parseInt(user.totalMapPoints)}
+                                    speed={3}
+                                    acceleration={1.25}
+                                /> pts</div>
                         </Link>
                     ))}
                 </div>

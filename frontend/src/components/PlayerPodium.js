@@ -1,5 +1,6 @@
 import '../styles/components/PlayerPodium.css';
 import {Link} from "react-router-dom";
+import CountUp from "./CountUp";
 
 const PlayerPodium = ({ players }) => {
     return (
@@ -17,7 +18,11 @@ const PlayerPodium = ({ players }) => {
                                     {player.userName}
                                 </div>
                                 <div className="points">
-                                    {parseInt(player.value)}
+                                    <CountUp
+                                        to={parseInt(player.value)}
+                                        speed={4}
+                                        acceleration={1.05}
+                                    />
                                 </div>
                             </Link>
                         </div>

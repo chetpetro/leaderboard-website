@@ -1,0 +1,10 @@
+.animate-count-up {
+    --value: 0;
+    display: inline-flex;
+}
+
+.animate-count-up::after {
+    /* Converts the numeric CSS variable into text */
+    counter-reset: num var(--value);
+    content: counter(num);
+}
