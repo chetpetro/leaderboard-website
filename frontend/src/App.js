@@ -14,6 +14,7 @@ import { ErrorProvider } from './context/ErrorContext';
 import HardestMaps from "./pages/HardestMaps";
 import useApi from './hooks/useApi';
 import {Footer} from "./components/Footer";
+import ScrollToTop from './components/ScrollToTop';
 
 function AppContent() {
   const api = useApi();
@@ -73,6 +74,7 @@ function AppContent() {
     <div className="App">
       <ErrorMessageDisplay/>
       <BrowserRouter>
+        <ScrollToTop />
         <Navbar user={user} setUser={setUser}/>
         <div className="pages">
           <Routes>
