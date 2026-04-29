@@ -105,13 +105,29 @@ body:has(.user) {
     }
 }
 
-@media (max-width: 400px) {
-    .user .hero >.inside {
+@media (max-width: 500px) {
+    .user .hero >.inside .points-center-display {
         .details-map-name {
             text-wrap: wrap;
             overflow-wrap: anywhere;
             /* it should  break mid word*/
             word-break: break-all;
+            font-size: 2rem;
+        }
+        .user-points {
+            font-size: 3rem;
+        }
+    }
+}
+
+@media (max-width: 400px) {
+    .user .hero >.inside .points-center-display {
+        .details-map-name {
+            font-size: 1.5rem;
+        }
+
+        .user-points {
+            font-size: 2rem;
         }
     }
 }

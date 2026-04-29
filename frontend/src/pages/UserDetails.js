@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { msToTime } from "../timeUtils";
 import '../styles/pages/UserDetails.css'
 import useApi from "../hooks/useApi";
+import CountUp from "../components/CountUp";
 
 const MAP_POINTS_GRADIENT = ['#9c27b0', '#cc8dd4', '#e1bbe6'];
 
@@ -159,7 +160,13 @@ const UserDetails = () => {
                 <div className="inside">
                     <div className="points-center-display">
                         <h1 className="details-map-name text-gradient">{ user.userName }</h1>
-                        <span className="user-points">{parseInt(totalMapPoints)}<small>PTS</small></span>
+                        <span className="user-points">
+                            <CountUp
+                                to={parseInt(totalMapPoints)}
+                                speed={2}
+                                acceleration={1.1}
+                            />
+                            <small>PTS</small></span>
                     </div>
                     <div className="motw-info">
                         <h2>
