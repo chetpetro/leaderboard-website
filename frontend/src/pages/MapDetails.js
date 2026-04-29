@@ -108,7 +108,9 @@ const MapDetails = ({user}) => {
                     </div>
                     <div className="leaderboard map-rankings">
                         {map && map.entries.sort((a, b) => a.time - b.time).map((entry, index) => (
-                            <div key={entry.discordID} className={"leaderboard-entry" + (isAdminAuthorized ? ' admin-view' : '')}>
+                            <div key={entry.discordID}
+                                 className={"leaderboard-entry" + (isAdminAuthorized ? ' admin-view' : '')}
+                                 style={{'--leaderboard-entry-animation-delay': 500 + 75*index + 'ms'}}>
                                 <span className={"placing"}>{index + 1}</span>
                                 <Link to={`/user/${entry.discordID}`}>{ entry.userName }</Link>
                                 <span>{ msToTime(entry.time) }</span>

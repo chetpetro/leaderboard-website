@@ -1,0 +1,13 @@
+@keyframes fade-in-top {
+    from {
+        opacity: 0;
+        transform: translateY(-1rem)
+    }
+    50% {
+        opacity: 1;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

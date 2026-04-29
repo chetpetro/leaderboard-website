@@ -7,7 +7,7 @@ import CountUp from "../components/CountUp";
 
 const PointsLeaderboard = () => {
     const api = useApi();
-    const [users, setUsers] = useState('')
+    const [users, setUsers] = useState([])
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -24,8 +24,7 @@ const PointsLeaderboard = () => {
 
     return (
         <div className="points-leaderboard">
-
-            {users.length >= 3 && <PlayerPodium players={users.slice(0,3).map(player => ({
+            {<PlayerPodium players={users.slice(0,3).map(player => ({
                 _id: player._id,
                 userName: player.userName,
                 discordID: player.discordID,
@@ -34,7 +33,9 @@ const PointsLeaderboard = () => {
             <div className="leaderboard">
                 <div className="inside">
                     {users.length > 3 && users.slice(3).filter(user => user.totalMapPoints > 0).map((user, index) => (
-                        <Link to={`/user/${user.discordID}`} className="leaderboard-entry" key={user._id}>
+                        <Link key={user._id} to={`/user/${user.discordID}`}
+                              className="leaderboard-entry"
+                              style={{'--leaderboard-entry-animation-delay': 500 + 75*index + 'ms'}}>
                             <div className="placing">{index + 4}</div>
                             <div className="name">{user.userName}</div>
                             <div className="points">

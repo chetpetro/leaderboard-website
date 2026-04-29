@@ -15,6 +15,9 @@
         }
     }
     .leaderboard-entry {
+        animation: fade-in-top 1s forwards;
+        animation-delay: var(--leaderboard-entry-animation-delay);
+        opacity: 0;
         display: grid;
         text-wrap: nowrap;
         column-gap: 2ch;

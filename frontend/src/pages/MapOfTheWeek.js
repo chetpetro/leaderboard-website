@@ -128,7 +128,9 @@ const MapOfTheWeek = ({ user }) => {
                     </div>
                     <div className="leaderboard map-rankings">
                         {motwEntries.map((entry, index) => (
-                            <div key={entry.discordID} className={"leaderboard-entry" + (isAdminAuthorized ? ' admin-view' : '')}>
+                            <div key={entry.discordID}
+                                 className={"leaderboard-entry" + (isAdminAuthorized ? ' admin-view' : '')}
+                                 style={{'--leaderboard-entry-animation-delay': 500 + 75*index + 'ms'}}>
                                 <span className="placing">{index + 1}</span>
                                 <Link to={`/user/${entry.discordID}`}>{entry.userName}</Link>
                                 <span>{msToTime(entry.time)}</span>
@@ -159,7 +161,7 @@ const MapOfTheWeek = ({ user }) => {
                     </div>
                     <div className={"card"}>
                         <h2>Info</h2>
-                        <p>Submit your time here or on the actual Map page to submit to the <i>Map Of The Week</i> leaderboard</p>
+                        <p>Submit your time here or on the actual pap page to submit to the <i>Map Of The Week</i> leaderboard</p>
                         <div className="buttons"><Link to={`/${map.steamID}`} className="btn btn-small btn-primary">Visit Map Page</Link></div>
                     </div>
                 </div>
