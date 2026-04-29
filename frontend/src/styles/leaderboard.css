@@ -12,6 +12,9 @@
         }
         .map-points {
             text-align: end;
+            opacity: 0;
+            animation: fade-in-top 1s forwards;
+            animation-delay: var(--leaderboard-entry-animation-delay);
         }
     }
     .leaderboard-entry {

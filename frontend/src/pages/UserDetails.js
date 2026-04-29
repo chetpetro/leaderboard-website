@@ -190,19 +190,19 @@ const UserDetails = () => {
             </div>
             <div className="leaderboad-entries">
                 <div className="inside leaderboard">
-                    {sortedEntries.map((map) => {
+                    {sortedEntries.map((map, index) => {
                         const mapPoints = getMapPointsForSteamId(map.steamID);
 
                         return (
                             <div className="leaderboard-entry-wrapper" key={map.steamID}>
-                                <div className="leaderboard-entry">
-                                <span className={"map-placing map-pos-" + map.pos}>
-                                    { map.pos }
-                                </span>
+                                <div className="leaderboard-entry" style={{'--leaderboard-entry-animation-delay': 500 + 75*index + 'ms'}}>
+                                    <span className={"map-placing map-pos-" + map.pos}>
+                                        { map.pos }
+                                    </span>
                                     <Link to={`/${map.steamID}`} className="map-link">{ map.mapName }</Link>
                                     <span className="time">{ msToTime(map.entry.time) }</span>
                                 </div>
-                                <span className="map-points" style={{ color: getMapPointsColor(mapPoints, minMapPoints, maxMapPoints) }}>
+                                <span className="map-points" style={{ color: getMapPointsColor(mapPoints, minMapPoints, maxMapPoints), '--leaderboard-entry-animation-delay': 500 + 75*index + 'ms' }}>
                                     +{parseInt(mapPoints)}
                                 </span>
                             </div>
