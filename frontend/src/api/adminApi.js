@@ -25,5 +25,13 @@ export class AdminApi {
       errorMessage: 'Failed to delete MOTW entry.'
     });
   }
+
+  deleteMap(steamID, token) {
+    return this.httpClient.request(`/admin/leaderboards/${steamID}`, {
+      method: 'DELETE',
+      token,
+      errorMessage: 'Failed to delete map.'
+    });
+  }
 }
 
