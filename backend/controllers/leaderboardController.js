@@ -574,31 +574,6 @@ const deleteMotwEntryByMapAndDiscord = async (req, res) => {
     }
 }
 
-const deleteLeaderboardBySteamID = async (req, res) => {
-    try {
-        const { steamID } = req.params;
-
-        const map = await Leaderboard.findOne({ steamID });
-        if (!map) return res.status(404).json({ error: 'No leadearboard found' });
-
-        // Delete the leaderboard document
-        await Leaderboard.deleteOne({ steamID });
-
-        // Delete any MOTW submissions for this map
-        await MotwSubmission.deleteOne({ steamID });
-
-        // Remove mapPoints entries referencing this map for all users
-        await User.updateMany(
-            { 'mapPoints.mapSteamID': steamID },
-            { $pull: { mapPoints: { mapSteamID: steamID } } }
-        );
-
-        return res.status(200).json({ success: true });
-    } catch (err) {
-        return res.status(400).json({ error: err.message });
-    }
-}
-
 const getMOTW = async (req, res) => {
     const response = await Leaderboard.findOne({ featured: true });
 
@@ -620,7 +595,6 @@ module.exports = {
     createMotwEntry,
     deleteEntryByMapAndDiscord,
     deleteMotwEntryByMapAndDiscord,
-    deleteLeaderboardBySteamID,
     getMOTW,
     getRecentLeaderboards,
     getEntriesByUser
