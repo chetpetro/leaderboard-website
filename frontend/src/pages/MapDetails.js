@@ -59,21 +59,6 @@ const MapDetails = ({user}) => {
     };
 
 
-    const handleDeleteMap = async () => {
-        if (!user?.token) return;
-        const confirmed = window.confirm(`Are you sure you want to delete this map and all entries?\n${map.mapName}`);
-        if (!confirmed) return;
-
-        try {
-            await api.admin.deleteMap(map.steamID, user.token);
-            // simple redirect to home after deletion
-            window.location.href = '/';
-        } catch (error) {
-            // Errors handled by API layer
-        }
-    };
-
-
     return (
         <div className="map-details">
             <div className={"inside"}>
@@ -121,9 +106,6 @@ const MapDetails = ({user}) => {
                             </div>
                         </div>
                     </div>
-                    { isAdminAuthorized && (<button className="btn btn-ghost" onClick={handleDeleteMap}>
-                        !Delete Map!
-                    </button>)}
                     <div className="leaderboard map-rankings">
                         {map && map.entries.sort((a, b) => a.time - b.time).map((entry, index) => (
                             <div key={entry.discordID}
