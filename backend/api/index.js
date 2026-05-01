@@ -28,7 +28,7 @@ app.use("/api/cron", cronRoutes);
 app.use("/api/oTMigrate", oTMigrationRoutes);
 app.get("/", (req, res) => res.status(200).json({ message: process.env.PORT}));
 
-const PORT = process.env.PORT + "";
+const PORT = process.env.PORT;
 const URI = process.env.MONGODB_URI;
 
 mongoose.connect(URI)
