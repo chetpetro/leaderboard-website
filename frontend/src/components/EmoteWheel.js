@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import '../styles/components/Emote.css'
 
 
@@ -101,7 +101,6 @@ export const EmoteWheel = ({onEmoteEvent}) => {
 }
 
 export function playEmote(emoteType, parentElement) {
-    const existingEmote = parentElement.querySelector('.played-emote')
     const el = document.createElement("div");
     el.classList.add(`played-emote-${emoteType}`, "media-container", "played-emote");
     const img = document.createElement("img")
