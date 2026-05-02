@@ -6,6 +6,7 @@ import ActiveMaps from "../components/ActiveMaps";
 import PlayerPodium from "../components/PlayerPodium";
 import LatestSubmissionsTicker from "../components/LatestSubmissionsTicker.js";
 import useApi from "../hooks/useApi";
+import {EmoteWheel} from "../components/EmoteWheel";
 
 const INVALID_SUBMISSION_DAY_END_UTC = Date.UTC(2026, 3, 12, 0, 0, 0, 0);
 
@@ -145,6 +146,7 @@ const Home = () => {
                     <div className="slide-in">
                         <img src="/junker.png" alt={"Pogostuck character of junker"}/>
                     </div>
+                    <EmoteWheel/>
                 </div>
                 <div className="pogo-char cheeb media-container">
                     <div className="slide-in">

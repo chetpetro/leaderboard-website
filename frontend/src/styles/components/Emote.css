@@ -1,0 +1,23 @@
+.emote-wheel {
+    position: absolute;
+    inset: 0 0 auto 0;
+    aspect-ratio: 1;
+    transition: transform .25s ease, opacity .25s ease;
+    transition-delay: .1s;
+    &.scale-down {
+        transform: scale(0);
+        opacity: 0;
+    }
+    .emote {
+        position: absolute;
+        width: 70px;
+        transition: transform .25s ease;
+        &.hover {
+            transform: scale(1.15) translateY(calc(4px * var(--y-direction))) translateX(calc(4px * var(--x-direction)));
+        }
+    }
+    .emote-left { left: 0; top: 0; translate: -15%; --y-direction: 0; --x-direction: -1}
+    .emote-right { right: 0; top: 0; translate: 15%; --y-direction: 0; --x-direction: 1}
+    .emote-top { left: 50%; top: 0; translate: -50% -75%; --y-direction: -1; --x-direction: 0}
+    .emote-bottom { left: 50%; bottom: 0; translate: -50% -75%; --y-direction: 1; --x-direction: 0}
+}
