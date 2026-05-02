@@ -138,12 +138,16 @@ const Home = () => {
             .slice(0, 10);
     }, [maps]);
     const junker = useRef()
+    const cheeb = useRef()
+    const ticker = useRef()
     const handleEmoteEvent = useCallback((emoteType) => {
-            playEmote(emoteType, junker.current)
-    }, [junker])
+            playEmote(emoteType, junker.current);
+            playEmote(emoteType, cheeb.current);
+            if (emoteType === 'top') ticker.current?.triggerWave()
+    }, [junker, cheeb, ticker])
     return (
         <div className="home">
-            <LatestSubmissionsTicker submissions={latestSubmissions} />
+            <LatestSubmissionsTicker submissions={latestSubmissions} ref={ticker}/>
             <div className={"teaser"}>
                 <div className="pogo-char junker media-container" ref={junker}>
                     <div className="slide-in">
@@ -153,10 +157,13 @@ const Home = () => {
                         onEmoteEvent={handleEmoteEvent}
                     />
                 </div>
-                <div className="pogo-char cheeb media-container">
+                <div className="pogo-char cheeb media-container" ref={cheeb}>
                     <div className="slide-in">
                         <img src="/cheeb.png" alt={"Pogostuck character of cheeb"}/>
                     </div>
+                    <EmoteWheel
+                        onEmoteEvent={handleEmoteEvent}
+                    />
                 </div>
                 <div className={"inside"}>
                     <h1>Ascend the <span className="text-gradient">Custom-Map</span> Ranks</h1>

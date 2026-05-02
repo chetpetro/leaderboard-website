@@ -1,8 +1,19 @@
 import {Component} from "react";
 import "../styles/components/LatestSubmissionsTicker.css";
 import { msToTime } from "../timeUtils";
+import {playEmote} from "./EmoteWheel";
 
 class LatestSubmissionsTicker extends Component {
+
+    constructor(props) {
+        super(props);
+        this.itemRefs = []
+    }
+
+    triggerWave() {
+        this.itemRefs.forEach(item => playEmote('top', item));
+    }
+
     formatSubmissionLabel(entry) {
         const segments = [
             { className: "submission-user", value: entry.userName },
@@ -26,8 +37,9 @@ class LatestSubmissionsTicker extends Component {
         return (
             <div className="latest-submissions-ticker__track" aria-hidden={hidden}>
                 {entries.map((entry, index) => (
-                    <span className="latest-submissions-ticker__item" key={`${prefix}-${this.buildEntryKey(entry, index)}`}>
-                        <span className="media-container">
+                    <span className={`latest-submissions-ticker__item ${index}`}
+                            key={`${prefix}-${this.buildEntryKey(entry, index)}`}>
+                        <span className="media-container" ref={el => this.itemRefs[index + (prefix === "clone" ? 100 : 0)] = el}>
                             <img src="/bee.png" alt="junker"/>
                         </span>
                         <span className="submission-text">{this.formatSubmissionLabel(entry)}</span>

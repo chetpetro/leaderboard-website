@@ -81,39 +81,38 @@ export const EmoteWheel = ({onEmoteEvent}) => {
 
 
     return (
-        <div className={`emote-wheel ${showEmoteWheel ? '' : 'scale-down'}`}>
-            <div className="emote emote-left media-container" ref={emoteLeft}>
-                <img src="/bee.png" alt="left emote (thinking)"/>
-            </div>
-            <div className="emote emote-top media-container" ref={emoteTop}>
-                <img src="/bee.png" alt="top emote (waving)"/>
-            </div>
-            <div className="emote emote-right media-container" ref={emoteRight}>
-                <img src="/bee.png" alt="right emote (laughing)"/>
-            </div>
-            <div className="emote emote-bottom media-container" ref={emoteBottom}>
-                <img src="/bee.png" alt="bottom emote (angry)"/>
+        <div className="emote-wheel-wrapper">
+            <div className={`emote-wheel ${showEmoteWheel ? '' : 'scale-down'}`}>
+                <div className="emote emote-left media-container" ref={emoteLeft}>
+                    <img src="/emote-left.webp" alt="left emote (thinking)"/>
+                </div>
+                <div className="emote emote-top media-container" ref={emoteTop}>
+                    <img src="/emote-top.webp" alt="top emote (waving)"/>
+                </div>
+                <div className="emote emote-right media-container" ref={emoteRight}>
+                    <img src="/emote-right.webp" alt="right emote (laughing)"/>
+                </div>
+                <div className="emote emote-bottom media-container" ref={emoteBottom}>
+                    <img src="/emote-bottom.webp" alt="bottom emote (angry)"/>
+                </div>
             </div>
         </div>
     )
 }
 
 export function playEmote(emoteType, parentElement) {
-    console.log("handlePlayEmote", emoteType, parentElement)
-    // add this to parent
-    // <div className="emote emote-left media-container" ref={emoteLeft}>
-    //                 <img src="/bee.png" alt="left emote (thinking)"/>
-    //             </div>
+    const existingEmote = parentElement.querySelector('.played-emote')
     const el = document.createElement("div");
     el.classList.add(`played-emote-${emoteType}`, "media-container", "played-emote");
     const img = document.createElement("img")
-    img.src = "/bee.png"
+    img.src = `/emote-${emoteType}.webp`
     img.alt = `${emoteType} emote`;
     el.appendChild(img);
     parentElement.appendChild(el);
 
 
     setTimeout(() => {
-        parentElement.removeChild(el)
-    }, 2000)
+        el.classList.add("scale-out")
+        setTimeout(() => parentElement.removeChild(el), 250)
+    }, 3000)
 }

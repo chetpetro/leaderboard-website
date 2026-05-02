@@ -16,7 +16,6 @@
 }
 
 .latest-submissions-ticker__viewport {
-    overflow: hidden;
 }
 
 .latest-submissions-ticker__content {
@@ -39,7 +38,8 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    .media-container {
+    & > .media-container {
+        position: relative;
         height: 1.5rem;
         aspect-ratio: 1;
         margin-inline: .5rem;

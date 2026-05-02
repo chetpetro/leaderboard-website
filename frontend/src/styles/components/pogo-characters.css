@@ -4,7 +4,7 @@
         position: absolute;
 
         z-index: -1;
-        z-index: 10;
+
 
         animation: scroll-pogo linear;
         animation-timeline: scroll()!important;
@@ -17,16 +17,20 @@
         top: 30%;
         left: 25%;
         width: 150px;
-        /*filter: brightness(.25) drop-shadow(2px 2px 4px rgba(0, 0, 0, .8));*/
+        filter: brightness(.25) drop-shadow(2px 2px 4px rgba(0, 0, 0, .8));
         --direction: -1;
+        --head-top: -30px;
+        --head-left: 18px;
     }
     .cheeb {
         top: 15%;
         right: 10%;
         width: 10rem;
-        /*filter: brightness(.3) drop-shadow(3px 3px 12px rgba(0, 0, 0, .75));*/
+        filter: brightness(.3) drop-shadow(3px 3px 12px rgba(0, 0, 0, .75));
         --scroll-amnt: 800px;
         --direction: 1;
+        --head-top: -30px;
+        --head-left: 40px;
     }
 }
 
