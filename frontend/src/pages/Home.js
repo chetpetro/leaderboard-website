@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef, useMemo} from "react";
+import {useState, useEffect, useRef, useMemo, useCallback} from "react";
 import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
 import '../styles/pages/Home.css'
 import {Link} from "react-router-dom";
@@ -6,7 +6,7 @@ import ActiveMaps from "../components/ActiveMaps";
 import PlayerPodium from "../components/PlayerPodium";
 import LatestSubmissionsTicker from "../components/LatestSubmissionsTicker.js";
 import useApi from "../hooks/useApi";
-import {EmoteWheel} from "../components/EmoteWheel";
+import {EmoteWheel, playEmote} from "../components/EmoteWheel";
 
 const INVALID_SUBMISSION_DAY_END_UTC = Date.UTC(2026, 3, 12, 0, 0, 0, 0);
 
@@ -137,16 +137,21 @@ const Home = () => {
             .sort((a, b) => b.submittedTimestamp - a.submittedTimestamp)
             .slice(0, 10);
     }, [maps]);
-
+    const junker = useRef()
+    const handleEmoteEvent = useCallback((emoteType) => {
+            playEmote(emoteType, junker.current)
+    }, [junker])
     return (
         <div className="home">
             <LatestSubmissionsTicker submissions={latestSubmissions} />
             <div className={"teaser"}>
-                <div className="pogo-char junker media-container">
+                <div className="pogo-char junker media-container" ref={junker}>
                     <div className="slide-in">
                         <img src="/junker.png" alt={"Pogostuck character of junker"}/>
                     </div>
-                    <EmoteWheel/>
+                    <EmoteWheel
+                        onEmoteEvent={handleEmoteEvent}
+                    />
                 </div>
                 <div className="pogo-char cheeb media-container">
                     <div className="slide-in">

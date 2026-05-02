@@ -21,3 +21,21 @@
     .emote-top { left: 50%; top: 0; translate: -50% -75%; --y-direction: -1; --x-direction: 0}
     .emote-bottom { left: 50%; bottom: 0; translate: -50% -75%; --y-direction: 1; --x-direction: 0}
 }
+
+.played-emote {
+    position: absolute;
+    left: 50%; top: 0;
+    translate: -50% -75%;
+    animation: play-emote .25s ease forwards;
+}
+
+@keyframes play-emote {
+    0% {
+        opacity: 0;
+        transform: scale(0) translateY(100px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+}

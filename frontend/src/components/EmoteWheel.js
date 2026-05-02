@@ -1,9 +1,10 @@
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import '../styles/components/Emote.css'
 
 
-export const EmoteWheel = ({onTopEmoteEvent, onLeftEmoteEvent, onRightEmoteEvent}) => {
+export const EmoteWheel = ({onEmoteEvent}) => {
     const [showEmoteWheel, setShowEmoteWheel] = useState(false);
+    const [hoveredEmote, setHoveredEmote] = useState(null);
     const emoteTop = useRef();
     const emoteLeft = useRef();
     const emoteRight = useRef();
@@ -20,6 +21,16 @@ export const EmoteWheel = ({onTopEmoteEvent, onLeftEmoteEvent, onRightEmoteEvent
         const handleKeyUp = (e) => {
             if (e.key === 'e') {
                 setShowEmoteWheel(false)
+                if (hoveredEmote !== null) {
+                    hoveredEmote.classList.remove("hover")
+                    const emoteType = hoveredEmote.classList.contains("emote-top") ? 'top' :
+                        hoveredEmote.classList.contains("emote-left") ? 'left' :
+                            hoveredEmote.classList.contains("emote-right") ? 'right' :
+                                hoveredEmote.classList.contains("emote-bottom") ? 'bottom' : null;
+                    if (emoteType === null) return;
+                    onEmoteEvent(emoteType)
+                    setHoveredEmote(null)
+                }
             }
         }
 
@@ -29,16 +40,16 @@ export const EmoteWheel = ({onTopEmoteEvent, onLeftEmoteEvent, onRightEmoteEvent
             document.removeEventListener('keydown', handleKeyDown)
             document.removeEventListener('keyup', handleKeyUp)
         }
-    }, [onTopEmoteEvent, onLeftEmoteEvent, onRightEmoteEvent]);
+    }, [onEmoteEvent, hoveredEmote]);
 
     useEffect(() => {
         if (showEmoteWheel) {
             const handleEmoteHover = (ref) => {
-                console.log("handleEmoteHover")
                 ref.current?.classList.add("hover");
+                setHoveredEmote(ref.current)
             }
             const handleEmoteUnselect = (ref) => {
-                console.log("handleEmoteUnselect")
+                setHoveredEmote(null)
                 ref.current?.classList.remove("hover");
             }
             const emoteWheelHoverListener = (e) => {
@@ -85,4 +96,24 @@ export const EmoteWheel = ({onTopEmoteEvent, onLeftEmoteEvent, onRightEmoteEvent
             </div>
         </div>
     )
+}
+
+export function playEmote(emoteType, parentElement) {
+    console.log("handlePlayEmote", emoteType, parentElement)
+    // add this to parent
+    // <div className="emote emote-left media-container" ref={emoteLeft}>
+    //                 <img src="/bee.png" alt="left emote (thinking)"/>
+    //             </div>
+    const el = document.createElement("div");
+    el.classList.add(`played-emote-${emoteType}`, "media-container", "played-emote");
+    const img = document.createElement("img")
+    img.src = "/bee.png"
+    img.alt = `${emoteType} emote`;
+    el.appendChild(img);
+    parentElement.appendChild(el);
+
+
+    setTimeout(() => {
+        parentElement.removeChild(el)
+    }, 2000)
 }
