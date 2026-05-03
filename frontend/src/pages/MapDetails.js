@@ -162,7 +162,7 @@ const MapDetails = ({user}) => {
                                         <button className="btn btn-red btn-small" onClick={handleDeleteMap}>
                                             !Delete Map!
                                         </button>
-                                        <button className="btn btn-gray btn-small" onClick={handleLogPointsClick}>
+                                        <button className="btn btn-gray btn-small" onClick={handleLogPointsClick} title="Logs some info about what points there should be and what they really are into the console">
                                             log points
                                         </button>
                                     </div>

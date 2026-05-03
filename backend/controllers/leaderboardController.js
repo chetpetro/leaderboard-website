@@ -337,12 +337,24 @@ const buildComputedMapPointsForLeaderboard = ({ finalEntries, steamID, difficult
 
 const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficultyBonus }) => {
     const { distinctDiscordIDs, computedMapPoints } = buildComputedMapPointsForLeaderboard({ finalEntries, steamID, difficultyBonus });
-    if (distinctDiscordIDs.length === 0) return;
+
+    const debugInfo = {
+        finalEntriesCount: Array.isArray(finalEntries) ? finalEntries.length : 0,
+        distinctDiscordIDsCount: distinctDiscordIDs.length,
+        computedMapPointsCount: computedMapPoints.length
+    };
+
+    if (distinctDiscordIDs.length === 0) {
+        return debugInfo;
+    }
 
     const users = await User.find(
         { discordID: { $in: distinctDiscordIDs } },
         { mapPoints: 1, discordID: 1 }
     ).lean();
+
+    debugInfo.usersFound = Array.isArray(users) ? users : [];
+    debugInfo.usersFoundCount = Array.isArray(users) ? users.length : 0;
 
     const usersByDiscordID = new Map(users.map((u) => [u.discordID, u]));
 
@@ -369,9 +381,20 @@ const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficu
         });
     });
 
+    debugInfo.bulkUpdatesCount = bulkUpdates.length;
+    debugInfo.bulkWriteExecuted = bulkUpdates.length > 0;
+
     if (bulkUpdates.length > 0) {
-        await User.bulkWrite(bulkUpdates);
+        try {
+            const bulkWriteResult = await User.bulkWrite(bulkUpdates);
+            debugInfo.bulkWriteResult = bulkWriteResult;
+        } catch (error) {
+            debugInfo.bulkWriteError = error.message;
+            throw error;
+        }
     }
+
+    return debugInfo;
 };
 
 const logMapPointsForLeaderboard = async (req, res) => {
@@ -475,20 +498,31 @@ const createOrEditEntry = async (req, res) => {
             return res.status(500).json({ error: `Inconsistent state: user has points for a map they have no entry on, if possible write us on discord :) (mapPointsIndex: ${mapPointsIndex}, existingEntryIndex: ${existingEntryIndex})` });
         }
 
+        let recomputeDebugInfo = {};
         try {
             await Promise.all([
-                recomputeMapPointsForLeaderboard({
-                    finalEntries,
-                    steamID,
-                    difficultyBonus: map.difficultyBonus
-                }),
+                (async () => {
+                    recomputeDebugInfo = await recomputeMapPointsForLeaderboard({
+                        finalEntries,
+                        steamID,
+                        difficultyBonus: map.difficultyBonus
+                    });
+                })(),
                 sendDiscordPbMessage(discordPayload)
             ]);
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
 
-        return res.status(200).json(responsePayload)
+        const responseWithDebug = {
+            ...responsePayload.toObject ? responsePayload.toObject() : responsePayload,
+            _debug: {
+                finalEntriesCount: Array.isArray(finalEntries) ? finalEntries.length : 0,
+                recomputeMapPointsDebug: recomputeDebugInfo
+            }
+        };
+
+        return res.status(200).json(responseWithDebug)
     } catch (err) {
         return res.status(400).json({error: err.message});
     }
@@ -553,12 +587,15 @@ const createMotwEntry = async (req, res) => {
             }
 
             try {
+                let recomputeDebugInfo = {};
                 await Promise.all([
-                    recomputeMapPointsForLeaderboard({
-                        finalEntries,
-                        steamID,
-                        difficultyBonus: map.difficultyBonus
-                    }),
+                    (async () => {
+                        recomputeDebugInfo = await recomputeMapPointsForLeaderboard({
+                            finalEntries,
+                            steamID,
+                            difficultyBonus: map.difficultyBonus
+                        });
+                    })(),
                     sendDiscordPbMessage({
                         discordID: req.body.discordID,
                         userName: req.body.userName,
@@ -568,6 +605,8 @@ const createMotwEntry = async (req, res) => {
                         wrContext
                     })
                 ]);
+
+                responsePayload.normalEntryRecomputeDebug = recomputeDebugInfo;
             } catch (error) {
                 return res.status(500).json({ error: error.message });
             }
@@ -582,6 +621,7 @@ const createMotwEntry = async (req, res) => {
     }
 };
 
+// TODO recalculate points here and at delete map of the week + check why recalculation is not working
 const deleteEntryByMapAndDiscord = async (req, res) => {
     try {
         const { steamID, discordID } = req.params;
