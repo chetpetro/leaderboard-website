@@ -337,12 +337,13 @@ const buildComputedMapPointsForLeaderboard = ({ finalEntries, steamID, difficult
 };
 
 const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficultyBonus }) => {
-    const { distinctDiscordIDs, computedMapPoints} = buildComputedMapPointsForLeaderboard({ finalEntries, steamID, difficultyBonus });
+    const { distinctDiscordIDs, computedMapPoints, sortedEntries} = buildComputedMapPointsForLeaderboard({ finalEntries, steamID, difficultyBonus });
 
     const debugInfo = {
         finalEntriesCount: Array.isArray(finalEntries) ? finalEntries.length : 0,
         distinctDiscordIDs,
         computedMapPointsCount: computedMapPoints.length,
+        sortedEntries
     };
 
     if (distinctDiscordIDs.length === 0) {
