@@ -395,8 +395,6 @@ const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficu
             throw error;
         }
     }
-
-    return debugInfo;
 };
 
 const logMapPointsForLeaderboard = async (req, res) => {
