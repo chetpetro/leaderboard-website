@@ -41,5 +41,13 @@ export class AdminApi {
       errorMessage: 'Failed to log map points.'
     });
   }
+
+  recomputeMapPoints(steamID, token) {
+    return this.httpClient.request(`/admin/leaderboards/${steamID}/recompute-map-points`, {
+      method: 'POST',
+      token,
+      errorMessage: 'Failed to recompute map points.'
+    });
+  }
 }
 

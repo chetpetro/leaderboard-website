@@ -53,6 +53,9 @@ const MapDetails = ({user}) => {
                     entries: (prev.entries || []).filter((entryEl) => entryEl.discordID !== entry.discordID)
                 };
             });
+
+            // Recompute map points after deletion
+            await api.admin.recomputeMapPoints(map.steamID, user.token);
         } catch (error) {
             // Errors are already shown by the API layer.
         }

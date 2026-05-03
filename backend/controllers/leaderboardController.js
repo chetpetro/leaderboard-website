@@ -10,7 +10,6 @@ const { getMotwNumber } = require('../scripts/motwNumber');
 require('dotenv').config()
 
 const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID, wrContext }) => {
-    if (discordID === "261147203307831296") return
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const userUrl = `${leaderboardUrl}user/${discordID}`;
     const mapUrl = `${leaderboardUrl}${steamID}`;
@@ -452,6 +451,34 @@ const logMapPointsForLeaderboard = async (req, res) => {
     }
 };
 
+const recomputeMapPointsAdmin = async (req, res) => {
+    try {
+        const { steamID } = req.params;
+
+        const map = await Leaderboard.findOne(
+            { steamID },
+            { mapName: 1, steamID: 1, entries: 1, difficultyBonus: 1 }
+        ).lean();
+
+        if (!map) return res.status(404).json({ error: 'No leadearboard found' });
+
+        const recomputeDebugInfo = await recomputeMapPointsForLeaderboard({
+            finalEntries: Array.isArray(map.entries) ? map.entries : [],
+            steamID: map.steamID,
+            difficultyBonus: map.difficultyBonus
+        });
+
+        return res.status(200).json({
+            success: true,
+            mapName: map.mapName,
+            steamID: map.steamID,
+            debugInfo: recomputeDebugInfo
+        });
+    } catch (err) {
+        return res.status(400).json({ error: err.message });
+    }
+};
+
 const requestToDiscordPayload = (req, map, wrContext) => ({
     discordID: req.body.discordID,
     userName: req.body.userName,
@@ -737,6 +764,7 @@ module.exports = {
     deleteMotwEntryByMapAndDiscord,
     deleteLeaderboardBySteamID,
     logMapPointsForLeaderboard,
+    recomputeMapPointsAdmin,
     getMOTW,
     getRecentLeaderboards,
     getEntriesByUser
