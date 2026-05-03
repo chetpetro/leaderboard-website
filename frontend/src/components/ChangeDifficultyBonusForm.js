@@ -36,7 +36,7 @@ const ChangeDifficultyBonusForm = ({ steamID, user, onDifficultyChanged, map }) 
 
     return (
         <form className="change-difficulty-bonus-form" onSubmit={handleSubmit}>
-            <h2>Change Difficulty Bonus</h2>
+            <h3>Change Difficulty Bonus</h3>
             <label htmlFor="difficulty-bonus-input">Difficulty Bonus:</label>
             <div className="input-cnt">
                 <input

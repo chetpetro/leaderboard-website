@@ -65,6 +65,17 @@ a.btn:focus {
     color: white;
     border-color: var(--color-surface-600);
 }
+.btn-red {
+    background-color: rgba(255, 0, 0, 0.33);
+    color: rgb(255, 100, 100);
+    border-color: rgb(255, 100, 100);
+}
+
+.btn-red:hover {
+    background-color: rgba(255, 0, 0, 0.15);
+    color: red;
+    border-color: red;
+}
 
 
 .btn-discord {

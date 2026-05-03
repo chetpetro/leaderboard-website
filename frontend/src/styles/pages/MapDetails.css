@@ -143,6 +143,19 @@
                     font-size: .75rem;
                 }
             }
+            .admin-panel {
+                h3 {
+                    margin-block: .5rem .25rem;
+                }
+                .admin-card-cnt {
+                    display: flex;
+                    flex-direction: column;
+                    .buttons {
+                        display: flex;
+                        gap: 1rem;
+                    }
+                }
+            }
         }
         .card {
             padding: .75rem .5rem;

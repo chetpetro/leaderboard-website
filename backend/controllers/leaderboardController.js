@@ -356,6 +356,15 @@ const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficu
     }
 };
 
+const requestToDiscordPayload = (req, map, wrContext) => ({
+    discordID: req.body.discordID,
+    userName: req.body.userName,
+    time: req.body.time,
+    mapName: map.mapName,
+    steamID: map.steamID,
+    wrContext
+})
+
 const createOrEditEntry = async (req, res) => {
     try {
         const { steamID } = req.params;
@@ -370,14 +379,7 @@ const createOrEditEntry = async (req, res) => {
         const submissionDate = new Date();
         const wrContext = buildWrContext(entries, req.body.time, req.body.discordID);
 
-        const discordPayload = {
-            discordID: req.body.discordID,
-            userName: req.body.userName,
-            time: req.body.time,
-            mapName: map.mapName,
-            steamID: map.steamID,
-            wrContext
-        };
+        const discordPayload = requestToDiscordPayload(req, map, wrContext);
 
         const existingEntryIndex = getEntryIndexForUser(entries, req.body);
         const persistResult = await persistLeaderboardEntry({

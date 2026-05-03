@@ -73,6 +73,10 @@ const MapDetails = ({user}) => {
         }
     };
 
+    const handleLogPointsClick = () => {
+
+    }
+
 
     return (
         <div className="map-details">
@@ -121,9 +125,6 @@ const MapDetails = ({user}) => {
                             </div>
                         </div>
                     </div>
-                    { isAdminAuthorized && (<button className="btn btn-ghost" onClick={handleDeleteMap}>
-                        !Delete Map!
-                    </button>)}
                     <div className="leaderboard map-rankings">
                         {map && map.entries.sort((a, b) => a.time - b.time).map((entry, index) => (
                             <div key={entry.discordID}
@@ -144,7 +145,22 @@ const MapDetails = ({user}) => {
                 <div className="col-right">
                     { isAdminAuthorized &&
                         <div className="admin-panel card">
-                            <ChangeDifficultyBonusForm steamID={map.steamID} user={user} onDifficultyChanged={fetchMap} map={map} />
+                            <h2> Admin Panel </h2>
+                            <div className="admin-card-cnt">
+                                <ChangeDifficultyBonusForm steamID={map.steamID} user={user} onDifficultyChanged={fetchMap} map={map} />
+                                <div className="buttons-cnt">
+                                    <h3>Buttons :)</h3>
+                                    <div className="buttons">
+
+                                        <button className="btn btn-red btn-small" onClick={handleDeleteMap}>
+                                            !Delete Map!
+                                        </button>
+                                        <button className="btn btn-gray btn-small" onClick={handleLogPointsClick}>
+                                            log points
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     }
                     <div className="submit-entry card">
