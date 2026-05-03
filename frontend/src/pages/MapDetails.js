@@ -73,8 +73,15 @@ const MapDetails = ({user}) => {
         }
     };
 
-    const handleLogPointsClick = () => {
+    const handleLogPointsClick = async () => {
+        if (!map?.steamID || !user?.token) return;
 
+        try {
+            const response = await api.admin.logMapPoints(map.steamID, user.token);
+            console.log(response);
+        } catch (error) {
+            // Errors are already shown by the API layer.
+        }
     }
 
 

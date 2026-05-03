@@ -301,13 +301,42 @@ const hasInconsistentMapPointState = (user, steamID, existingEntryIndex) => {
     };
 };
 
-const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficultyBonus }) => {
+const buildComputedMapPointsForLeaderboard = ({ finalEntries, steamID, difficultyBonus }) => {
     const sortedEntries = finalEntries
         .filter((entry) => entry?.discordID && Number.isFinite(Number(entry.time)))
         .map((entry) => ({ ...entry, time: Number(entry.time) }))
         .sort((a, b) => a.time - b.time);
 
     const distinctDiscordIDs = [...new Set(sortedEntries.map((entry) => entry.discordID))];
+    const effectiveDifficultyBonus = Number.isFinite(difficultyBonus) ? difficultyBonus : 0;
+    const computedMapPoints = [];
+
+    sortedEntries.forEach((entry, placement) => {
+        if (computedMapPoints.some((computedEntry) => computedEntry.discordID === entry.discordID)) return;
+
+        const points = calculatePoints(sortedEntries.length, placement, effectiveDifficultyBonus);
+        if (Number.isFinite(points)) {
+            computedMapPoints.push({
+                discordID: entry.discordID,
+                userName: entry.userName,
+                time: entry.time,
+                placement: placement + 1,
+                points,
+                mapSteamID: steamID
+            });
+        }
+    });
+
+    return {
+        sortedEntries,
+        distinctDiscordIDs,
+        computedMapPoints,
+        effectiveDifficultyBonus
+    };
+};
+
+const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficultyBonus }) => {
+    const { distinctDiscordIDs, computedMapPoints } = buildComputedMapPointsForLeaderboard({ finalEntries, steamID, difficultyBonus });
     if (distinctDiscordIDs.length === 0) return;
 
     const users = await User.find(
@@ -316,20 +345,9 @@ const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficu
     ).lean();
 
     const usersByDiscordID = new Map(users.map((u) => [u.discordID, u]));
-    const pointsByDiscordID = new Map();
-    const effectiveDifficultyBonus = Number.isFinite(difficultyBonus) ? difficultyBonus : 0;
-
-    sortedEntries.forEach((entry, placement) => {
-        if (pointsByDiscordID.has(entry.discordID)) return;
-
-        const points = calculatePoints(sortedEntries.length, placement, effectiveDifficultyBonus);
-        if (Number.isFinite(points)) {
-            pointsByDiscordID.set(entry.discordID, points);
-        }
-    });
 
     const bulkUpdates = [];
-    pointsByDiscordID.forEach((points, discordID) => {
+    computedMapPoints.forEach(({ discordID, points }) => {
         const targetUser = usersByDiscordID.get(discordID);
         if (!targetUser) return;
 
@@ -353,6 +371,62 @@ const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficu
 
     if (bulkUpdates.length > 0) {
         await User.bulkWrite(bulkUpdates);
+    }
+};
+
+const logMapPointsForLeaderboard = async (req, res) => {
+    try {
+        const { steamID } = req.params;
+
+        const map = await Leaderboard.findOne(
+            { steamID },
+            { mapName: 1, steamID: 1, entries: 1, difficultyBonus: 1 }
+        ).lean();
+
+        if (!map) return res.status(404).json({ error: 'No leadearboard found' });
+
+        const { computedMapPoints, distinctDiscordIDs, effectiveDifficultyBonus } = buildComputedMapPointsForLeaderboard({
+            finalEntries: Array.isArray(map.entries) ? map.entries : [],
+            steamID: map.steamID,
+            difficultyBonus: map.difficultyBonus
+        });
+
+        const users = distinctDiscordIDs.length === 0
+            ? []
+            : await User.find(
+                { discordID: { $in: distinctDiscordIDs } },
+                { mapPoints: 1, discordID: 1, userName: 1 }
+            ).lean();
+
+        const usersByDiscordID = new Map(users.map((user) => [user.discordID, user]));
+        const usersWithMapPoints = computedMapPoints.map((computedMapPoint) => {
+            const user = usersByDiscordID.get(computedMapPoint.discordID);
+            const currentMapPoint = Array.isArray(user?.mapPoints)
+                ? user.mapPoints.find((entry) => entry.mapSteamID === steamID) || null
+                : null;
+
+            return {
+                discordID: computedMapPoint.discordID,
+                userName: computedMapPoint.userName,
+                computedMapPoint,
+                currentMapPoint,
+                mapPoints: Array.isArray(user?.mapPoints) ? user.mapPoints : []
+            };
+        });
+
+        return res.status(200).json({
+            map: {
+                mapName: map.mapName,
+                steamID: map.steamID,
+                difficultyBonus: map.difficultyBonus,
+                effectiveDifficultyBonus
+            },
+            computedMapPoints,
+            users: usersWithMapPoints,
+            distinctDiscordIDs
+        });
+    } catch (err) {
+        return res.status(400).json({ error: err.message });
     }
 };
 
@@ -623,6 +697,7 @@ module.exports = {
     deleteEntryByMapAndDiscord,
     deleteMotwEntryByMapAndDiscord,
     deleteLeaderboardBySteamID,
+    logMapPointsForLeaderboard,
     getMOTW,
     getRecentLeaderboards,
     getEntriesByUser

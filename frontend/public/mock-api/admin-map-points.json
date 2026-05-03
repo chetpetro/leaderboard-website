@@ -1,0 +1,45 @@
+{
+  "map": {
+    "mapName": "Short Map 2",
+    "steamID": "234",
+    "difficultyBonus": 0,
+    "effectiveDifficultyBonus": 0
+  },
+  "computedMapPoints": [
+    {
+      "discordID": "1234",
+      "userName": "gurgy",
+      "time": 1234,
+      "placement": 1,
+      "points": 250,
+      "mapSteamID": "234"
+    }
+  ],
+  "users": [
+    {
+      "discordID": "1234",
+      "userName": "gurgy",
+      "computedMapPoint": {
+        "discordID": "1234",
+        "userName": "gurgy",
+        "time": 1234,
+        "placement": 1,
+        "points": 250,
+        "mapSteamID": "234"
+      },
+      "currentMapPoint": {
+        "points": 250,
+        "mapSteamID": "234"
+      },
+      "mapPoints": [
+        {
+          "points": 250,
+          "mapSteamID": "234"
+        }
+      ]
+    }
+  ],
+  "requestedUser": null,
+  "distinctDiscordIDs": ["1234"]
+}
+

@@ -1,6 +1,7 @@
 export class AdminApi {
   constructor(httpClient) {
     this.httpClient = httpClient;
+    this.logMapPoints = this.logMapPoints.bind(this);
   }
 
   fetchStatus(token) {
@@ -31,6 +32,13 @@ export class AdminApi {
       method: 'DELETE',
       token,
       errorMessage: 'Failed to delete map.'
+    });
+  }
+
+  logMapPoints(steamID, token) {
+    return this.httpClient.request(`/admin/leaderboards/${steamID}/map-points`, {
+      token,
+      errorMessage: 'Failed to log map points.'
     });
   }
 }
