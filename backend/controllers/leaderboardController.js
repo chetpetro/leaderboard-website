@@ -341,7 +341,7 @@ const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficu
 
     const debugInfo = {
         finalEntriesCount: Array.isArray(finalEntries) ? finalEntries.length : 0,
-        distinctDiscordIDsCount: distinctDiscordIDs.length,
+        distinctDiscordIDs,
         computedMapPointsCount: computedMapPoints.length,
     };
 
