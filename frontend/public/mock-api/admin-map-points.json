@@ -39,7 +39,6 @@
       ]
     }
   ],
-  "requestedUser": null,
-  "distinctDiscordIDs": ["1234"]
+  "requestedUser": null
 }
 
