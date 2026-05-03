@@ -38,11 +38,12 @@ const CreateEntryForm = ({ steamID, user, onEntrySaved, submissionMode = 'normal
                     user.token
                 );
             } else {
-                await api.leaderboards.createOrEditEntry(
+                const res = await api.leaderboards.createOrEditEntry(
                     steamID,
                     submissionPayload,
                     user.token
                 );
+                console.log("createOrEdit\n", res)
             }
 
             setTime('00:00:00.000');
