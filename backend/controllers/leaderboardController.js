@@ -305,7 +305,7 @@ const hasInconsistentMapPointState = (user, steamID, existingEntryIndex) => {
 const buildComputedMapPointsForLeaderboard = ({ finalEntries, steamID, difficultyBonus }) => {
     const sortedEntries = finalEntries
         .filter((entry) => entry?.discordID && Number.isFinite(Number(entry.time))) // TODO this doenst work for uses without discord ids!!
-        .map((entry) => ({ ...entry, time: Number(entry.time) }))
+        .map((entry) => ({ ...entry, discordID: entry.discordID, time: Number(entry.time) }))
         .sort((a, b) => a.time - b.time);
 
     const distinctDiscordIDs = [...new Set(sortedEntries.map((entry) => entry.discordID))];
