@@ -158,7 +158,6 @@ const MapDetails = ({user}) => {
                                 <div className="buttons-cnt">
                                     <h3>Buttons :)</h3>
                                     <div className="buttons">
-
                                         <button className="btn btn-red btn-small" onClick={handleDeleteMap}>
                                             !Delete Map!
                                         </button>

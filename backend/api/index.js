@@ -15,6 +15,7 @@ const app = express();
 app.use(cors({
     origin: "*"
 }))
+
 app.use((req, res, next) => {
     console.log(req.path, req.method);
     next();

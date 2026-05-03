@@ -10,6 +10,7 @@ const { getMotwNumber } = require('../scripts/motwNumber');
 require('dotenv').config()
 
 const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID, wrContext }) => {
+    if (discordID === "261147203307831296") return
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const userUrl = `${leaderboardUrl}user/${discordID}`;
     const mapUrl = `${leaderboardUrl}${steamID}`;

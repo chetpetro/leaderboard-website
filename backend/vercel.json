@@ -5,5 +5,15 @@
         "path": "/api/cron/newFeaturedLeaderboard",
         "schedule": "0 0 * * 1"
         }
+    ],
+    "headers": [
+        {
+            "source": "/api/(.*)",
+            "headers": [
+                { "key": "Access-Control-Allow-Origin", "value": "https://pogostuckleaderboards.vercel.app" },
+                { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PATCH, OPTIONS, DELETE, PUT" },
+                { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
+            ]
+        }
     ]
 }
