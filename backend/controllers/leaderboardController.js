@@ -303,12 +303,10 @@ const hasInconsistentMapPointState = (user, steamID, existingEntryIndex) => {
 };
 
 const buildComputedMapPointsForLeaderboard = ({ finalEntries, steamID, difficultyBonus }) => {
-    const finalEntriesSize = finalEntries.length
     const sortedEntries = finalEntries
-        .filter((entry) => entry?.discordID && Number.isFinite(Number(entry.time)))
+        .filter((entry) => entry?.discordID && Number.isFinite(Number(entry.time))) // TODO this doenst work for uses without discord ids!!
         .map((entry) => ({ ...entry, time: Number(entry.time) }))
         .sort((a, b) => a.time - b.time);
-    const sortedEntriesSize = sortedEntries.length
 
     const distinctDiscordIDs = [...new Set(sortedEntries.map((entry) => entry.discordID))];
     const effectiveDifficultyBonus = Number.isFinite(difficultyBonus) ? difficultyBonus : 0;
@@ -335,20 +333,16 @@ const buildComputedMapPointsForLeaderboard = ({ finalEntries, steamID, difficult
         distinctDiscordIDs,
         computedMapPoints,
         effectiveDifficultyBonus,
-        finalEntriesSize,
-        sortedEntriesSize
     };
 };
 
 const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficultyBonus }) => {
-    const { distinctDiscordIDs, computedMapPoints, finalEntriesSize, sortedEntriesSize } = buildComputedMapPointsForLeaderboard({ finalEntries, steamID, difficultyBonus });
+    const { distinctDiscordIDs, computedMapPoints} = buildComputedMapPointsForLeaderboard({ finalEntries, steamID, difficultyBonus });
 
     const debugInfo = {
         finalEntriesCount: Array.isArray(finalEntries) ? finalEntries.length : 0,
         distinctDiscordIDsCount: distinctDiscordIDs.length,
         computedMapPointsCount: computedMapPoints.length,
-        finalEntriesSize: finalEntriesSize,
-        sortedEntriesSize: sortedEntriesSize
     };
 
     if (distinctDiscordIDs.length === 0) {
