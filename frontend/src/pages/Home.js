@@ -8,12 +8,6 @@ import LatestSubmissionsTicker from "../components/LatestSubmissionsTicker.js";
 import useApi from "../hooks/useApi";
 import {EmoteWheel, playEmote} from "../components/EmoteWheel";
 
-const INVALID_SUBMISSION_DAY_END_UTC = Date.UTC(2026, 3, 12, 0, 0, 0, 0);
-
-const isInvalidSubmissionDay = (timestamp) => {
-    return timestamp < INVALID_SUBMISSION_DAY_END_UTC;
-};
-
 const Home = () => {
     const api = useApi();
 
@@ -133,7 +127,6 @@ const Home = () => {
                     };
                 });
             })
-            .filter((entry) => !isInvalidSubmissionDay(entry?.submittedTimestamp))
             .sort((a, b) => b.submittedTimestamp - a.submittedTimestamp)
             .slice(0, 10);
     }, [maps]);
