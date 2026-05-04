@@ -44,10 +44,13 @@ export class HttpClient {
       const payload = await parseResponseBody(response);
 
       if (!response.ok) {
-        const serverMessage =
+        let serverMessage =
           payload && typeof payload === 'object'
             ? payload.error || payload.message
             : null;
+        if (response.status === 403) {
+          serverMessage = "Most likely a new deployment caused vercel to break 😢. Fix: re-open the browser (not the tab)"
+        }
         return Promise.reject(new Error(serverMessage || errorMessage));
       }
 
