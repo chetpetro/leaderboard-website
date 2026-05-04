@@ -90,11 +90,11 @@ const createMotwEntry = async (req, res) => {
         const entries = Array.isArray(map.entries) ? map.entries : [];
         const submittedTime = Number(req.body.time);
         const existingEntryIndex = getEntryIndexForUser(entries, req.body);
+        const wrContext = buildWrContext(entries, submittedTime, req.body.discordID);
         const currentBestTime = existingEntryIndex !== -1 ? Number(entries[existingEntryIndex].time) : null;
         const shouldUpdateNormalEntry = Number.isFinite(submittedTime)
             && (existingEntryIndex === -1 || (Number.isFinite(currentBestTime) && submittedTime < currentBestTime));
         if (shouldUpdateNormalEntry) {
-            const wrContext = buildWrContext(entries, submittedTime, req.body.discordID);
             const persistResult = await persistLeaderboardEntry({
                 steamID,
                 entries,
@@ -126,7 +126,8 @@ const createMotwEntry = async (req, res) => {
                         time: submittedTime,
                         mapName: map.mapName,
                         steamID: map.steamID,
-                        wrContext
+                        wrContext,
+                        motw: true
                     })
                 ]);
                 responsePayload.normalEntryRecomputeDebug = recomputeDebugInfo;
@@ -135,6 +136,22 @@ const createMotwEntry = async (req, res) => {
             }
             responsePayload.updatedNormalEntry = true;
             responsePayload.normal = persistResult.responsePayload;
+        }
+        // If we did NOT update the normal leaderboard entry (e.g. slower time), still announce the MOTW submission
+        if (!shouldUpdateNormalEntry) {
+            try {
+                await sendDiscordPbMessage({
+                    discordID: req.body.discordID,
+                    userName: req.body.userName,
+                    time: submittedTime,
+                    mapName: map.mapName,
+                    steamID: map.steamID,
+                    wrContext,
+                    motw: true
+                });
+            } catch (error) {
+                return res.status(500).json({ error: error.message });
+            }
         }
         return res.status(200).json(responsePayload);
     } catch (err) {

@@ -6,7 +6,7 @@ const { msToTime } = require('../../utils/timeUtil');
 const { sendDiscordMessage } = require('../../utils/discordUtil');
 const { calculatePoints } = require('../../scripts/points');
 require('dotenv').config();
-const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID, wrContext }) => {
+const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID, wrContext, motw = false }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const newline = String.fromCharCode(10);
     const userUrl = `${leaderboardUrl}user/${discordID}`;
@@ -14,11 +14,12 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamI
     const oldWrTime = wrContext?.oldWrTime;
     const hasOldWrTime = Number.isFinite(oldWrTime);
     const isNewWr = wrContext?.isNewWr === true;
+    const motwStr = motw ? ' Map of the Week' : '';
     const template = isNewWr
         ? [
             wrContext?.isSelfWrImprovement || !hasOldWrTime
-                ? 'New WR by <@%DISCORDID%>'
-                : "New WR by <@%DISCORDID%> dethroning %OLDWRHOLDER%'s `%OLDWRTIME%`",
+                ? `New${motwStr} WR by <@%DISCORDID%>`
+                : `New${motwStr} WR by <@%DISCORDID%> dethroning %OLDWRHOLDER%'s %OLDWRTIME%`,
             '',
             hasOldWrTime
                 ? '**WR:** `%PBTIME%` (`-%TIMEDIFF%`)'
@@ -29,7 +30,7 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamI
             '**More on:** [Pogostuck Leaderboards](<%LEADERBOARDURL%>)'
         ].join(newline)
         : [
-            'New PB for <@%DISCORDID%>',
+            `New${motwStr} PB for <@%DISCORDID%>`,
             '',
             '**PB:** `%PBTIME%`',
             '**By:** [%USERNAME%](<%USERURL%>)',
@@ -238,7 +239,8 @@ const requestToDiscordPayload = (req, map, wrContext) => ({
     time: req.body.time,
     mapName: map.mapName,
     steamID: map.steamID,
-    wrContext
+    wrContext,
+    motw: !!map.featured
 });
 module.exports = {
     sendDiscordPbMessage,
