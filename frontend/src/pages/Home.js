@@ -7,6 +7,7 @@ import PlayerPodium from "../components/PlayerPodium";
 import LatestSubmissionsTicker from "../components/LatestSubmissionsTicker.js";
 import useApi from "../hooks/useApi";
 import {EmoteWheel, playEmote} from "../components/EmoteWheel";
+import {RandomMapSuggester} from "../components/RandomMapSuggester";
 
 const Home = () => {
     const api = useApi();
@@ -267,6 +268,8 @@ const Home = () => {
                 </div>
             </div>
             <RecentMaps/>
+            <div className="separator"></div>
+            <RandomMapSuggester maps={maps}/>
         </div>
     );
 }

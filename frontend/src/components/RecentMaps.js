@@ -34,7 +34,7 @@ const RecentMaps = () => {
         <div className="active-maps">
             <div className="inside">
                 <h2>New Maps</h2>
-                <div className="desc-cnt">
+                <div className="dash-container desc-cnt">
                     <span className="dash"></span>
                     <p>
                         The maps with the latest submissions. Click on a map to view the leaderboard and submit your time!

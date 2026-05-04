@@ -125,3 +125,15 @@ a.btn:focus {
     padding-inline: .75rem;
     padding-block: .33rem;
 }
+
+.btn-toggle.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    border-color: transparent;
+}
+
+.btn-toggle.btn-primary:hover {
+    background-color: color-mix(in srgb, var(--primary) 85%, black);
+    color: white;
+    border-color: transparent;
+}

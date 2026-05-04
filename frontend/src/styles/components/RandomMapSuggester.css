@@ -1,0 +1,31 @@
+.random-map-suggester {
+    &>.inside {
+        .map-selector-cnt {
+            overflow-x: hidden;
+            display: flex;
+            gap: var(--flex-gap, .5rem);
+            width: var(--item-width, 0);
+            padding-block: .5rem;
+            margin-inline: auto;
+            .map-entry-cnt {
+                flex-shrink: 0;
+                transform: translateX(var(--scroll-x, 0));
+                .map {
+                    text-align: center;
+                    text-wrap: nowrap;
+                    overflow: hidden;
+                    width: var(--item-width, 0);
+                    background-color: var(--color-surface-400);
+                }
+            }
+            margin-block: 2rem 1rem;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+    }
+}
