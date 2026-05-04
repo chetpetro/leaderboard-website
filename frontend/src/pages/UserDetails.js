@@ -194,7 +194,7 @@ const UserDetails = () => {
                             <div className="motw-participations">
                                 <h3>participations</h3>
                                 {user.mapOfTheWeekParticipations && motwInfo && <div>{user.mapOfTheWeekParticipations.length + (motwInfo.submittedToCurrent ? 1 : 0)}</div>}
-                                {!user.mapOfTheWeekParticipations || !motwInfo && <div>0</div>}
+                                {(!user.mapOfTheWeekParticipations || !motwInfo) && <div>0</div>}
                             </div>
                         </div>
                     </div>
