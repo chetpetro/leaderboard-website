@@ -1,24 +1,53 @@
 .random-map-suggester {
     &>.inside {
         .map-selector-cnt {
-            overflow-x: hidden;
-            display: flex;
-            gap: var(--flex-gap, .5rem);
-            width: var(--item-width, 0);
-            padding-block: .5rem;
+            position: relative;
+            max-width: fit-content;
             margin-inline: auto;
-            .map-entry-cnt {
-                flex-shrink: 0;
-                transform: translateX(var(--scroll-x, 0));
-                .map {
-                    text-align: center;
-                    text-wrap: nowrap;
-                    overflow: hidden;
-                    width: var(--item-width, 0);
-                    background-color: var(--color-surface-400);
+            .map-selector {
+                overflow-x: hidden;
+                display: flex;
+                gap: var(--flex-gap, .5rem);
+                width: var(--item-width, 0);
+                .map-entry-cnt {
+                    flex-shrink: 0;
+                    transform: translateX(var(--scroll-x, 0));
+                    .map {
+                        text-align: center;
+                        text-wrap: nowrap;
+                        overflow: hidden;
+                        width: var(--item-width, 0);
+                        background-color: var(--color-surface-400);
+                    }
                 }
             }
-            margin-block: 2rem 1rem;
+            margin-block: 2rem 3rem;
+            border-radius: var(--border-radius);
+
+            &::before,
+            &::after {
+                content: "";
+                position: absolute;
+                inset: -2px;
+                border-radius: inherit;
+                z-index: -1;
+                background-image: conic-gradient(
+                        from var(--angle),
+                        var(--color-surface-100) .01turn,
+                        var(--primary) .98turn,
+                        var(--color-surface-100) 1turn
+                );
+                visibility: hidden;
+            }
+
+            &::after {
+                filter: blur(14px);
+            }
+            &.animated::before,
+            &.animated::after {
+                visibility: visible;
+                animation: spin 4s ease-out forwards, hide reverse .5s ease, hide 1s forwards 2.5s ease-out;
+            }
         }
         .buttons {
             display: flex;
@@ -28,4 +57,26 @@
             gap: 1rem;
         }
     }
+}
+
+
+@keyframes hide {
+    from {
+        opacity: 1!important;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes spin {
+    100% {
+        --angle: 500deg;
+    }
+}
+
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
 }

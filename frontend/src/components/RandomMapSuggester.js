@@ -5,11 +5,12 @@ import {ToggleButton} from "./ToggleButton";
 
 export const RandomMapSuggester = ({maps}) => {
     const flexGapRem = .5;
-    const itemWidthRem = 20;
+    const itemWidthRem = 15;
     const animationTicks = 400;
     const mapAmnt = 20;
     const mapListWidth = mapAmnt * (itemWidthRem + flexGapRem);
     const [randomMaps, setRandomMaps] = useState([]);
+    const [inAnimation, setInAnimation] = useState(false);
     const [isReducedMotion, setIsReducedMotion] = useState(() => {
         if (typeof window === "undefined" || typeof window.matchMedia !== "function") return false;
         return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -65,7 +66,10 @@ export const RandomMapSuggester = ({maps}) => {
         if (!mapSelector.current) return;
         setScrollPosition(scrollXRef.current);
         currentTickRef.current++;
-        if (currentTickRef.current > animationTicks) return;
+        if (currentTickRef.current > animationTicks) {
+            setInAnimation(false)
+            return
+        }
         let newScrollValue = customSpeedEaseCurve(currentTickRef.current / animationTicks, scrollTargetRef.current.x, startScrollXRef.current)
         newScrollValue = getWrappedScrollX(newScrollValue);
         scrollXRef.current = newScrollValue;
@@ -85,8 +89,10 @@ export const RandomMapSuggester = ({maps}) => {
             cancelAnimationFrame(animationFrameRef.current);
             animationFrameRef.current = null;
         }
+        setInAnimation(true)
         if (isReducedMotion) {
             setScrollPosition(getWrappedScrollX(scrollTargetRef.current.x));
+            requestAnimationFrame(() => setInAnimation(false))
             return;
         }
         animationFrameRef.current = requestAnimationFrame(executeTick);
@@ -129,12 +135,14 @@ export const RandomMapSuggester = ({maps}) => {
                         Not sure which map to play? Try this!
                     </p>
                 </div>
-                <div className="map-selector-cnt" ref={mapSelector} style={{
-                    '--item-width': itemWidthRem + "rem",
-                    '--flex-gap': flexGapRem + "rem",
-                }}>
-                    {renderEntries()}
-                    {renderEntries()}
+                <div className={`map-selector-cnt ${inAnimation ? '' : 'animated'}`}>
+                    <div className="map-selector" ref={mapSelector} style={{
+                        '--item-width': itemWidthRem + "rem",
+                        '--flex-gap': flexGapRem + "rem",
+                    }}>
+                        {renderEntries()}
+                        {renderEntries()}
+                    </div>
                 </div>
                 <div className="buttons">
                     <button type="button" className="btn btn-primary" onClick={handleShuffle}>
