@@ -5,9 +5,9 @@ import {ToggleButton} from "./ToggleButton";
 
 export const RandomMapSuggester = ({maps}) => {
     const flexGapRem = .5;
-    const itemWidthRem = 15;
     const animationTicks = 400;
     const mapAmnt = 20;
+    const [itemWidthRem, setItemWidthRem] = useState(15);
     const mapListWidth = mapAmnt * (itemWidthRem + flexGapRem);
     const [randomMaps, setRandomMaps] = useState([]);
     const [inAnimation, setInAnimation] = useState(false);
@@ -49,6 +49,23 @@ export const RandomMapSuggester = ({maps}) => {
                 cancelAnimationFrame(animationFrameRef.current);
             }
         }
+    }, []);
+
+    useEffect(() => {
+        if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+
+        const mediaQuery = window.matchMedia("(min-width: 864px)");
+
+        const handleMediaChange = (e) => {
+            setItemWidthRem(e.matches ? 25 : 15);
+        };
+
+        // Set initial value
+        setItemWidthRem(mediaQuery.matches ? 20 : 15);
+
+        // Listen for changes
+        mediaQuery.addEventListener("change", handleMediaChange);
+        return () => mediaQuery.removeEventListener("change", handleMediaChange);
     }, []);
 
     const getWrappedScrollX = (value) => {
