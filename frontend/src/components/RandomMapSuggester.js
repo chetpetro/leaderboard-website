@@ -6,7 +6,7 @@ import {ToggleButton} from "./ToggleButton";
 export const RandomMapSuggester = ({maps}) => {
     const flexGapRem = .5;
     const animationTicks = 400;
-    const mapAmnt = 20;
+    const mapAmnt = 100;
     const [itemWidthRem, setItemWidthRem] = useState(15);
     const mapListWidth = mapAmnt * (itemWidthRem + flexGapRem);
     const [randomMaps, setRandomMaps] = useState([]);
@@ -97,7 +97,7 @@ export const RandomMapSuggester = ({maps}) => {
         if (!mapSelector.current) return;
         const mapIndexToSelect = Math.floor(Math.random() * mapAmnt);
         scrollTargetRef.current = {
-            x: (mapIndexToSelect-2 + mapAmnt*5) * (itemWidthRem + flexGapRem),
+            x: (mapIndexToSelect-2 + mapAmnt) * (itemWidthRem + flexGapRem),
             index: mapIndexToSelect
         }
         startScrollXRef.current = scrollXRef.current;
