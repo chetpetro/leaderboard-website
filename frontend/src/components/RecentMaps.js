@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import '../styles/components/ActiveMaps.css';
 import useApi from "../hooks/useApi";
 
-const ActiveMaps = () => {
+const RecentMaps = () => {
     const api = useApi();
     const [leaderboards, setLeaderboards] = useState([]);
 
@@ -33,7 +33,7 @@ const ActiveMaps = () => {
     return (
         <div className="active-maps">
             <div className="inside">
-                <h2>Active Maps</h2>
+                <h2>New Maps</h2>
                 <div className="desc-cnt">
                     <span className="dash"></span>
                     <p>
@@ -68,4 +68,4 @@ const ActiveMaps = () => {
     );
 }
  
-export default ActiveMaps;
+export default RecentMaps;

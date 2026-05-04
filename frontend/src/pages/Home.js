@@ -2,7 +2,7 @@ import {useState, useEffect, useRef, useMemo, useCallback} from "react";
 import CreateLeaderboardForm from "../components/CreateLeaderboardForm";
 import '../styles/pages/Home.css'
 import {Link} from "react-router-dom";
-import ActiveMaps from "../components/ActiveMaps";
+import RecentMaps from "../components/RecentMaps";
 import PlayerPodium from "../components/PlayerPodium";
 import LatestSubmissionsTicker from "../components/LatestSubmissionsTicker.js";
 import useApi from "../hooks/useApi";
@@ -266,7 +266,7 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-            <ActiveMaps/>
+            <RecentMaps/>
         </div>
     );
 }

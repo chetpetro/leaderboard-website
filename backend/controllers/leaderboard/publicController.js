@@ -6,12 +6,14 @@ const getLeaderboards = async (req, res) => {
     const response = await Leaderboard.find({}).sort({ entries: -1 });
     res.status(200).json(response);
 };
+
+/* recently created leaderboards */
 const getRecentLeaderboards = async (req, res) => {
     const requestedLimit = Number.parseInt(req.query.limit, 10);
     const limit = Number.isNaN(requestedLimit) ? 10 : Math.min(Math.max(requestedLimit, 1), 50);
     const response = await Leaderboard
         .find({})
-        .sort({ lastSubmissionAt: -1, updatedAt: -1 })
+        .sort({ createdAt: -1})
         .limit(limit);
     res.status(200).json(response);
 };
