@@ -2,6 +2,7 @@ import {Component} from "react";
 import "../styles/components/LatestSubmissionsTicker.css";
 import { msToTime } from "../timeUtils";
 import {playEmote} from "./EmoteWheel";
+import {Link} from "react-router-dom";
 
 class LatestSubmissionsTicker extends Component {
 
@@ -12,21 +13,6 @@ class LatestSubmissionsTicker extends Component {
 
     triggerWave() {
         this.itemRefs.forEach(item => playEmote('top', item));
-    }
-
-    formatSubmissionLabel(entry) {
-        const segments = [
-            { className: "submission-user", value: entry.userName },
-            { className: "submission-map", value: entry.mapName },
-            { className: "submission-time", value: msToTime(entry.time) }
-        ];
-
-        return segments.map((segment, index) => (
-            <span className={`submission-segment ${segment.className}`} key={`${segment.className}-${index}`}>
-                {index > 0 && <span className="submission-separator"> - </span>}
-                <span className="submission-segment__value">{segment.value}</span>
-            </span>
-        ));
     }
 
     buildEntryKey(entry, index) {
@@ -42,7 +28,19 @@ class LatestSubmissionsTicker extends Component {
                         <span className="media-container" ref={el => this.itemRefs[index + (prefix === "clone" ? 100 : 0)] = el}>
                             <img src="/bee.png" alt="junker"/>
                         </span>
-                        <span className="submission-text">{this.formatSubmissionLabel(entry)}</span>
+                        <span className="submission-text">
+                            <span className={`submission-segment submission-user`}>
+                                <Link className="submission-segment__value" to={`/user/${entry.discordID}`}>{entry.userName}</Link>
+                            </span>
+                            <span className={`submission-segment submission-map`}>
+                                <span className="submission-separator"> - </span>
+                                <Link className="submission-segment__value" to={`/${entry.steamID}`}>{entry.mapName}</Link>
+                            </span>
+                            <span className={`submission-segment submission-time`}>
+                                <span className="submission-separator"> - </span>
+                                <span className="submission-segment__value">{msToTime(entry.time)}</span>
+                            </span>
+                        </span>
                     </span>
                 ))}
             </div>
