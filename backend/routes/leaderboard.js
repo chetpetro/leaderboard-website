@@ -2,14 +2,16 @@ const express = require('express');
 const {
     getLeaderboard,
     getLeaderboards,
-    createOrEditEntry,
-    createMotwEntry,
     createMapLeaderboard,
     getMOTW,
     getRecentLeaderboards,
     changeMapDifficultyBonus,
     getEntriesByUser
-} = require("../controllers/leaderboardController");
+} = require("../controllers/leaderboard/publicController");
+const {
+    createOrEditEntry,
+    createMotwEntry
+} = require("../controllers/leaderboard/submissionController");
 const requireAuth = require('../middleware/requireAuth');
 const requireAdmin = require('../middleware/requireAdmin');
 const router = express.Router();

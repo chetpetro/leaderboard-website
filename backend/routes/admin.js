@@ -1,5 +1,5 @@
 const express = require('express');
-const { deleteEntryByMapAndDiscord, deleteMotwEntryByMapAndDiscord, deleteLeaderboardBySteamID, logMapPointsForLeaderboard, recomputeMapPointsAdmin } = require('../controllers/leaderboardController');
+const { deleteEntryByMapAndDiscord, deleteMotwEntryByMapAndDiscord, deleteLeaderboardBySteamID, logMapPointsForLeaderboard, recomputeMapPointsAdmin } = require('../controllers/leaderboard/adminController');
 const requireAuth = require('../middleware/requireAuth');
 const requireAdmin = require('../middleware/requireAdmin');
 
