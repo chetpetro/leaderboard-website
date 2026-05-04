@@ -65,7 +65,7 @@ const UserDetails = () => {
     const { discordID } = useParams()
     const [entries, setEntries] = useState([]);
     const [user, setUser] = useState({});
-    const [currentMotwNumber, setCurrentMotwNumber] = useState(null);
+    const [motwInfo, setMotwInfo] = useState(null);
 
     const numericMapPoints = (user.mapPoints ?? [])
         .map((entry) => Number(entry.points))
@@ -80,7 +80,9 @@ const UserDetails = () => {
     };
 
     const motwStreak = useMemo(() => {
-        const motwNumber = Number(currentMotwNumber);
+        if(!motwInfo) return
+        const motwNumber = motwInfo.motwNumber;
+        console.log("motwInfo", motwInfo);
         if (!Number.isFinite(motwNumber) || motwNumber <= 0) {
             return 0;
         }
@@ -91,21 +93,21 @@ const UserDetails = () => {
                 .filter((number) => Number.isFinite(number))
         );
 
-        const startMotwNumber = participationNumbers.has(motwNumber)
-            ? motwNumber
-            : motwNumber - 1;
+        console.log("participationNumbers", participationNumbers);
 
-        if (startMotwNumber <= 0) {
-            return 0;
-        }
+        const startMotwNumber = motwNumber - 1;
+
+        console.log("startMotwNumber", startMotwNumber);
 
         let streak = 0;
+        console.log("Initial streak", streak);
+
         while (participationNumbers.has(startMotwNumber - streak)) {
             streak += 1;
         }
-
+        if (motwInfo.submittedToCurrent) streak += 1;
         return streak;
-    }, [currentMotwNumber, user.mapOfTheWeekParticipations]);
+    }, [motwInfo, user.mapOfTheWeekParticipations]);
 
     const sortedEntries = [...entries].sort((entryA, entryB) => {
         const pointsDiff = getMapPointsForSteamId(entryB.steamID) - getMapPointsForSteamId(entryA.steamID);
@@ -125,7 +127,11 @@ const UserDetails = () => {
             try {
                 const motwPayload = await api.leaderboards.fetchMOTW();
                 if (motwPayload) {
-                    setCurrentMotwNumber(Number(motwPayload.motwNumber));
+                    console.log("payload", motwPayload)
+                    setMotwInfo({
+                        motwNumber: Number(motwPayload.motwNumber),
+                        submittedToCurrent: motwPayload.entries?.some((entry) => entry.discordID === discordID) || false
+                    });
                 }
             } catch (error) {
                 // Errors are already shown by the API layer.
@@ -187,8 +193,8 @@ const UserDetails = () => {
                             </div>
                             <div className="motw-participations">
                                 <h3>participations</h3>
-                                {user.mapOfTheWeekParticipations && <div>{user.mapOfTheWeekParticipations.length}</div>}
-                                {!user.mapOfTheWeekParticipations && <div>0</div>}
+                                {user.mapOfTheWeekParticipations && motwInfo && <div>{user.mapOfTheWeekParticipations.length + (motwInfo.submittedToCurrent ? 1 : 0)}</div>}
+                                {!user.mapOfTheWeekParticipations || !motwInfo && <div>0</div>}
                             </div>
                         </div>
                     </div>
