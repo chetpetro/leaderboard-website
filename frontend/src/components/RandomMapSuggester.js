@@ -143,7 +143,7 @@ export const RandomMapSuggester = ({maps}) => {
         ))
     }
     return (
-        <div className="random-map-suggester">
+        <div className="random-map-suggester" id="suggest-map">
             <div className="inside">
                 <h2>Play a random map</h2>
                 <div className="dash-container desc-cnt">
