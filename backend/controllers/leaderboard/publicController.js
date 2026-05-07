@@ -63,6 +63,14 @@ const createMapLeaderboard = async (req, res) => {
         let { url, entries } = req.body;
         if (!entries) entries = [];
         const mapID = getID(url);
+        if (!mapID) {
+            return res.status(400).json({ error: 'Invalid or missing map URL / id' });
+        }
+        // If a leaderboard for this steamID already exists, reject the request
+        const existing = await Leaderboard.findOne({ steamID: mapID });
+        if (existing) {
+            return res.status(400).json({ error: 'Leaderboard with this steamID already exists' });
+        }
         const API_KEY = process.env.STEAM_API_KEY;
         const mapData = new FormData();
         mapData.append('itemcount', '1');
