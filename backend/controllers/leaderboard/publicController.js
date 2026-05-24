@@ -2,6 +2,7 @@ const Leaderboard = require('../../models/LeaderboardModel');
 const MotwSubmission = require('../../models/MotwSubmissionModel');
 const { getAverageColor } = require('fast-average-color-node');
 const { getMotwNumber } = require('../../scripts/motwNumber');
+const {recomputeMapPointsForLeaderboard} = require("./shared");
 const getLeaderboards = async (req, res) => {
     const response = await Leaderboard.find({}).sort({ entries: -1 });
     res.status(200).json(response);
@@ -110,6 +111,11 @@ const changeMapDifficultyBonus = async (req, res) => {
     if (!map) return res.status(404).json({ error: 'No leadearboard found' });
     map.difficultyBonus = difficultyBonus;
     await map.save();
+    await recomputeMapPointsForLeaderboard({
+        finalEntries: map.entries,
+        steamID,
+        difficultyBonus: map.difficultyBonus
+    });
     res.status(200).json(map);
 };
 const getMOTW = async (req, res) => {
