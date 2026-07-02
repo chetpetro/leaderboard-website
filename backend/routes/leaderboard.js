@@ -9,6 +9,10 @@ const {
     getEntriesByUser
 } = require("../controllers/leaderboard/publicController");
 const {
+    getCustomLeaderboard,
+    createCustomLeaderboard
+} = require("../controllers/leaderboard/customController");
+const {
     createOrEditEntry,
     createMotwEntry
 } = require("../controllers/leaderboard/submissionController");
@@ -20,8 +24,10 @@ router.get('/', getLeaderboards); // GET all leaderboards
 router.get('/motw', getMOTW); // GET Map of the Week
 router.get('/recent', getRecentLeaderboards); // GET the 10 most recently updated leaderboards
 router.get('/entries', getEntriesByUser); // GET all entries for a user
+router.get('/custom/:id', getCustomLeaderboard); // GET one custom leaderboard by id
 router.get('/:steamID', getLeaderboard); // GET one leaderboard by name
 router.post('/', createMapLeaderboard); // POST new leaderboard
+router.post('/custom', requireAuth, requireAdmin, createCustomLeaderboard); // POST custom leaderboard
 
 // Auth required to add leaderboard entry
 router.use(requireAuth);

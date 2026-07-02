@@ -110,6 +110,7 @@ const Navbar = ({ user, setUser }) => {
                 </button>
                 <ul className="desktop-nav-links">
                     <li><Link to="/points-leaderboard">Leaderboard</Link></li>
+                    {user.isAdmin && <li><Link to="/admin/custom-leaderboards/new">Create Custom Map</Link></li>}
                     {user.userName && <li><Link to={`/user/${user.discordID}`} title={user.userName}>
                         <div className="user-icon media-container">
                             <img src="/user.svg" alt="user" />
@@ -139,6 +140,7 @@ const Navbar = ({ user, setUser }) => {
                 <nav aria-label="Mobile">
                     <ul>
                         <li><Link ref={firstMobileLinkRef} to="/points-leaderboard" onClick={closeMenu}>Leaderboard</Link></li>
+                        {user.isAdmin && <li><Link to="/admin/custom-leaderboards/new" onClick={closeMenu}>Create Custom Map</Link></li>}
                         {user.userName && <li><Link to={`/user/${user.discordID}`} title={user.userName}>
                             <div className="user-icon media-container">
                                 <img src="/user.svg" alt="user" />

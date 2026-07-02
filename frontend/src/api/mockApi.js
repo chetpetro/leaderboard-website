@@ -7,8 +7,10 @@ const MOCK_RESPONSE_FILES = [
     {method: 'GET', pattern: /^\/leaderboards\/recent$/, file: `${MOCK_API_BASE_URL}/leaderboards-recent.json`},
     {method: 'GET', pattern: /^\/leaderboards\/entries$/, file: `${MOCK_API_BASE_URL}/leaderboards-entries.json`},
     {method: 'GET', pattern: /^\/leaderboards\/?$/, file: `${MOCK_API_BASE_URL}/leaderboards.json`},
+    {method: 'GET', pattern: /^\/leaderboards\/custom\/[^/]+$/, file: `${MOCK_API_BASE_URL}/leaderboards-custom-by-id.json`},
     {method: 'GET', pattern: /^\/leaderboards\/[^/]+$/, file: `${MOCK_API_BASE_URL}/leaderboards-by-steamid.json`},
     {method: 'POST', pattern: /^\/leaderboards\/?$/, file: `${MOCK_API_BASE_URL}/leaderboards-create.json`},
+    {method: 'POST', pattern: /^\/leaderboards\/custom$/, file: `${MOCK_API_BASE_URL}/leaderboards-custom-create.json`},
     {method: 'PATCH', pattern: /^\/leaderboards\/[^/]+\/motw$/, file: `${MOCK_API_BASE_URL}/leaderboards-motw-submit.json`},
     {
         method: 'PATCH',
@@ -83,4 +85,3 @@ export const requestMockResponse = async (method, path, errorMessage = 'Request 
 
     return payload;
 };
-

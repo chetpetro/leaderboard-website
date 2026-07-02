@@ -15,6 +15,12 @@ export class LeaderboardsApi {
     });
   }
 
+  fetchCustomLeaderboard(id) {
+    return this.httpClient.request(`/leaderboards/custom/${id}`, {
+      errorMessage: 'Failed to load custom leaderboard.'
+    });
+  }
+
   fetchMOTW() {
     return this.httpClient.request('/leaderboards/motw', {
       errorMessage: 'Failed to load map of the week.'
@@ -38,6 +44,15 @@ export class LeaderboardsApi {
       method: 'POST',
       body: { url },
       errorMessage: 'Failed to create leaderboard.'
+    });
+  }
+
+  createCustomLeaderboard(payload, token) {
+    return this.httpClient.request('/leaderboards/custom', {
+      method: 'POST',
+      token,
+      body: payload,
+      errorMessage: 'Failed to create custom leaderboard.'
     });
   }
 
@@ -68,4 +83,3 @@ export class LeaderboardsApi {
     });
   }
 }
-

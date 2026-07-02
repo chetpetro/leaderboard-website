@@ -14,8 +14,12 @@ Track progress for each phase. Update statuses as work proceeds.
   - Verified isCustomLeaderboard defaults to true, difficultyBonus defaults to 0
   - Confirmed model isolation: no existing controllers changed
   - Model verified to import and load correctly
-- Phase 3 — Admin creation + public view pages: Pending
+- Phase 3 — Admin creation + public view pages: ✅ Complete
+  - Added admin-only POST /leaderboards/custom route for CustomLeaderboard creation
+  - Added admin-only frontend creation page at /admin/custom-leaderboards/new
+  - Added public raw JSON view page at /custom-leaderboard/:id
+  - Added mock API mappings for custom leaderboard create/fetch flows
 - Phase 4 — Audit usages & document changes: Pending
 - Phase 5 — Implement interchangeability: Pending
 
-Last updated: 2026-07-02T08:49:13+02:00
+Last updated: 2026-07-02T14:59:09+02:00
