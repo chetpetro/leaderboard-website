@@ -21,7 +21,9 @@ Track progress for each phase. Update statuses as work proceeds.
   - Added admin-only frontend creation page at /admin/custom-leaderboards/new
   - Added public raw JSON view page at /custom-leaderboard/:id
   - Added mock API mappings for custom leaderboard create/fetch flows
-- Phase 4 — Audit usages & document changes: Pending
+- Phase 4 — Audit usages & document changes: ✅ Complete
+  - Wrote the phase 4 inventory in `backend/CUSTOM_LEADERBOARD_PHASE4_AUDIT.md`
+  - Documented the `mapKey` migration path and route strategy
 - Phase 5 — Implement interchangeability: Pending
 
-Last updated: 2026-07-02T15:19:59+02:00
+Last updated: 2026-07-02T17:03:30+02:00
