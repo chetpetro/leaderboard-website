@@ -4,7 +4,7 @@
   "mapName": "Custom Map",
   "creator": "Superku",
   "description": "description",
-  "previewImage": "/bee.png",
+  "previewImage": "/public/customLeaderboardImages/custom-123.png",
   "difficultyBonus": 0,
   "isCustomLeaderboard": true,
   "entries": []

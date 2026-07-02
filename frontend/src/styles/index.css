@@ -132,7 +132,8 @@ input[type="number"] {
 }
 
 input[type="number"],
-input[type="text"] {
+input[type="text"],
+textarea {
   background: var(--color-surface-300);
   color: white;
   border: none;
@@ -146,6 +147,10 @@ input[type="text"] {
   }
 }
 
-label, input {
+textarea {
+  resize: vertical;
+}
+
+label, input, textarea {
   display: block;
 }

@@ -26,10 +26,14 @@ Phase 2 — Backend model only
 - Add unit sanity checks in model (unique index on id).
 
 Phase 3 — Admin creation + public view pages
-- Backend: Add admin-only route to create custom leaderboards (POST /leaderboards/custom) that accepts mapName, description, difficultyBonus, previewImage, id.
-  - creator set to "Superku" on server side regardless of payload.
+- Backend: Add admin-only route to create custom leaderboards (POST /leaderboards/custom) that accepts mapName, creator, description, difficultyBonus, id.
+  - creator comes from the payload and is not hardcoded.
+  - previewImage is derived server-side as `/public/customLeaderboardImages/$id.png`.
   - isCustomLeaderboard set true.
-- Frontend: Add admin creation page (route behind admin check) with form to create custom leaderboards (no styling required now).
+- Frontend: Add admin creation page (route behind admin check) with form to create custom leaderboards.
+  - creator input defaults to Superku.
+  - textarea styling should match normal text inputs.
+  - no preview image input; the image path is derived from id.
 - Public: Add view page /custom-leaderboard/:id that fetches and displays raw JSON of the custom leaderboard.
 
 Phase 4 — Audit usages & document changes
@@ -45,7 +49,7 @@ Phase 5 — Implement interchangeability
 
 Security & permissions
 - Creation of custom leaderboards must be admin-only.
-- Persisted creator must be "Superku" per requirement.
+- Persisted creator is editable, with Superku as the default admin form value.
 
 Notes
 - Keep the Leaderboard model untouched for Phase 2; Phase 5 will introduce compatibility changes.

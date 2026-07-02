@@ -10,9 +10,9 @@ const AdminCustomLeaderboardCreate = ({ user }) => {
     const [form, setForm] = useState({
         id: '',
         mapName: '',
+        creator: 'Superku',
         description: '',
-        difficultyBonus: '0',
-        previewImage: ''
+        difficultyBonus: '0'
     });
 
     const handleChange = (field) => (event) => {
@@ -61,16 +61,16 @@ const AdminCustomLeaderboardCreate = ({ user }) => {
                     <input id="custom-name" type="text" value={form.mapName} onChange={handleChange('mapName')} />
                 </div>
                 <div>
+                    <label htmlFor="custom-creator">Creator</label>
+                    <input id="custom-creator" type="text" value={form.creator} onChange={handleChange('creator')} />
+                </div>
+                <div>
                     <label htmlFor="custom-description">Description</label>
                     <textarea id="custom-description" value={form.description} onChange={handleChange('description')} />
                 </div>
                 <div>
                     <label htmlFor="custom-difficulty-bonus">Difficulty Bonus</label>
                     <input id="custom-difficulty-bonus" type="number" value={form.difficultyBonus} onChange={handleChange('difficultyBonus')} />
-                </div>
-                <div>
-                    <label htmlFor="custom-preview-image">Preview Image</label>
-                    <input id="custom-preview-image" type="text" value={form.previewImage} onChange={handleChange('previewImage')} />
                 </div>
                 <button className="btn btn-primary" type="submit">Create</button>
             </form>

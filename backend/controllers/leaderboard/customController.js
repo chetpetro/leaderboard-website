@@ -21,12 +21,12 @@ const createCustomLeaderboard = async (req, res) => {
             id,
             mapName,
             description = '',
-            previewImage = ''
+            creator
         } = req.body;
         const difficultyBonus = Number.parseInt(req.body?.difficultyBonus ?? 0, 10);
 
-        if (!id || !mapName) {
-            return res.status(400).json({ error: 'id and mapName are required' });
+        if (!id || !mapName || !creator) {
+            return res.status(400).json({ error: 'id, mapName and creator are required' });
         }
 
         if (Number.isNaN(difficultyBonus)) {
@@ -35,8 +35,9 @@ const createCustomLeaderboard = async (req, res) => {
 
         const normalizedId = String(id).trim();
         const normalizedMapName = String(mapName).trim();
-        if (!normalizedId || !normalizedMapName) {
-            return res.status(400).json({ error: 'id and mapName are required' });
+        const normalizedCreator = String(creator).trim();
+        if (!normalizedId || !normalizedMapName || !normalizedCreator) {
+            return res.status(400).json({ error: 'id, mapName and creator are required' });
         }
 
         const existingLeaderboard = await CustomLeaderboard.findOne({ id: normalizedId }).lean();
@@ -47,9 +48,9 @@ const createCustomLeaderboard = async (req, res) => {
         const leaderboard = await CustomLeaderboard.create({
             id: normalizedId,
             mapName: normalizedMapName,
-            creator: 'Superku',
+            creator: normalizedCreator,
             description,
-            previewImage,
+            previewImage: `/public/customLeaderboardImages/${normalizedId}.png`,
             difficultyBonus,
             isCustomLeaderboard: true,
             entries: []
