@@ -7,18 +7,20 @@ import { msToTime } from "../timeUtils";
 import { useError } from '../context/ErrorContext';
 import useAdminAuthorization from '../hooks/useAdminAuthorization';
 import useApi from '../hooks/useApi';
+import { getMapKey } from "../utils/mapUtils";
 
 const MapDetails = ({user}) => {
     const api = useApi();
-    const { steamID } = useParams()
-    const [map, setMap] = useState('');
+    const { mapKey: routeMapKey, steamID } = useParams()
+    const mapKey = routeMapKey || steamID;
+    const [map, setMap] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const { showError } = useError();
     const { isAuthorized: isAdminAuthorized } = useAdminAuthorization(user);
 
     const fetchMap = useCallback(async () => {
         try {
-            const json = await api.leaderboards.fetchBySteamID(steamID);
+            const json = await api.leaderboards.fetchByMapKey(mapKey);
 
             if (!Array.isArray(json) || !json[0]) {
                 showError('Failed to load map details');
@@ -32,7 +34,7 @@ const MapDetails = ({user}) => {
             // Errors are already shown by the API layer.
             setIsLoading(false);
         }
-    }, [api, steamID, showError]);
+    }, [api, mapKey, showError]);
 
 
     useEffect(() => {
@@ -45,7 +47,7 @@ const MapDetails = ({user}) => {
         if (!confirmed) return;
 
         try {
-            await api.admin.deleteEntry(map.steamID, entry.discordID, user.token);
+            await api.admin.deleteEntry(getMapKey(map), entry.discordID, user.token);
 
             setMap((prev) => {
                 return {
@@ -55,7 +57,7 @@ const MapDetails = ({user}) => {
             });
 
             // Recompute map points after deletion
-            await api.admin.recomputeMapPoints(map.steamID, user.token);
+            await api.admin.recomputeMapPoints(getMapKey(map), user.token);
         } catch (error) {
             // Errors are already shown by the API layer.
         }
@@ -63,12 +65,12 @@ const MapDetails = ({user}) => {
 
 
     const handleDeleteMap = async () => {
-        if (!user?.token) return;
-        const confirmed = window.confirm(`Are you sure you want to delete this map and all entries?\n${map.mapName}`);
+        if (!user?.token || !mapKey) return;
+        const confirmed = window.confirm(`Are you sure you want to delete this map and all entries?\n${map?.mapName || 'this map'}`);
         if (!confirmed) return;
 
         try {
-            await api.admin.deleteMap(map.steamID, user.token);
+            await api.admin.deleteMap(getMapKey(map), user.token);
             // simple redirect to home after deletion
             window.location.href = '/';
         } catch (error) {
@@ -77,10 +79,10 @@ const MapDetails = ({user}) => {
     };
 
     const handleLogPointsClick = async () => {
-        if (!map?.steamID || !user?.token) return;
+        if (!mapKey || !user?.token) return;
 
         try {
-            const response = await api.admin.logMapPoints(map.steamID, user.token);
+            const response = await api.admin.logMapPoints(mapKey, user.token);
             console.log(response);
         } catch (error) {
             // Errors are already shown by the API layer.
@@ -95,24 +97,30 @@ const MapDetails = ({user}) => {
                     <div className={"map-hero-placeholder placeholder-wrapper"}>
                         <div className={"map-hero placeholder-target" + (isLoading ? ' is-loading' : '')}>
                             <div className="map-image media-container">
-                                <img src={map.previewImage} alt={`${map.mapName} preview`} />
+                                <img src={map?.previewImage} alt={`${map?.mapName || 'Map'} preview`} />
                             </div>
-                            <img src={map.previewImage} alt={""} className={"bg-blurred-img"}/>
+                                <img src={map?.previewImage} alt={""} className={"bg-blurred-img"}/>
                             <div className={"map-info"}>
-                                <h1 className="details-map-name">{map.mapName || 'Unknown'}</h1>
+                                    <h1 className="details-map-name">{map?.mapName || 'Unknown'}</h1>
                                 <div className="details">
-                                    <span className={"map-creator"}>By: { map.creator }</span>
-                                    {map.difficultyBonus > 0 && (<div className="difficulty-bonus-cnt">
-                                        <div className="hot_pepper media-container"><img src="/hot_pepper.png" alt=""/></div><span className="bonus">+{map.difficultyBonus}</span>
+                                        <span className={"map-creator"}>By: { map?.creator }</span>
+                                        {map?.difficultyBonus > 0 && (<div className="difficulty-bonus-cnt">
+                                        <div className="hot_pepper media-container"><img src="/hot_pepper.png" alt=""/></div><span className="bonus">+{map?.difficultyBonus}</span>
                                     </div>)}
                                 </div>
                             </div>
-                            <a className="steam-btn btn btn-small" title={`View ${map.mapName} on Steam`} href={`https://steamcommunity.com/sharedfiles/filedetails/?id=${map.steamID}`} target="_blank" rel="noopener noreferrer">
-                                <div className="media-container">
-                                    <img src={"/Steam.svg"} alt="Steam Icon" className="steam-icon" />
-                                </div>
-                            </a>
-                        </div>
+                                {map?.isCustomLeaderboard ? (
+                                    <a className="steam-btn btn btn-small" title={`View ${map?.mapName} raw JSON`} href={`/custom-leaderboard/${getMapKey(map)}`}>
+                                        View JSON
+                                    </a>
+                                ) : (
+                                    <a className="steam-btn btn btn-small" title={`View ${map?.mapName} on Steam`} href={`https://steamcommunity.com/sharedfiles/filedetails/?id=${getMapKey(map)}`} target="_blank" rel="noopener noreferrer">
+                                        <div className="media-container">
+                                            <img src={"/Steam.svg"} alt="Steam Icon" className="steam-icon" />
+                                        </div>
+                                    </a>
+                                )}
+                            </div>
                         <div className={"placeholder" + (isLoading ? ' is-loading' : '')}>
                             <div className={"placeholder-image"}>
                                 <div className="placeholder-block placeholder-block-left with-border"></div>
@@ -136,7 +144,7 @@ const MapDetails = ({user}) => {
                         </div>
                     </div>
                     <div className="leaderboard map-rankings">
-                        {map && map.entries.sort((a, b) => a.time - b.time).map((entry, index) => (
+                        {map && [...(map.entries || [])].sort((a, b) => a.time - b.time).map((entry, index) => (
                             <div key={entry.discordID}
                                  className={"leaderboard-entry" + (isAdminAuthorized ? ' admin-view' : '')}
                                  style={{'--leaderboard-entry-animation-delay': 500 + 75*index + 'ms'}}>
@@ -157,7 +165,7 @@ const MapDetails = ({user}) => {
                         <div className="admin-panel card">
                             <h2> Admin Panel </h2>
                             <div className="admin-card-cnt">
-                                <ChangeDifficultyBonusForm steamID={map.steamID} user={user} onDifficultyChanged={fetchMap} map={map} />
+                                <ChangeDifficultyBonusForm mapKey={getMapKey(map)} user={user} onDifficultyChanged={fetchMap} map={map} />
                                 <div className="buttons-cnt">
                                     <h3>Buttons :)</h3>
                                     <div className="buttons">
@@ -175,22 +183,22 @@ const MapDetails = ({user}) => {
                     <div className="submit-entry card">
                         {user.userName && (
                             <CreateEntryForm
-                                steamID={map.steamID}
+                                mapKey={getMapKey(map)}
                                 user={user}
                                 onEntrySaved={fetchMap}
-                                submissionMode={map.featured === true ? 'motw' : 'normal'}
+                                submissionMode={map?.featured === true ? 'motw' : 'normal'}
                             />
                         )}
                         {!user.userName && <h2>Login to Submit Entry</h2>}
                     </div>
-                    {map.featured && (<Link to="/map-of-the-week" className="btn btn-primary btn-small">Visit Map of the Week Leaderboard</Link>)}
+                    {map?.featured && (<Link to="/map-of-the-week" className="btn btn-primary btn-small">Visit Map of the Week Leaderboard</Link>)}
                     <div className="map-details-placeholder placeholder-wrapper">
                         <div className={"map-details card placeholder-target" + (isLoading ? ' is-loading' : '')}>
                             <h2 className={"heading-description"}>
                                 Description
                             </h2>
                             <p className="description">
-                                { map.description }
+                                { map?.description }
                             </p>
                         </div>
                         <div className={"placeholder" + (isLoading ? ' is-loading' : '')}>

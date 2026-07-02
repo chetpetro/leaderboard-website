@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const Leaderboard = require('../models/LeaderboardModel');
+const CustomLeaderboard = require('../models/CustomLeaderboardModel');
 const {currentPointCalculationMethod, calculatePoints} = require("../scripts/points");
 
 const createToken = (_id) => {
@@ -89,11 +90,22 @@ const updateUserPoints = async (req, res) => {
         const user = await User.findOne({ discordID: id });
         if (!user) return res.status(404).json({ error: "User not found while attempting to update user points" });
 
-        const mapsWithUser = await Leaderboard.find(
-            { 'entries.discordID': user.discordID },
-            { mapName: 1, steamID: 1, entries: 1, difficultyBonus: 1 }
-        ).lean();
-        mapsWithUser.forEach((map) => map.entries.sort((a, b) => a.time - b.time));
+        const [steamMapsWithUser, customMapsWithUser] = await Promise.all([
+            Leaderboard.find(
+                { 'entries.discordID': user.discordID },
+                { mapName: 1, steamID: 1, entries: 1, difficultyBonus: 1 }
+            ).lean(),
+            CustomLeaderboard.find(
+                { 'entries.discordID': user.discordID },
+                { mapName: 1, id: 1, entries: 1, difficultyBonus: 1 }
+            ).lean()
+        ]);
+        const mapsWithUser = [...steamMapsWithUser, ...customMapsWithUser];
+        mapsWithUser.forEach((map) => {
+            if (Array.isArray(map.entries)) {
+                map.entries.sort((a, b) => a.time - b.time);
+            }
+        });
 
         if (user.pointCalculationMethod !== currentPointCalculationMethod()) {
             await updateUserPointsIfCalculationMethodChanged(user, mapsWithUser);
@@ -135,7 +147,8 @@ async function updateUserPointsIfCalculationMethodChanged(user, mapsWithUser) {
         if (!Number.isFinite(newPoints)) return;
 
         // Update the user object
-        user.mapPoints.push({ points: newPoints, mapSteamID: map.steamID });
+        const mapKey = map.steamID || map.id;
+        user.mapPoints.push({ points: newPoints, mapKey, mapSteamID: mapKey });
 
         // Collect debug data
         debugLog.push({
@@ -164,7 +177,8 @@ async function getUserWithEntries(user, userMapEntries) {
             if (entry?.discordID === user.discordID) {
                 userWithEntries.entries.push({
                     mapName: leaderboard.mapName,
-                    steamID: leaderboard.steamID,
+                    mapKey: leaderboard.steamID || leaderboard.id,
+                    steamID: leaderboard.steamID || leaderboard.id,
                     pos: index + 1,
                     entry
                 });

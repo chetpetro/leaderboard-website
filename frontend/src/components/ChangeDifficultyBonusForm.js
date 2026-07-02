@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useError } from "../context/ErrorContext";
 import '../styles/components/ChangeDifficultyBonusForm.css';
 import useApi from "../hooks/useApi";
 
-const ChangeDifficultyBonusForm = ({ steamID, user, onDifficultyChanged, map }) => {
+const ChangeDifficultyBonusForm = ({ mapKey, user, onDifficultyChanged, map }) => {
     const api = useApi();
     const { showError } = useError();
-    const [difficultyBonus, setDifficultyBonus] = useState(map.difficultyBonus);
+    const [difficultyBonus, setDifficultyBonus] = useState(map?.difficultyBonus ?? 0);
+
+    useEffect(() => {
+        setDifficultyBonus(map?.difficultyBonus ?? 0);
+    }, [map]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,7 +28,7 @@ const ChangeDifficultyBonusForm = ({ steamID, user, onDifficultyChanged, map }) 
 
         try {
             await api.leaderboards.updateDifficultyBonus(
-                steamID,
+                mapKey,
                 parsedDifficultyBonus,
                 user?.token
             );
@@ -52,4 +56,3 @@ const ChangeDifficultyBonusForm = ({ steamID, user, onDifficultyChanged, map }) 
 };
 
 export default ChangeDifficultyBonusForm;
-

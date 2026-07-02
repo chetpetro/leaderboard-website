@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from "react";
 import '../styles/components/RandomMapSuggester.css'
 import {Link} from "react-router-dom";
 import {ToggleButton} from "./ToggleButton";
+import { getMapPath } from "../utils/mapUtils";
 
 export const RandomMapSuggester = ({maps}) => {
     const flexGapRem = .5;
@@ -127,7 +128,7 @@ export const RandomMapSuggester = ({maps}) => {
     const renderEntries = () => {
         return randomMaps.map((map) => (
                 <div className="map-entry-cnt" key={map._id}>
-                    <Link to={`/${map.steamID}`} className="map">
+                    <Link to={getMapPath(map)} className="map">
                         <div className="map-blurred-bg media-container">
                             <img src={map.previewImage} alt="" />
                         </div>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import '../styles/components/CreateEntryForm.css';
 import {useError} from "../context/ErrorContext";
 import useApi from "../hooks/useApi";
-const CreateEntryForm = ({ steamID, user, onEntrySaved, submissionMode = 'normal' }) => {
+const CreateEntryForm = ({ mapKey, user, onEntrySaved, submissionMode = 'normal' }) => {
     const { showError } = useError();
     const api = useApi();
 
@@ -33,13 +33,13 @@ const CreateEntryForm = ({ steamID, user, onEntrySaved, submissionMode = 'normal
 
             if (submissionMode === 'motw') {
                 await api.leaderboards.createMotwEntry(
-                    steamID,
+                mapKey,
                     submissionPayload,
                     user.token
                 );
             } else {
                 const res = await api.leaderboards.createOrEditEntry(
-                    steamID,
+                mapKey,
                     submissionPayload,
                     user.token
                 );

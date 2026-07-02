@@ -82,6 +82,7 @@ function AppContent() {
           <Routes>
             <Route exact path='/' element={<Home/>} />
             <Route path='/map-of-the-week' element={<MapOfTheWeek user={user} />} />
+            <Route path='/leaderboards/:mapKey' element={<MapDetails user={user} />} />
             <Route path='/:steamID' element={<MapDetails user={user} />} />
             <Route path='/custom-leaderboard/:id' element={<CustomLeaderboardView />} />
             <Route path='/user/:discordID' element={<User />}/>

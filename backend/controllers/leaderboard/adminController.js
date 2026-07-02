@@ -1,19 +1,25 @@
 const Leaderboard = require('../../models/LeaderboardModel');
+const CustomLeaderboard = require('../../models/CustomLeaderboardModel');
 const MotwSubmission = require('../../models/MotwSubmissionModel');
 const User = require('../../models/userModel');
 const {
     buildComputedMapPointsForLeaderboard,
     recomputeMapPointsForLeaderboard
 } = require('./shared');
+const { resolveLeaderboardByKey, getMapKey, withMapKey } = require('./mapUtils');
+
 const deleteEntryByMapAndDiscord = async (req, res) => {
     try {
-        const { steamID, discordID } = req.params;
-        const map = await Leaderboard.findOne({ steamID });
+        const { mapKey, discordID } = req.params;
+        const resolved = await resolveLeaderboardByKey(mapKey);
+        const map = resolved.map;
         if (!map) return res.status(404).json({ error: 'No leadearboard found' });
+
         const filteredEntries = map.entries.filter((entry) => entry.discordID !== discordID);
         if (filteredEntries.length === map.entries.length) {
             return res.status(404).json({ error: 'No entry found for this map and discordID' });
         }
+
         const lastSubmissionAt = filteredEntries.reduce((latest, entry) => {
             if (!entry?.submittedAt) return latest;
             const submittedAt = new Date(entry.submittedAt);
@@ -21,6 +27,7 @@ const deleteEntryByMapAndDiscord = async (req, res) => {
             if (!latest || submittedAt > latest) return submittedAt;
             return latest;
         }, null);
+
         map.entries = filteredEntries;
         map.lastSubmissionAt = lastSubmissionAt;
         await map.save();
@@ -29,17 +36,22 @@ const deleteEntryByMapAndDiscord = async (req, res) => {
         return res.status(400).json({ error: err.message });
     }
 };
+
 const deleteMotwEntryByMapAndDiscord = async (req, res) => {
     try {
-        const { steamID, discordID } = req.params;
-        const map = await Leaderboard.findOne({ steamID });
+        const { mapKey, discordID } = req.params;
+        const resolved = await resolveLeaderboardByKey(mapKey);
+        const map = resolved.map;
         if (!map) return res.status(404).json({ error: 'No leadearboard found' });
-        const motwSubmission = await MotwSubmission.findOne({ steamID });
+
+        const motwSubmission = await MotwSubmission.findOne({ steamID: getMapKey(map) });
         if (!motwSubmission) return res.status(404).json({ error: 'No MOTW submission found for this map' });
+
         const filteredEntries = motwSubmission.entries.filter((entry) => entry.discordID !== discordID);
         if (filteredEntries.length === motwSubmission.entries.length) {
             return res.status(404).json({ error: 'No MOTW entry found for this map and discordID' });
         }
+
         const lastSubmissionAt = filteredEntries.reduce((latest, entry) => {
             if (!entry?.submittedAt) return latest;
             const submittedAt = new Date(entry.submittedAt);
@@ -47,6 +59,7 @@ const deleteMotwEntryByMapAndDiscord = async (req, res) => {
             if (!latest || submittedAt > latest) return submittedAt;
             return latest;
         }, null);
+
         motwSubmission.entries = filteredEntries;
         motwSubmission.lastSubmissionAt = lastSubmissionAt;
         await motwSubmission.save();
@@ -55,33 +68,48 @@ const deleteMotwEntryByMapAndDiscord = async (req, res) => {
         return res.status(400).json({ error: err.message });
     }
 };
+
 const deleteLeaderboardBySteamID = async (req, res) => {
     try {
-        const { steamID } = req.params;
-        const map = await Leaderboard.findOne({ steamID });
+        const { mapKey } = req.params;
+        const resolved = await resolveLeaderboardByKey(mapKey);
+        const map = resolved.map;
         if (!map) return res.status(404).json({ error: 'No leadearboard found' });
-        await Leaderboard.deleteOne({ steamID });
-        await MotwSubmission.deleteOne({ steamID });
+
+        const mapKeyValue = getMapKey(map);
+        if (resolved.mapType === 'custom') {
+            await CustomLeaderboard.deleteOne({ id: mapKeyValue });
+        } else {
+            await Leaderboard.deleteOne({ steamID: mapKeyValue });
+        }
+
+        await MotwSubmission.deleteOne({ steamID: mapKeyValue });
         await User.updateMany(
-            { 'mapPoints.mapSteamID': steamID },
-            { $pull: { mapPoints: { mapSteamID: steamID } } }
+            { 'mapPoints.mapKey': mapKeyValue },
+            { $pull: { mapPoints: { mapKey: mapKeyValue } } }
+        );
+        await User.updateMany(
+            { 'mapPoints.mapSteamID': mapKeyValue },
+            { $pull: { mapPoints: { mapSteamID: mapKeyValue } } }
         );
         return res.status(200).json({ success: true });
     } catch (err) {
         return res.status(400).json({ error: err.message });
     }
 };
+
 const logMapPointsForLeaderboard = async (req, res) => {
     try {
-        const { steamID } = req.params;
-        const map = await Leaderboard.findOne(
-            { steamID },
-            { mapName: 1, steamID: 1, entries: 1, difficultyBonus: 1 }
-        ).lean();
+        const { mapKey } = req.params;
+        const resolved = await resolveLeaderboardByKey(mapKey);
+        const map = resolved.map;
         if (!map) return res.status(404).json({ error: 'No leadearboard found' });
+
+        const mapKeyValue = getMapKey(map);
+        const normalizedMap = withMapKey(map);
         const { computedMapPoints, distinctDiscordIDs, effectiveDifficultyBonus } = buildComputedMapPointsForLeaderboard({
             finalEntries: Array.isArray(map.entries) ? map.entries : [],
-            steamID: map.steamID,
+            mapKey: mapKeyValue,
             difficultyBonus: map.difficultyBonus
         });
         const users = distinctDiscordIDs.length === 0
@@ -94,7 +122,7 @@ const logMapPointsForLeaderboard = async (req, res) => {
         const usersWithMapPoints = computedMapPoints.map((computedMapPoint) => {
             const user = usersByDiscordID.get(computedMapPoint.discordID);
             const currentMapPoint = Array.isArray(user?.mapPoints)
-                ? user.mapPoints.find((entry) => entry.mapSteamID === steamID) || null
+                ? user.mapPoints.find((entry) => (entry.mapKey || entry.mapSteamID) === mapKeyValue) || null
                 : null;
             return {
                 discordID: computedMapPoint.discordID,
@@ -106,8 +134,7 @@ const logMapPointsForLeaderboard = async (req, res) => {
         });
         return res.status(200).json({
             map: {
-                mapName: map.mapName,
-                steamID: map.steamID,
+                ...normalizedMap,
                 difficultyBonus: map.difficultyBonus,
                 effectiveDifficultyBonus
             },
@@ -118,29 +145,31 @@ const logMapPointsForLeaderboard = async (req, res) => {
         return res.status(400).json({ error: err.message });
     }
 };
+
 const recomputeMapPointsAdmin = async (req, res) => {
     try {
-        const { steamID } = req.params;
-        const map = await Leaderboard.findOne(
-            { steamID },
-            { mapName: 1, steamID: 1, entries: 1, difficultyBonus: 1 }
-        ).lean();
+        const { mapKey } = req.params;
+        const resolved = await resolveLeaderboardByKey(mapKey);
+        const map = resolved.map;
         if (!map) return res.status(404).json({ error: 'No leadearboard found' });
+
+        const mapKeyValue = getMapKey(map);
         const recomputeDebugInfo = await recomputeMapPointsForLeaderboard({
             finalEntries: Array.isArray(map.entries) ? map.entries : [],
-            steamID: map.steamID,
+            mapKey: mapKeyValue,
             difficultyBonus: map.difficultyBonus
         });
         return res.status(200).json({
             success: true,
             mapName: map.mapName,
-            steamID: map.steamID,
+            mapKey: mapKeyValue,
             debugInfo: recomputeDebugInfo
         });
     } catch (err) {
         return res.status(400).json({ error: err.message });
     }
 };
+
 module.exports = {
     deleteEntryByMapAndDiscord,
     deleteMotwEntryByMapAndDiscord,

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import {useEffect, useState} from "react";
 import '../styles/components/ActiveMaps.css';
 import useApi from "../hooks/useApi";
+import { getMapPath, getMapKey } from "../utils/mapUtils";
 
 const RecentMaps = () => {
     const api = useApi();
@@ -43,7 +44,7 @@ const RecentMaps = () => {
                 {leaderboards && leaderboards.length > 0 ? (
                 <div className="maps">
                         {leaderboards.map((leaderboard) => (
-                            <Link to={`/${leaderboard.steamID}`} className="map" key={leaderboard._id}>
+                            <Link to={getMapPath(leaderboard)} className="map" key={leaderboard._id || getMapKey(leaderboard)}>
                                 <div className="map-blurred-bg media-container">
                                     <img src={leaderboard.previewImage} alt="" />
                                 </div>

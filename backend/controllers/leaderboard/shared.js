@@ -5,12 +5,13 @@ const { replaceTemplateKeywords } = require('../../utils/templateReplacer');
 const { msToTime } = require('../../utils/timeUtil');
 const { sendDiscordMessage } = require('../../utils/discordUtil');
 const { calculatePoints } = require('../../scripts/points');
+const { getMapKey } = require('./mapUtils');
 require('dotenv').config();
-const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, steamID, wrContext, motw = false }) => {
+const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, mapKey, wrContext, motw = false }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const newline = String.fromCharCode(10);
     const userUrl = `${leaderboardUrl}user/${discordID}`;
-    const mapUrl = `${leaderboardUrl}${steamID}`;
+    const mapUrl = `${leaderboardUrl}leaderboards/${mapKey}`;
     const oldWrTime = wrContext?.oldWrTime;
     const hasOldWrTime = Number.isFinite(oldWrTime);
     const isNewWr = wrContext?.isNewWr === true;
@@ -84,36 +85,31 @@ const buildWrContext = (entries, submittedTimeRaw, submittedDiscordID) => {
 const getEntryIndexForUser = (entries, body) => entries.findIndex(
     (entry) => body.time && entry.discordID === body.discordID
 );
-const persistLeaderboardEntry = async ({ steamID, entries, body, submissionDate, existingEntryIndex }) => {
+const persistLeaderboardEntry = async ({ map, mapKey, body, submissionDate, existingEntryIndex }) => {
+    const entries = Array.isArray(map.entries) ? [...map.entries] : [];
     if (existingEntryIndex !== -1) {
         if (entries[existingEntryIndex].time <= body.time) {
             return { error: { status: 400, payload: { msg: 'Posting slower time, time not updated!' } } };
         }
         entries[existingEntryIndex] = { ...body, submittedAt: submissionDate };
-        const responsePayload = await Leaderboard.findOneAndUpdate(
-            { steamID },
-            { entries, lastSubmissionAt: submissionDate },
-            { new: true }
-        );
-        return { responsePayload, finalEntries: entries };
+        map.entries = entries;
+        map.lastSubmissionAt = submissionDate;
+        const responsePayload = await map.save();
+        return { responsePayload, finalEntries: entries, mapKey: getMapKey(map) || mapKey };
     }
     const newEntry = { ...body, submittedAt: submissionDate };
     const finalEntries = [...entries, newEntry];
-    const responsePayload = await Leaderboard.updateOne(
-        { steamID },
-        {
-            $push: { entries: newEntry },
-            $set: { lastSubmissionAt: submissionDate }
-        }
-    );
-    return { responsePayload, finalEntries };
+    map.entries = finalEntries;
+    map.lastSubmissionAt = submissionDate;
+    const responsePayload = await map.save();
+    return { responsePayload, finalEntries, mapKey: getMapKey(map) || mapKey };
 };
-const persistMotwSubmissionEntry = async ({ steamID, mapName, creator, body, submissionDate }) => {
+const persistMotwSubmissionEntry = async ({ mapKey, mapName, creator, body, submissionDate }) => {
     const submittedTime = Number(body.time);
     if (!Number.isFinite(submittedTime)) {
         return { error: { status: 400, payload: { error: 'Invalid submission time' } } };
     }
-    const existingSubmission = await MotwSubmission.findOne({ steamID }).lean();
+    const existingSubmission = await MotwSubmission.findOne({ steamID: mapKey }).lean();
     const entries = Array.isArray(existingSubmission?.entries) ? [...existingSubmission.entries] : [];
     const existingEntryIndex = entries.findIndex((entry) => entry.discordID === body.discordID);
     if (existingEntryIndex !== -1 && entries[existingEntryIndex].time <= submittedTime) {
@@ -135,12 +131,13 @@ const persistMotwSubmissionEntry = async ({ steamID, mapName, creator, body, sub
         entries.push(updatedEntry);
     }
     const responsePayload = await MotwSubmission.findOneAndUpdate(
-        { steamID },
+        { steamID: mapKey },
         {
             $set: {
                 mapName,
                 creator,
-                steamID,
+                steamID: mapKey,
+                mapKey,
                 entries,
                 lastSubmissionAt: submissionDate
             }
@@ -149,14 +146,15 @@ const persistMotwSubmissionEntry = async ({ steamID, mapName, creator, body, sub
     );
     return { responsePayload, finalEntries: entries, updated: true };
 };
-const hasInconsistentMapPointState = (user, steamID, existingEntryIndex) => {
-    const mapPointsIndex = user.mapPoints.findIndex((entry) => entry.mapSteamID === steamID);
+const getUserMapPointKey = (entry) => entry?.mapKey || entry?.mapSteamID;
+const hasInconsistentMapPointState = (user, mapKey, existingEntryIndex) => {
+    const mapPointsIndex = user.mapPoints.findIndex((entry) => getUserMapPointKey(entry) === mapKey);
     return {
         isInconsistent: (mapPointsIndex !== -1 && existingEntryIndex === -1) || (mapPointsIndex === -1 && existingEntryIndex !== -1),
         mapPointsIndex
     };
 };
-const buildComputedMapPointsForLeaderboard = ({ finalEntries, steamID, difficultyBonus }) => {
+const buildComputedMapPointsForLeaderboard = ({ finalEntries, mapKey, difficultyBonus }) => {
     const sortedEntries = finalEntries
         .filter((entry) => entry?.discordID && Number.isFinite(Number(entry.time)))
         .map((entry) => ({ ...entry, discordID: entry.discordID, time: Number(entry.time) }))
@@ -174,7 +172,8 @@ const buildComputedMapPointsForLeaderboard = ({ finalEntries, steamID, difficult
                 time: entry.time,
                 placement: placement + 1,
                 points,
-                mapSteamID: steamID
+                mapKey,
+                mapSteamID: mapKey
             });
         }
     });
@@ -185,8 +184,8 @@ const buildComputedMapPointsForLeaderboard = ({ finalEntries, steamID, difficult
         effectiveDifficultyBonus,
     };
 };
-const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficultyBonus }) => {
-    const { distinctDiscordIDs, computedMapPoints, sortedEntries } = buildComputedMapPointsForLeaderboard({ finalEntries, steamID, difficultyBonus });
+const recomputeMapPointsForLeaderboard = async ({ finalEntries, mapKey, difficultyBonus }) => {
+    const { distinctDiscordIDs, computedMapPoints, sortedEntries } = buildComputedMapPointsForLeaderboard({ finalEntries, mapKey, difficultyBonus });
     const debugInfo = {
         finalEntriesCount: Array.isArray(finalEntries) ? finalEntries.length : 0,
         distinctDiscordIDs,
@@ -208,8 +207,8 @@ const recomputeMapPointsForLeaderboard = async ({ finalEntries, steamID, difficu
         const targetUser = usersByDiscordID.get(discordID);
         if (!targetUser) return;
         const mapPoints = Array.isArray(targetUser.mapPoints) ? [...targetUser.mapPoints] : [];
-        const targetIndex = mapPoints.findIndex((entry) => entry.mapSteamID === steamID);
-        const updatedMapPointsEntry = { mapSteamID: steamID, points };
+        const targetIndex = mapPoints.findIndex((entry) => getUserMapPointKey(entry) === mapKey);
+        const updatedMapPointsEntry = { mapKey, mapSteamID: mapKey, points };
         if (targetIndex !== -1) {
             mapPoints[targetIndex] = updatedMapPointsEntry;
         } else {
@@ -238,7 +237,7 @@ const requestToDiscordPayload = (req, map, wrContext) => ({
     userName: req.body.userName,
     time: req.body.time,
     mapName: map.mapName,
-    steamID: map.steamID,
+    mapKey: getMapKey(map),
     wrContext,
     motw: !!map.featured
 });
@@ -253,5 +252,3 @@ module.exports = {
     recomputeMapPointsForLeaderboard,
     requestToDiscordPayload
 };
-
-

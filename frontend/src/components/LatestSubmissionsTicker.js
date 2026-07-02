@@ -3,6 +3,7 @@ import "../styles/components/LatestSubmissionsTicker.css";
 import { msToTime } from "../timeUtils";
 import {playEmote} from "./EmoteWheel";
 import {Link} from "react-router-dom";
+import { getMapPath } from "../utils/mapUtils";
 
 class LatestSubmissionsTicker extends Component {
 
@@ -16,7 +17,7 @@ class LatestSubmissionsTicker extends Component {
     }
 
     buildEntryKey(entry, index) {
-        return entry.key || `${entry.steamID || "map"}-${entry.discordID || entry.userName || "entry"}-${entry.submittedTimestamp || 0}-${index}`;
+        return entry.key || `${entry.mapKey || entry.steamID || "map"}-${entry.discordID || entry.userName || "entry"}-${entry.submittedTimestamp || 0}-${index}`;
     }
 
     renderTrack(entries, prefix, hidden = false) {
@@ -34,7 +35,7 @@ class LatestSubmissionsTicker extends Component {
                             </span>
                             <span className={`submission-segment submission-map`}>
                                 <span className="submission-separator"> - </span>
-                                <Link className="submission-segment__value" to={`/${entry.steamID}`}>{entry.mapName}</Link>
+                                <Link className="submission-segment__value" to={getMapPath(entry)}>{entry.mapName}</Link>
                             </span>
                             <span className={`submission-segment submission-time`}>
                                 <span className="submission-separator"> - </span>

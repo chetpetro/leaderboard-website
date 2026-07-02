@@ -24,6 +24,11 @@ Track progress for each phase. Update statuses as work proceeds.
 - Phase 4 — Audit usages & document changes: ✅ Complete
   - Wrote the phase 4 inventory in `backend/CUSTOM_LEADERBOARD_PHASE4_AUDIT.md`
   - Documented the `mapKey` migration path and route strategy
-- Phase 5 — Implement interchangeability: Pending
+- Phase 5 — Implement interchangeability: ✅ Complete
+  - Added shared map-key resolution for Steam and custom leaderboards
+  - Updated submissions, admin actions, points, MOTW, and Discord links to use the normalized map key
+  - Switched frontend map routes and links to `/leaderboards/:mapKey` with legacy Steam fallback
+  - Added custom leaderboard support to the MOTW rotation flow
+  - Verified backend module loading and frontend production build
 
-Last updated: 2026-07-02T17:03:30+02:00
+Last updated: 2026-07-02T17:08:34+02:00

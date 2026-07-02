@@ -9,10 +9,14 @@ export class LeaderboardsApi {
     });
   }
 
-  fetchBySteamID(steamID) {
-    return this.httpClient.request(`/leaderboards/${steamID}`, {
+  fetchByMapKey(mapKey) {
+    return this.httpClient.request(`/leaderboards/${mapKey}`, {
       errorMessage: 'Failed to load map details.'
     });
+  }
+
+  fetchBySteamID(steamID) {
+    return this.fetchByMapKey(steamID);
   }
 
   fetchCustomLeaderboard(id) {
@@ -56,8 +60,8 @@ export class LeaderboardsApi {
     });
   }
 
-  createOrEditEntry(steamID, entry, token) {
-    return this.httpClient.request(`/leaderboards/${steamID}`, {
+  createOrEditEntry(mapKey, entry, token) {
+    return this.httpClient.request(`/leaderboards/${mapKey}`, {
       method: 'PATCH',
       token,
       body: entry,
@@ -65,8 +69,8 @@ export class LeaderboardsApi {
     });
   }
 
-  createMotwEntry(steamID, entry, token) {
-    return this.httpClient.request(`/leaderboards/${steamID}/motw`, {
+  createMotwEntry(mapKey, entry, token) {
+    return this.httpClient.request(`/leaderboards/${mapKey}/motw`, {
       method: 'PATCH',
       token,
       body: entry,
@@ -74,8 +78,8 @@ export class LeaderboardsApi {
     });
   }
 
-  updateDifficultyBonus(steamID, difficultyBonus, token) {
-    return this.httpClient.request(`/leaderboards/${steamID}/difficultyBonus`, {
+  updateDifficultyBonus(mapKey, difficultyBonus, token) {
+    return this.httpClient.request(`/leaderboards/${mapKey}/difficultyBonus`, {
       method: 'PATCH',
       token,
       body: { difficultyBonus },

@@ -4,6 +4,7 @@ import { msToTime } from "../timeUtils";
 import '../styles/pages/UserDetails.css'
 import useApi from "../hooks/useApi";
 import CountUp from "../components/CountUp";
+import { getMapPath } from "../utils/mapUtils";
 
 const MAP_POINTS_GRADIENT = ['#9c27b0', '#cc8dd4', '#e1bbe6'];
 
@@ -73,8 +74,8 @@ const UserDetails = () => {
     const minMapPoints = numericMapPoints.length ? Math.min(...numericMapPoints) : 0;
     const maxMapPoints = numericMapPoints.length ? Math.max(...numericMapPoints) : 0;
     const totalMapPoints = numericMapPoints.reduce((sum, points) => sum + points, 0);
-    const getMapPointsForSteamId = (steamID) => {
-        const mapPointsEntry = user.mapPoints?.find((entry) => entry.mapSteamID === steamID);
+    const getMapPointsForSteamId = (mapKey) => {
+        const mapPointsEntry = user.mapPoints?.find((entry) => (entry.mapKey || entry.mapSteamID) === mapKey);
         const mapPoints = Number(mapPointsEntry?.points);
         return Number.isFinite(mapPoints) ? mapPoints : 0;
     };
@@ -110,7 +111,7 @@ const UserDetails = () => {
     }, [motwInfo, user.mapOfTheWeekParticipations]);
 
     const sortedEntries = [...entries].sort((entryA, entryB) => {
-        const pointsDiff = getMapPointsForSteamId(entryB.steamID) - getMapPointsForSteamId(entryA.steamID);
+        const pointsDiff = getMapPointsForSteamId(entryB.mapKey || entryB.steamID) - getMapPointsForSteamId(entryA.mapKey || entryA.steamID);
         if (pointsDiff !== 0) {
             return pointsDiff;
         }
@@ -119,7 +120,7 @@ const UserDetails = () => {
             return entryA.pos - entryB.pos;
         }
 
-        return String(entryA.steamID).localeCompare(String(entryB.steamID));
+        return String(entryA.mapKey || entryA.steamID).localeCompare(String(entryB.mapKey || entryB.steamID));
     });
 
     useEffect(() => {
@@ -204,15 +205,16 @@ const UserDetails = () => {
             <div className="leaderboad-entries">
                 <div className="inside leaderboard">
                     {sortedEntries.map((map, index) => {
-                        const mapPoints = getMapPointsForSteamId(map.steamID);
+                        const mapIdentifier = map.mapKey || map.steamID;
+                        const mapPoints = getMapPointsForSteamId(mapIdentifier);
 
                         return (
-                            <div className="leaderboard-entry-wrapper" key={map.steamID}>
+                            <div className="leaderboard-entry-wrapper" key={mapIdentifier}>
                                 <div className="leaderboard-entry" style={{'--leaderboard-entry-animation-delay': 500 + 75*index + 'ms'}}>
                                     <span className={"map-placing map-pos-" + map.pos}>
                                         { map.pos }
                                     </span>
-                                    <Link to={`/${map.steamID}`} className="map-link">{ map.mapName }</Link>
+                                    <Link to={getMapPath(map)} className="map-link">{ map.mapName }</Link>
                                     <span className="time">{ msToTime(map.entry.time) }</span>
                                 </div>
                                 <span className="map-points" style={{ color: getMapPointsColor(mapPoints, minMapPoints, maxMapPoints), '--leaderboard-entry-animation-delay': 500 + 75*index + 'ms' }}>

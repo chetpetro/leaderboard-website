@@ -40,6 +40,9 @@ const userSchema = new Schema({
             type: Number,
             required: true
         },
+        mapKey: {
+            type: String
+        },
         mapSteamID: {
             type: String,
             required: true

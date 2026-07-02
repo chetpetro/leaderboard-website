@@ -11,43 +11,42 @@ export class AdminApi {
     });
   }
 
-  deleteEntry(steamID, discordID, token) {
-    return this.httpClient.request(`/admin/leaderboards/${steamID}/entries/${discordID}`, {
+  deleteEntry(mapKey, discordID, token) {
+    return this.httpClient.request(`/admin/leaderboards/${mapKey}/entries/${discordID}`, {
       method: 'DELETE',
       token,
       errorMessage: 'Failed to delete entry.'
     });
   }
 
-  deleteMotwEntry(steamID, discordID, token) {
-    return this.httpClient.request(`/admin/leaderboards/${steamID}/motw/entries/${discordID}`, {
+  deleteMotwEntry(mapKey, discordID, token) {
+    return this.httpClient.request(`/admin/leaderboards/${mapKey}/motw/entries/${discordID}`, {
       method: 'DELETE',
       token,
       errorMessage: 'Failed to delete MOTW entry.'
     });
   }
 
-  deleteMap(steamID, token) {
-    return this.httpClient.request(`/admin/leaderboards/${steamID}`, {
+  deleteMap(mapKey, token) {
+    return this.httpClient.request(`/admin/leaderboards/${mapKey}`, {
       method: 'DELETE',
       token,
       errorMessage: 'Failed to delete map.'
     });
   }
 
-  logMapPoints(steamID, token) {
-    return this.httpClient.request(`/admin/leaderboards/${steamID}/map-points`, {
+  logMapPoints(mapKey, token) {
+    return this.httpClient.request(`/admin/leaderboards/${mapKey}/map-points`, {
       token,
       errorMessage: 'Failed to log map points.'
     });
   }
 
-  recomputeMapPoints(steamID, token) {
-    return this.httpClient.request(`/admin/leaderboards/${steamID}/recompute-map-points`, {
+  recomputeMapPoints(mapKey, token) {
+    return this.httpClient.request(`/admin/leaderboards/${mapKey}/recompute-map-points`, {
       method: 'POST',
       token,
       errorMessage: 'Failed to recompute map points.'
     });
   }
 }
-

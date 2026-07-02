@@ -1,14 +1,16 @@
 const Leaderboard = require('../models/LeaderboardModel');
+const CustomLeaderboard = require('../models/CustomLeaderboardModel');
 const MotwSubmission = require('../models/MotwSubmissionModel');
 const User = require('../models/userModel');
 const { replaceTemplateKeywords } = require('../utils/templateReplacer');
 const {msToTime} = require("../utils/timeUtil");
 const { sendDiscordMessage } = require('../utils/discordUtil');
 const { getMotwNumber } = require('../scripts/motwNumber');
+const { getMapKey } = require('./leaderboard/mapUtils');
 
-const buildMotwMessageContent = ({ mapName, steamID, creator, wrEntry }) => {
+const buildMotwMessageContent = ({ mapName, mapKey, creator, wrEntry }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
-    const mapUrl = `${leaderboardUrl}${steamID}`;
+    const mapUrl = `${leaderboardUrl}leaderboards/${mapKey}`;
     const hasWrEntry = Boolean(wrEntry);
 
     const template = [
@@ -27,14 +29,13 @@ const buildMotwMessageContent = ({ mapName, steamID, creator, wrEntry }) => {
     });
 };
 
-const sendNewMotwMessage = async ({ mapName, steamID, creator, wrEntry }) => {
-    const content = buildMotwMessageContent({ mapName, steamID, creator, wrEntry });
+const sendNewMotwMessage = async ({ mapName, mapKey, creator, wrEntry }) => {
+    const content = buildMotwMessageContent({ mapName, mapKey, creator, wrEntry });
     await sendDiscordMessage(content);
 };
 
 const sendMotwRecapMessage = async (currentFeatured, motwEntries) => {
     try {
-
         if (!currentFeatured) {
             console.log('No featured leaderboard found for recap');
             return;
@@ -46,9 +47,8 @@ const sendMotwRecapMessage = async (currentFeatured, motwEntries) => {
 
         const participantCount = entries.length;
         const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
-        const mapUrl = `${leaderboardUrl}${currentFeatured.steamID}`;
+        const mapUrl = `${leaderboardUrl}leaderboards/${getMapKey(currentFeatured)}`;
 
-        // Build the recap message
         let podiumContent;
         if (participantCount === 0) {
             podiumContent = 'No participants this week.';
@@ -60,7 +60,6 @@ const sendMotwRecapMessage = async (currentFeatured, motwEntries) => {
             const second = entries[1];
             podiumContent = `🥇 ${first.userName} - \`${msToTime(first.time)}\`\n🥈 ${second.userName} - \`${msToTime(second.time)}\``;
         } else {
-            // 3 or more participants
             const first = entries[0];
             const second = entries[1];
             const third = entries[2];
@@ -79,39 +78,40 @@ const sendMotwRecapMessage = async (currentFeatured, motwEntries) => {
     } catch (err) {
         console.log('Failed to send MotW recap message:', err);
     }
-}
+};
 
-const getRandomLeaderboardWithWr = async () => {
-    const response = await Leaderboard.aggregate([{ $sample: { size: 1 } }]);
-    const selectedMap = response[0];
+const sampleRandomLeaderboard = async () => {
+    const [steamCount, customCount] = await Promise.all([
+        Leaderboard.countDocuments({}),
+        CustomLeaderboard.countDocuments({})
+    ]);
+    const total = steamCount + customCount;
+    if (total === 0) return null;
 
-    if (!selectedMap) {
-        return null;
-    }
-
-    const sortedEntries = Array.isArray(selectedMap.entries)
-        ? [...selectedMap.entries].sort((a, b) => a.time - b.time)
-        : [];
-
-    return {
-        selectedMap,
-        wrEntry: sortedEntries.length ? sortedEntries[0] : null
-    };
+    const chooseSteam = customCount === 0 || (steamCount > 0 && Math.random() * total < steamCount);
+    const response = chooseSteam
+        ? await Leaderboard.aggregate([{ $sample: { size: 1 } }])
+        : await CustomLeaderboard.aggregate([{ $sample: { size: 1 } }]);
+    return response[0] || null;
 };
 
 const newFeaturedLeaderboard = async (req, res) => {
-    try{
-        const current = await Leaderboard.findOneAndUpdate({ featured: true }, {featured: false});
+    try {
+        const [currentSteamFeatured, currentCustomFeatured] = await Promise.all([
+            Leaderboard.findOneAndUpdate({ featured: true }, { featured: false }),
+            CustomLeaderboard.findOneAndUpdate({ featured: true }, { featured: false })
+        ]);
+        const current = currentSteamFeatured || currentCustomFeatured;
         const motwNumber = getMotwNumber();
         const currentMotwSubmissions = current
-            ? await MotwSubmission.findOne({ steamID: current.steamID })
+            ? await MotwSubmission.findOne({ steamID: getMapKey(current) })
             : null;
         const motwEntries = Array.isArray(currentMotwSubmissions?.entries)
             ? currentMotwSubmissions.entries
             : [];
 
         if (current) {
-            const entries = [...motwEntries].sort((a, b) => a.time - b.time)
+            const entries = [...motwEntries].sort((a, b) => a.time - b.time);
 
             for (let i = 0; i < entries.length; i++) {
                 const user = await User.findOne({ discordID: entries[i].discordID });
@@ -120,9 +120,9 @@ const newFeaturedLeaderboard = async (req, res) => {
                     if (!user.mapOfTheWeekParticipations) user.mapOfTheWeekParticipations = [];
                     user.mapOfTheWeekParticipations.push({
                         placement: i,
-                        motwNumber: motwNumber-1 // the old motwNumber
+                        motwNumber: motwNumber - 1
                     });
-                    user.save()
+                    user.save();
                 }
             }
             await sendMotwRecapMessage(current, motwEntries);
@@ -133,19 +133,29 @@ const newFeaturedLeaderboard = async (req, res) => {
         console.log(err);
     }
 
-    const randomLeaderboard = await getRandomLeaderboardWithWr();
-
+    const randomLeaderboard = await sampleRandomLeaderboard();
     if (!randomLeaderboard) {
         return res.status(404).json({ error: 'No leaderboard found' });
     }
 
-    const { selectedMap, wrEntry } = randomLeaderboard;
-    console.log(selectedMap.mapName)
-    await Leaderboard.findOneAndUpdate({ _id: selectedMap._id }, {featured: true});
+    const selectedMap = randomLeaderboard;
+    const wrEntries = Array.isArray(selectedMap.entries)
+        ? [...selectedMap.entries].sort((a, b) => a.time - b.time)
+        : [];
+    const wrEntry = wrEntries.length ? wrEntries[0] : null;
+    const mapKey = getMapKey(selectedMap);
+
+    console.log(selectedMap.mapName);
+    if (selectedMap.steamID) {
+        await Leaderboard.findOneAndUpdate({ _id: selectedMap._id }, { featured: true });
+    } else {
+        await CustomLeaderboard.findOneAndUpdate({ _id: selectedMap._id }, { featured: true });
+    }
 
     await MotwSubmission.create({
         mapName: selectedMap.mapName,
-        steamID: selectedMap.steamID,
+        steamID: mapKey,
+        mapKey,
         creator: selectedMap.creator,
         entries: []
     });
@@ -153,7 +163,7 @@ const newFeaturedLeaderboard = async (req, res) => {
     try {
         await sendNewMotwMessage({
             mapName: selectedMap.mapName,
-            steamID: selectedMap.steamID,
+            mapKey,
             creator: selectedMap.creator,
             wrEntry
         });
@@ -162,20 +172,24 @@ const newFeaturedLeaderboard = async (req, res) => {
     }
 
     res.status(200).json({msg: "updated MotW"})
-}
+};
 
 const previewMotwMessage = async (req, res) => {
     try {
-        const randomLeaderboard = await getRandomLeaderboardWithWr();
-
+        const randomLeaderboard = await sampleRandomLeaderboard();
         if (!randomLeaderboard) {
             return res.status(404).json({ error: 'No leaderboard found' });
         }
 
-        const { selectedMap, wrEntry } = randomLeaderboard;
+        const selectedMap = randomLeaderboard;
+        const wrEntries = Array.isArray(selectedMap.entries)
+            ? [...selectedMap.entries].sort((a, b) => a.time - b.time)
+            : [];
+        const wrEntry = wrEntries.length ? wrEntries[0] : null;
+        const mapKey = getMapKey(selectedMap);
         const content = buildMotwMessageContent({
             mapName: selectedMap.mapName,
-            steamID: selectedMap.steamID,
+            mapKey,
             creator: selectedMap.creator,
             wrEntry
         });

@@ -13,6 +13,9 @@ const motwSubmissionSchema = new Schema({
         unique: true,
         index: true
     },
+    mapKey: {
+        type: String
+    },
     creator: {
         type: String,
         required: true

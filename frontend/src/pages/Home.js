@@ -8,6 +8,7 @@ import LatestSubmissionsTicker from "../components/LatestSubmissionsTicker.js";
 import useApi from "../hooks/useApi";
 import {EmoteWheel, playEmote} from "../components/EmoteWheel";
 import {RandomMapSuggester} from "../components/RandomMapSuggester";
+import { getMapPath } from "../utils/mapUtils";
 
 const Home = () => {
     const api = useApi();
@@ -122,9 +123,9 @@ const Home = () => {
                     return {
                         ...entry,
                         mapName: map.mapName,
-                        steamID: map.steamID,
+                        mapKey: map.mapKey || map.steamID,
                         submittedTimestamp: Number.isFinite(submittedTimestamp) ? submittedTimestamp : 0,
-                        key: `${map._id || map.steamID}-${entry.discordID || entry.userName || 'entry'}-${index}`
+                        key: `${map._id || map.mapKey || map.steamID}-${entry.discordID || entry.userName || 'entry'}-${index}`
                     };
                 });
             })
@@ -197,7 +198,7 @@ const Home = () => {
                                                 el.creator.toLowerCase().includes(query.toLowerCase()))
                                             .slice(0, 6)
                                             .map(map => (
-                                                <Link to={`/${map.steamID}`} className="result-map" key={map._id} title={`${map.mapName}`}>
+                                                <Link to={getMapPath(map)} className="result-map" key={map._id} title={`${map.mapName}`}>
                                                     <div className="media-container">
                                                         <img src={map.previewImage} alt={`${map.mapName} preview`} />
                                                     </div>

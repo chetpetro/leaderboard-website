@@ -1,4 +1,5 @@
 const CustomLeaderboard = require('../../models/CustomLeaderboardModel');
+const { withMapKey } = require('./mapUtils');
 
 const getCustomLeaderboard = async (req, res) => {
     try {
@@ -9,7 +10,7 @@ const getCustomLeaderboard = async (req, res) => {
             return res.status(404).json({ error: 'No custom leaderboard found' });
         }
 
-        return res.status(200).json(leaderboard);
+        return res.status(200).json(withMapKey(leaderboard));
     } catch (error) {
         return res.status(400).json({ error: error.message });
     }
@@ -56,7 +57,7 @@ const createCustomLeaderboard = async (req, res) => {
             entries: []
         });
 
-        return res.status(201).json(leaderboard);
+        return res.status(201).json(withMapKey(leaderboard));
     } catch (error) {
         return res.status(400).json({ error: error.message });
     }

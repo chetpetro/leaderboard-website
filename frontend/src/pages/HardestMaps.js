@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import '../styles/pages/HardestMaps.css'
 import {Link} from "react-router-dom";
 import useApi from "../hooks/useApi";
+import { getMapPath } from "../utils/mapUtils";
 
 const TOP_MAP_SPECIAL_COLOR = '#a855f7';
 const MAP_DIFFICULTY_GRADIENT = ['#5b0f0f', '#ea580c', '#facc15', '#16a34a'];
@@ -110,14 +111,14 @@ const HardestMaps = () => {
                     </div>
                     {maps.map((map, index) => (
                         <div
-                            key={map.steamID}
+                            key={map.mapKey || map.steamID}
                             className="map-row"
                             style={{
                                 '--row-color': getMapRowColor(index, map.difficultyBonus, minBonus, maxBonus),
                                 '--animation-delay': 20*index + 'ms'
                             }}
                         >
-                            <Link className="name" to={`/${map.steamID}`} title={map.mapName}>
+                            <Link className="name" to={getMapPath(map)} title={map.mapName}>
                                 {map.mapName}
                             </Link>
                             <span className="bonus">{map.difficultyBonus}</span>

@@ -7,6 +7,7 @@ import useAdminAuthorization from "../hooks/useAdminAuthorization";
 import useApi from "../hooks/useApi";
 import "../styles/pages/MapDetails.css";
 import "../styles/pages/MapOfTheWeek.css"
+import { getMapKey } from "../utils/mapUtils";
 
 const MapOfTheWeek = ({ user }) => {
     const api = useApi();
@@ -19,7 +20,7 @@ const MapOfTheWeek = ({ user }) => {
         try {
             const json = await api.leaderboards.fetchMOTW();
 
-            if (!json || !json.steamID) {
+            if (!json || !getMapKey(json)) {
                 showError("Failed to load map of the week");
                 setIsLoading(false);
                 return;
@@ -49,13 +50,13 @@ const MapOfTheWeek = ({ user }) => {
     }, [map]);
 
     const handleDeleteEntry = async (entry) => {
-        if (!user?.token || !map?.steamID) return;
+        if (!user?.token || !getMapKey(map)) return;
 
         const confirmed = window.confirm(`Are you sure you want to delete this entry?\n${entry.userName} - ${msToTime(entry.time)}`);
         if (!confirmed) return;
 
         try {
-            await api.admin.deleteMotwEntry(map.steamID, entry.discordID, user.token);
+            await api.admin.deleteMotwEntry(getMapKey(map), entry.discordID, user.token);
 
             setMap((prev) => {
                 const prevEntries = Array.isArray(prev?.entries) ? prev.entries : [];
@@ -67,7 +68,7 @@ const MapOfTheWeek = ({ user }) => {
             });
 
             // Recompute map points after MOTW entry deletion
-            await api.admin.recomputeMapPoints(map.steamID, user.token);
+            await api.admin.recomputeMapPoints(getMapKey(map), user.token);
         } catch (error) {
             // Errors are already shown by the API layer.
         }
@@ -97,14 +98,16 @@ const MapOfTheWeek = ({ user }) => {
                             </div>
                             <a
                                 className="steam-btn btn btn-small"
-                                title={`View ${map.mapName} on Steam`}
-                                href={`https://steamcommunity.com/sharedfiles/filedetails/?id=${map.steamID}`}
+                                title={map?.isCustomLeaderboard ? `View ${map?.mapName} raw JSON` : `View ${map?.mapName} on Steam`}
+                                href={map?.isCustomLeaderboard ? `/custom-leaderboard/${getMapKey(map)}` : `https://steamcommunity.com/sharedfiles/filedetails/?id=${getMapKey(map)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <div className="media-container">
-                                    <img src="/Steam.svg" alt="Steam Icon" className="steam-icon" />
-                                </div>
+                                {map?.isCustomLeaderboard ? 'View JSON' : (
+                                    <div className="media-container">
+                                        <img src="/Steam.svg" alt="Steam Icon" className="steam-icon" />
+                                    </div>
+                                )}
                             </a>
                         </div>
                         <div className={"placeholder" + (isLoading ? " is-loading" : "")}>
@@ -154,7 +157,7 @@ const MapOfTheWeek = ({ user }) => {
                     <div className="submit-entry card">
                         {user.userName && (
                             <CreateEntryForm
-                                steamID={map.steamID}
+                            mapKey={getMapKey(map)}
                                 user={user}
                                 onEntrySaved={fetchMap}
                                 submissionMode="motw"
@@ -165,7 +168,7 @@ const MapOfTheWeek = ({ user }) => {
                     <div className={"card"}>
                         <h2>Info</h2>
                         <p>Submit your time here or on the actual pap page to submit to the <i>Map Of The Week</i> leaderboard</p>
-                        <div className="buttons"><Link to={`/${map.steamID}`} className="btn btn-small btn-primary">Visit Map Page</Link></div>
+                        <div className="buttons"><Link to={`/leaderboards/${getMapKey(map)}`} className="btn btn-small btn-primary">Visit Map Page</Link></div>
                     </div>
                 </div>
             </div>
@@ -174,4 +177,3 @@ const MapOfTheWeek = ({ user }) => {
 };
 
 export default MapOfTheWeek;
-

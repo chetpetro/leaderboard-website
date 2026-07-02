@@ -25,16 +25,16 @@ router.get('/motw', getMOTW); // GET Map of the Week
 router.get('/recent', getRecentLeaderboards); // GET the 10 most recently updated leaderboards
 router.get('/entries', getEntriesByUser); // GET all entries for a user
 router.get('/custom/:id', getCustomLeaderboard); // GET one custom leaderboard by id
-router.get('/:steamID', getLeaderboard); // GET one leaderboard by name
+router.get('/:mapKey', getLeaderboard); // GET one leaderboard by key
 router.post('/', createMapLeaderboard); // POST new leaderboard
 router.post('/custom', requireAuth, requireAdmin, createCustomLeaderboard); // POST custom leaderboard
 
 // Auth required to add leaderboard entry
 router.use(requireAuth);
-router.patch('/:steamID/motw', createMotwEntry); // PATCH one featured map MOTW entry
-router.patch('/:steamID', createOrEditEntry); // PATCH one leaderboard by name
+router.patch('/:mapKey/motw', createMotwEntry); // PATCH one featured map MOTW entry
+router.patch('/:mapKey', createOrEditEntry); // PATCH one leaderboard by key
 
 router.use(requireAdmin);
-router.patch('/:steamID/difficultyBonus', changeMapDifficultyBonus); // PATCH one leaderboard's difficulty bonus by name)
+router.patch('/:mapKey/difficultyBonus', changeMapDifficultyBonus); // PATCH one leaderboard's difficulty bonus by key)
 
 module.exports = router;
