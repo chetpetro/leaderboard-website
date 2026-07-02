@@ -44,3 +44,10 @@
 - If a change touches run submission or leaderboard display, confirm the frontend and backend data shapes still match.
 - Keep documentation and comments short, accurate, and specific to this repository.
 
+## Custom leaderboard plan reference
+The custom leaderboard plan and progress tracker live in the backend folder:
+- backend/CUSTOM_LEADERBOARD_PLAN.md  — design & phased plan
+- backend/CUSTOM_LEADERBOARD_PROGRESS.md  — phase progress tracker
+
+Follow the plan there when working on custom leaderboard changes.
+
