@@ -141,14 +141,15 @@ const MapDetails = ({user}) => {
                             </div>
                         </div>
                     </div>
-                    <div className="leaderboard map-rankings">
+                    <div className={"leaderboard map-rankings" + (map?.isBoostless ? ' boostless' : '') + (isAdminAuthorized ? ' admin-view' : '')}>
                         {map && [...(map.entries || [])].sort((a, b) => compareEntries(a, b, map.isBoostless)).map((entry, index) => (
                             <div key={entry.discordID}
                                  className={"leaderboard-entry" + (isAdminAuthorized ? ' admin-view' : '')}
                                  style={{'--leaderboard-entry-animation-delay': 500 + 75*index + 'ms'}}>
                                 <span className={"placing"}>{index + 1}</span>
                                 <Link to={`/user/${entry.discordID}`}>{ entry.userName }</Link>
-                                <span>{map.isBoostless && (<span className="entry-boosts" title="Boosts used">🚀{entry.boosts ?? 0} </span>)}{ msToTime(entry.time) }</span>
+                                <span className="entry-time">{ msToTime(entry.time) }</span>
+                                {map.isBoostless && (<span className="entry-boosts" title="Boosts used">{entry.boosts ?? 0}</span>)}
                                 { isAdminAuthorized &&
                                     <button type={"button"} onClick={() => handleDeleteEntry(entry)}
                                             className={"delete-btn btn btn-ghost btn-small"}>

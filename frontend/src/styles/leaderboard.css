@@ -66,6 +66,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .entry-boosts {
+            padding-inline-start: .75ch;
+            border-left: 1px solid var(--primary);
+            font-weight: bold;
+            text-align: end;
+        }
         & > :nth-child(2) {
             overflow: hidden;
             text-wrap: nowrap;
@@ -82,5 +88,27 @@
     }
     .leaderboard .leaderboard-entry {
         grid-template-columns: 1ch 1fr auto;
+    }
+    /* Map rankings: shared column tracks so times/boosts align across entries.
+       Columns: placing | name (fills) | time [| boosts] [| delete] */
+    .leaderboard.map-rankings {
+        display: grid;
+        grid-template-columns: max-content 1fr max-content;
+        column-gap: 2ch;
+    }
+    .leaderboard.map-rankings.boostless,
+    .leaderboard.map-rankings.admin-view {
+        grid-template-columns: max-content 1fr max-content max-content;
+    }
+    .leaderboard.map-rankings.boostless.admin-view {
+        grid-template-columns: max-content 1fr max-content max-content max-content;
+    }
+    .leaderboard.map-rankings .leaderboard-entry {
+        grid-column: 1 / -1;
+        grid-template-columns: subgrid;
+        align-items: center;
+    }
+    .leaderboard.map-rankings .entry-time {
+        justify-self: end;
     }
 }

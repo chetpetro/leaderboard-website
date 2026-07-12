@@ -9,7 +9,7 @@ const {
     sendDiscordPbMessage,
     requestToDiscordPayload
 } = require('./shared');
-const { resolveLeaderboardByKey, getMapKey, withMapKey, isBetterEntry } = require('./mapUtils');
+const { resolveLeaderboardByKey, getMapKey, withMapKey, isBetterEntry, getBoostsPbInfo } = require('./mapUtils');
 
 // Boostless maps require a boost count on every submission; on normal maps a stray
 // `boosts` value must not be persisted, so it gets stripped from the body.
@@ -43,9 +43,10 @@ const createOrEditEntry = async (req, res) => {
 
         const entries = map.entries;
         const submissionDate = new Date();
-        const wrContext = buildWrContext(entries, body, body.discordID, map.isBoostless);
-        const discordPayload = requestToDiscordPayload(body, map, wrContext);
         const existingEntryIndex = getEntryIndexForUser(entries, body);
+        const existingEntry = existingEntryIndex !== -1 ? entries[existingEntryIndex] : null;
+        const wrContext = buildWrContext(entries, body, body.discordID, map.isBoostless);
+        const discordPayload = requestToDiscordPayload(body, map, wrContext, existingEntry);
         const persistResult = await persistLeaderboardEntry({
             map,
             mapKey: getMapKey(map),
@@ -125,8 +126,10 @@ const createMotwEntry = async (req, res) => {
         const existingEntryIndex = getEntryIndexForUser(entries, body);
         const wrContext = buildWrContext(entries, body, body.discordID, map.isBoostless);
         const submittedEntry = { time: submittedTime, boosts: body.boosts };
+        const existingEntry = existingEntryIndex !== -1 ? entries[existingEntryIndex] : null;
         const shouldUpdateNormalEntry = Number.isFinite(submittedTime)
-            && (existingEntryIndex === -1 || isBetterEntry(submittedEntry, entries[existingEntryIndex], map.isBoostless));
+            && (existingEntryIndex === -1 || isBetterEntry(submittedEntry, existingEntry, map.isBoostless));
+        const { isBoostsPb, oldPbBoosts } = getBoostsPbInfo(existingEntry, submittedEntry, map.isBoostless);
 
         if (shouldUpdateNormalEntry) {
             const persistResult = await persistLeaderboardEntry({
@@ -162,7 +165,9 @@ const createMotwEntry = async (req, res) => {
                         mapName: map.mapName,
                         mapKey: mapKeyValue,
                         wrContext,
-                        motw: true
+                        motw: true,
+                        isBoostsPb,
+                        oldPbBoosts
                     })
                 ]);
             } catch (error) {

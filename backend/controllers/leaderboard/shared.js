@@ -5,9 +5,9 @@ const { replaceTemplateKeywords } = require('../../utils/templateReplacer');
 const { msToTime } = require('../../utils/timeUtil');
 const { sendDiscordMessage } = require('../../utils/discordUtil');
 const { calculatePoints } = require('../../scripts/points');
-const { getMapKey, compareEntries, isBetterEntry } = require('./mapUtils');
+const { getMapKey, compareEntries, isBetterEntry, getEntryBoosts, getBoostsPbInfo } = require('./mapUtils');
 require('dotenv').config();
-const sendDiscordPbMessage = async ({ discordID, userName, time, boosts, isBoostless = false, mapName, mapKey, wrContext, motw = false }) => {
+const sendDiscordPbMessage = async ({ discordID, userName, time, boosts, isBoostless = false, mapName, mapKey, wrContext, motw = false, isBoostsPb = false, oldPbBoosts = null }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const newline = String.fromCharCode(10);
     const userUrl = `${leaderboardUrl}user/${discordID}`;
@@ -15,13 +15,63 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, boosts, isBoost
     const oldWrTime = wrContext?.oldWrTime;
     const hasOldWrTime = Number.isFinite(oldWrTime);
     const isNewWr = wrContext?.isNewWr === true;
+    const isBoostsWr = isBoostless && isNewWr && wrContext?.isBoostsWr === true;
+    const isBoostsPbMessage = !isNewWr && isBoostless && isBoostsPb;
     const motwStr = motw ? ' Map of the Week' : '';
     // On boostless maps a WR can be taken with a slower time (fewer boosts) — only show the time diff when the time actually improved.
     const wrImprovement = hasOldWrTime ? oldWrTime - time : null;
     const showTimeDiff = wrImprovement !== null && wrImprovement > 0;
-    const boostsLine = isBoostless && Number.isFinite(Number(boosts)) ? ['**Boosts:** `%BOOSTS%`'] : [];
-    const template = isNewWr
-        ? [
+    const numericBoosts = Number.isFinite(Number(boosts)) ? Number(boosts) : null;
+    const boostsLine = isBoostless && numericBoosts !== null ? ['**Boosts:** `%BOOSTS%`'] : [];
+    const oldWrHolder = wrContext?.oldWrHolder
+        || (wrContext?.oldWrHolderDiscordID ? `<@${wrContext.oldWrHolderDiscordID}>` : 'unknown');
+    const replacements = {
+        DISCORDID: discordID,
+        PBTIME: msToTime(time),
+        USERNAME: userName,
+        USERURL: userUrl,
+        MAPNAME: mapName,
+        MAPURL: mapUrl,
+        LEADERBOARDURL: leaderboardUrl,
+        OLDWRTIME: hasOldWrTime ? msToTime(oldWrTime) : '',
+        OLDWRHOLDER: oldWrHolder,
+        TIMEDIFF: showTimeDiff ? msToTime(wrImprovement) : '',
+        BOOSTS: numericBoosts !== null ? String(numericBoosts) : ''
+    };
+    let template;
+    if (isBoostsWr) {
+        const oldWrBoosts = wrContext?.oldWrBoosts;
+        const boostsDiff = Number.isFinite(oldWrBoosts) && numericBoosts !== null ? oldWrBoosts - numericBoosts : null;
+        template = [
+            wrContext?.isSelfWrImprovement
+                ? `New${motwStr} boostless WR by <@%DISCORDID%> — fewer boosts`
+                : `New${motwStr} boostless WR by <@%DISCORDID%> dethroning %OLDWRHOLDER% with fewer boosts`,
+            '',
+            '**Boosts:** `%BOOSTS%` (`-%BOOSTDIFF%` from `%OLDBOOSTS%`)',
+            '**Time:** `%PBTIME%`',
+            '**By:** [%USERNAME%](<%USERURL%>)',
+            '**Map:** [%MAPNAME%](<%MAPURL%>)',
+            '',
+            '**More on:** [Pogostuck Leaderboards](<%LEADERBOARDURL%>)'
+        ].join(newline);
+        replacements.OLDBOOSTS = Number.isFinite(oldWrBoosts) ? String(oldWrBoosts) : '';
+        replacements.BOOSTDIFF = boostsDiff !== null ? String(boostsDiff) : '';
+    } else if (isBoostsPbMessage) {
+        const boostsDiff = Number.isFinite(oldPbBoosts) && numericBoosts !== null ? oldPbBoosts - numericBoosts : null;
+        template = [
+            `New${motwStr} boostless PB for <@%DISCORDID%> — fewer boosts`,
+            '',
+            '**Boosts:** `%BOOSTS%` (`-%BOOSTDIFF%` from `%OLDBOOSTS%`)',
+            '**Time:** `%PBTIME%`',
+            '**By:** [%USERNAME%](<%USERURL%>)',
+            '**Map:** [%MAPNAME%](<%MAPURL%>)',
+            '',
+            '**More on:** [Pogostuck Leaderboards](<%LEADERBOARDURL%>)'
+        ].join(newline);
+        replacements.OLDBOOSTS = Number.isFinite(oldPbBoosts) ? String(oldPbBoosts) : '';
+        replacements.BOOSTDIFF = boostsDiff !== null ? String(boostsDiff) : '';
+    } else if (isNewWr) {
+        template = [
             wrContext?.isSelfWrImprovement || !hasOldWrTime
                 ? `New${motwStr} WR by <@%DISCORDID%>`
                 : `New${motwStr} WR by <@%DISCORDID%> dethroning %OLDWRHOLDER%'s %OLDWRTIME%`,
@@ -34,8 +84,9 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, boosts, isBoost
             '**Map:** [%MAPNAME%](<%MAPURL%>)',
             '',
             '**More on:** [Pogostuck Leaderboards](<%LEADERBOARDURL%>)'
-        ].join(newline)
-        : [
+        ].join(newline);
+    } else {
+        template = [
             `New${motwStr} PB for <@%DISCORDID%>`,
             '',
             '**PB:** `%PBTIME%`',
@@ -45,21 +96,8 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, boosts, isBoost
             '',
             '**More on:** [Pogostuck Leaderboards](<%LEADERBOARDURL%>)'
         ].join(newline);
-    const oldWrHolder = wrContext?.oldWrHolder
-        || (wrContext?.oldWrHolderDiscordID ? `<@${wrContext.oldWrHolderDiscordID}>` : 'unknown');
-    const content = replaceTemplateKeywords(template, {
-        DISCORDID: discordID,
-        PBTIME: msToTime(time),
-        USERNAME: userName,
-        USERURL: userUrl,
-        MAPNAME: mapName,
-        MAPURL: mapUrl,
-        LEADERBOARDURL: leaderboardUrl,
-        OLDWRTIME: hasOldWrTime ? msToTime(oldWrTime) : '',
-        OLDWRHOLDER: oldWrHolder,
-        TIMEDIFF: showTimeDiff ? msToTime(wrImprovement) : '',
-        BOOSTS: Number.isFinite(Number(boosts)) ? String(Number(boosts)) : ''
-    });
+    }
+    const content = replaceTemplateKeywords(template, replacements);
     await sendDiscordMessage(content);
 };
 const buildWrContext = (entries, body, submittedDiscordID, isBoostless = false) => {
@@ -76,16 +114,22 @@ const buildWrContext = (entries, body, submittedDiscordID, isBoostless = false) 
             isSelfWrImprovement: true,
             oldWrTime: null,
             oldWrHolder: null,
-            oldWrHolderDiscordID: null
+            oldWrHolderDiscordID: null,
+            oldWrBoosts: null,
+            isBoostsWr: false
         };
     }
-    const isNewWr = isBetterEntry({ time: submittedTime, boosts: body?.boosts }, oldWrEntry, isBoostless);
+    const candidate = { time: submittedTime, boosts: body?.boosts };
+    const isNewWr = isBetterEntry(candidate, oldWrEntry, isBoostless);
+    const isBoostsWr = isNewWr && isBoostless && getEntryBoosts(candidate) < getEntryBoosts(oldWrEntry);
     return {
         isNewWr,
         isSelfWrImprovement: isNewWr && oldWrEntry.discordID === submittedDiscordID,
         oldWrTime: oldWrEntry.time,
         oldWrHolder: oldWrEntry.userName,
-        oldWrHolderDiscordID: oldWrEntry.discordID
+        oldWrHolderDiscordID: oldWrEntry.discordID,
+        oldWrBoosts: getEntryBoosts(oldWrEntry),
+        isBoostsWr
     };
 };
 const getEntryIndexForUser = (entries, body) => entries.findIndex(
@@ -242,17 +286,22 @@ const recomputeMapPointsForLeaderboard = async ({ finalEntries, mapKey, difficul
     }
     return debugInfo;
 };
-const requestToDiscordPayload = (body, map, wrContext) => ({
-    discordID: body.discordID,
-    userName: body.userName,
-    time: body.time,
-    boosts: body.boosts,
-    isBoostless: !!map.isBoostless,
-    mapName: map.mapName,
-    mapKey: getMapKey(map),
-    wrContext,
-    motw: !!map.featured
-});
+const requestToDiscordPayload = (body, map, wrContext, existingEntry = null) => {
+    const { isBoostsPb, oldPbBoosts } = getBoostsPbInfo(existingEntry, body, !!map.isBoostless);
+    return {
+        discordID: body.discordID,
+        userName: body.userName,
+        time: body.time,
+        boosts: body.boosts,
+        isBoostless: !!map.isBoostless,
+        mapName: map.mapName,
+        mapKey: getMapKey(map),
+        wrContext,
+        motw: !!map.featured,
+        isBoostsPb,
+        oldPbBoosts
+    };
+};
 module.exports = {
     sendDiscordPbMessage,
     buildWrContext,

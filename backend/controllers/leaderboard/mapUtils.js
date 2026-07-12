@@ -59,6 +59,15 @@ const compareEntries = (a, b, isBoostless) => {
 
 const isBetterEntry = (candidate, existing, isBoostless) => compareEntries(candidate, existing, isBoostless) < 0;
 
+// On a boostless map, dropping the boost count alone makes an entry "better" (see compareEntries),
+// regardless of time. This tells callers whether an improvement over `existingEntry` was boosts-driven.
+const getBoostsPbInfo = (existingEntry, candidate, isBoostless) => {
+    if (!isBoostless || !existingEntry) return { isBoostsPb: false, oldPbBoosts: null };
+    const oldPbBoosts = getEntryBoosts(existingEntry);
+    const isBoostsPb = getEntryBoosts(candidate) < oldPbBoosts;
+    return { isBoostsPb, oldPbBoosts };
+};
+
 const getMapRoutePath = (mapOrKey) => {
     const mapKey = normalizeMapKey(typeof mapOrKey === 'object' ? getMapKey(mapOrKey) : mapOrKey);
     return mapKey ? `/leaderboards/${encodeURIComponent(mapKey)}` : '/leaderboards';
@@ -66,6 +75,7 @@ const getMapRoutePath = (mapOrKey) => {
 
 module.exports = {
     compareEntries,
+    getBoostsPbInfo,
     getEntryBoosts,
     getMapKey,
     getMapRoutePath,
