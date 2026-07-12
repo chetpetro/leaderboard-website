@@ -187,11 +187,11 @@
         ";base:" + state.basePoints + ";comp:sqrt;scale:" + state.scaleFactor;
     }
 
-    // placement is 0 indexed so wr = index 0
+    // placement is 1 indexed so wr = 1
     function calculatePoints(submittedTimesAmnt, placement, difficultyBonus) {
       const competitivePoints = Math.sqrt(submittedTimesAmnt);
-      const top3Bonus = state.placementBonusValues[placement] || 0;
-      const base = state.basePoints * (submittedTimesAmnt - placement) / Math.max(submittedTimesAmnt - 1, 1);
+      const top3Bonus = state.placementBonusValues[placement - 1] || 0;
+      const base = state.basePoints * (submittedTimesAmnt - placement + 1) / Math.max(submittedTimesAmnt - 1, 1);
       return (base + top3Bonus) * competitivePoints * state.scaleFactor + difficultyBonus;
     }
 
@@ -251,14 +251,14 @@
       body.innerHTML = "";
 
       for (let submittedTimesAmnt = 1; submittedTimesAmnt <= state.maxSubmittedTimesAmnt; submittedTimesAmnt += 1) {
-        for (let placement = 0; placement < submittedTimesAmnt; placement += 1) {
+        for (let placement = 1; placement <= submittedTimesAmnt; placement += 1) {
           const competitivePoints = Math.sqrt(submittedTimesAmnt);
-          const top3Bonus = state.placementBonusValues[placement] || 0;
-          const base = state.basePoints * (submittedTimesAmnt - placement) / Math.max(submittedTimesAmnt - 1, 1);
+          const top3Bonus = state.placementBonusValues[placement - 1] || 0;
+          const base = state.basePoints * (submittedTimesAmnt - placement + 1) / Math.max(submittedTimesAmnt - 1, 1);
           const points = calculatePoints(submittedTimesAmnt, placement, state.difficultyBonus);
 
           const tr = document.createElement("tr");
-          const placementClass = placement < 3 ? "highlight" : "";
+          const placementClass = placement <= 3 ? "highlight" : "";
 
           tr.innerHTML =
             "<td>" + submittedTimesAmnt + "</td>" +

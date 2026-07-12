@@ -215,15 +215,16 @@ const buildComputedMapPointsForLeaderboard = ({ finalEntries, mapKey, difficulty
     const distinctDiscordIDs = [...new Set(sortedEntries.map((entry) => entry.discordID))];
     const effectiveDifficultyBonus = Number.isFinite(difficultyBonus) ? difficultyBonus : 0;
     const computedMapPoints = [];
-    sortedEntries.forEach((entry, placement) => {
+    sortedEntries.forEach((entry, index) => {
         if (computedMapPoints.some((computedEntry) => computedEntry.discordID === entry.discordID)) return;
+        const placement = index + 1;
         const points = calculatePoints(sortedEntries.length, placement, effectiveDifficultyBonus);
         if (Number.isFinite(points)) {
             computedMapPoints.push({
                 discordID: entry.discordID,
                 userName: entry.userName,
                 time: entry.time,
-                placement: placement + 1,
+                placement,
                 points,
                 mapKey,
                 mapSteamID: mapKey

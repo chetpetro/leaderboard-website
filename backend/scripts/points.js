@@ -11,11 +11,11 @@ function currentPointCalculationMethod() {
     return `top3:${placementBonusValues[0]}:${placementBonusValues[1]}:${placementBonusValues[2]};base:${basePoints};comp:sqrt;scale:${scaleFactor};rev:${calculationRevision}`;
 }
 
-// placement is 0 indexed so wr = index 0
+// placement is 1 indexed so wr = 1
 function calculatePoints(submittedTimesAmnt, placement, difficultyBonus) {
     const competitivePoints = Math.sqrt(submittedTimesAmnt)
-    const top3Bonus = placementBonusValues[placement] || 0
-    const base = basePoints * (submittedTimesAmnt - placement) / Math.max(submittedTimesAmnt-1, 1)
+    const top3Bonus = placementBonusValues[placement - 1] || 0
+    const base = basePoints * (submittedTimesAmnt - placement + 1) / Math.max(submittedTimesAmnt-1, 1)
     return (base + top3Bonus) * competitivePoints * scaleFactor + difficultyBonus;
 }
 

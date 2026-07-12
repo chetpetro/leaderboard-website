@@ -35,12 +35,15 @@ Related user fields:
 ```
 points = (base + top3Bonus) * sqrt(entryCount) * 0.25 + difficultyBonus
 
-base      = 50 * (entryCount - placement) / max(entryCount - 1, 1)   // placement is 0-indexed
-top3Bonus = 150 / 50 / 25 for placements 0 / 1 / 2, else 0
+base      = 50 * (entryCount - placement + 1) / max(entryCount - 1, 1)   // placement is 1-indexed (WR = 1)
+top3Bonus = 150 / 50 / 25 for placements 1 / 2 / 3, else 0
 ```
 
 - `entryCount` is the number of entries on the map, so every submission changes **everyone's**
   points on that map — points must be recomputed for the whole map whenever its entries change.
+- The top-3 bonus is deliberately **not flat**: it sits inside the `sqrt(entryCount) * 0.25`
+  scaling, so the WR's effective bonus is `150 * sqrt(entryCount) / 4` — e.g. +37.5 on a 1-entry
+  map, exactly +150 at 16 entries, +300 at 64.
 - `difficultyBonus` is a per-map admin-set flat bonus (`PATCH /api/leaderboards/:mapKey/difficultyBonus`).
 - `currentPointCalculationMethod()` returns a string encoding of these constants plus a manual
   revision counter (`top3:150:50:25;base:50;comp:sqrt;scale:.25;rev:2`). Changing the formula —
