@@ -65,18 +65,22 @@ const createOrEditEntry = async (req, res) => {
             return res.status(500).json({ error: `Inconsistent state: user has points for a map they have no entry on, if possible write us on discord :) (mapPointsIndex: ${mapPointsIndex}, existingEntryIndex: ${existingEntryIndex})` });
         }
 
-        try {
-            await Promise.all([
-                recomputeMapPointsForLeaderboard({
-                    finalEntries,
-                    mapKey: getMapKey(map),
-                    difficultyBonus: map.difficultyBonus,
-                    isBoostless: map.isBoostless
-                }),
-                sendDiscordPbMessage(discordPayload)
-            ]);
-        } catch (error) {
-            return res.status(500).json({ error: error.message });
+        // The entry is already saved at this point: a Discord outage must not fail
+        // the request, and a recompute failure has to be reported as exactly that.
+        const [recomputeResult, discordResult] = await Promise.allSettled([
+            recomputeMapPointsForLeaderboard({
+                finalEntries,
+                mapKey: getMapKey(map),
+                difficultyBonus: map.difficultyBonus,
+                isBoostless: map.isBoostless
+            }),
+            sendDiscordPbMessage(discordPayload)
+        ]);
+        if (discordResult.status === 'rejected') {
+            console.error('Failed to send Discord PB message:', discordResult.reason);
+        }
+        if (recomputeResult.status === 'rejected') {
+            return res.status(500).json({ error: `Entry was saved but recomputing map points failed: ${recomputeResult.reason?.message || recomputeResult.reason}` });
         }
 
         return res.status(200).json(withMapKey(responsePayload));
@@ -148,30 +152,34 @@ const createMotwEntry = async (req, res) => {
             if (isInconsistent) {
                 return res.status(500).json({ error: `Inconsistent state: user has points for a map they have no entry on, if possible write us on discord :) (mapPointsIndex: ${mapPointsIndex}, existingEntryIndex: ${existingEntryIndex})` });
             }
-            try {
-                await Promise.all([
-                    recomputeMapPointsForLeaderboard({
-                        finalEntries,
-                        mapKey: mapKeyValue,
-                        difficultyBonus: map.difficultyBonus,
-                        isBoostless: map.isBoostless
-                    }),
-                    sendDiscordPbMessage({
-                        discordID: body.discordID,
-                        userName: body.userName,
-                        time: submittedTime,
-                        boosts: body.boosts,
-                        isBoostless: !!map.isBoostless,
-                        mapName: map.mapName,
-                        mapKey: mapKeyValue,
-                        wrContext,
-                        motw: true,
-                        isBoostsPb,
-                        oldPbBoosts
-                    })
-                ]);
-            } catch (error) {
-                return res.status(500).json({ error: error.message });
+            // The entries are already saved at this point: a Discord outage must not
+            // fail the request, and a recompute failure has to be reported as exactly that.
+            const [recomputeResult, discordResult] = await Promise.allSettled([
+                recomputeMapPointsForLeaderboard({
+                    finalEntries,
+                    mapKey: mapKeyValue,
+                    difficultyBonus: map.difficultyBonus,
+                    isBoostless: map.isBoostless
+                }),
+                sendDiscordPbMessage({
+                    discordID: body.discordID,
+                    userName: body.userName,
+                    time: submittedTime,
+                    boosts: body.boosts,
+                    isBoostless: !!map.isBoostless,
+                    mapName: map.mapName,
+                    mapKey: mapKeyValue,
+                    wrContext,
+                    motw: true,
+                    isBoostsPb,
+                    oldPbBoosts
+                })
+            ]);
+            if (discordResult.status === 'rejected') {
+                console.error('Failed to send Discord PB message:', discordResult.reason);
+            }
+            if (recomputeResult.status === 'rejected') {
+                return res.status(500).json({ error: `Entry was saved but recomputing map points failed: ${recomputeResult.reason?.message || recomputeResult.reason}` });
             }
             responsePayload.updatedNormalEntry = true;
             responsePayload.normal = withMapKey(persistResult.responsePayload);
@@ -191,7 +199,8 @@ const createMotwEntry = async (req, res) => {
                     motw: true
                 });
             } catch (error) {
-                return res.status(500).json({ error: error.message });
+                // The MOTW entry is already saved; a Discord outage must not fail the request.
+                console.error('Failed to send Discord PB message:', error);
             }
         }
 

@@ -26,6 +26,10 @@
   - `SECRET`
   - `STEAM_API_KEY`
   - `DISCORD_TOKEN`
+- The backend runs on Vercel serverless: long-running requests hit the platform timeout.
+  Bulk work over all maps/users (e.g. recomputing every leaderboard's map points via the
+  one-time-migrations endpoint) does not fit in one request — prefer lazy per-user migration
+  (bump `calculationRevision` in `backend/scripts/points.js`).
 - Be careful with weekly MOTW behavior:
   - The current featured map is unset.
   - A new random featured map is selected.

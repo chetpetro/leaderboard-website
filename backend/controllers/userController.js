@@ -140,11 +140,12 @@ async function updateUserPointsIfCalculationMethodChanged(user, mapsWithUser) {
     mapsWithUser.forEach((map) => {
         if (!Array.isArray(map.entries) || map.entries.length === 0) return;
 
-        const userRank = map.entries.findIndex((entry) => entry.discordID === user.discordID) + 1;
-        if (userRank <= 0) return;
+        // calculatePoints expects a 0-indexed placement (WR = 0), matching recomputeMapPointsForLeaderboard.
+        const placement = map.entries.findIndex((entry) => entry.discordID === user.discordID);
+        if (placement === -1) return;
 
         const difficultyBonus = Number.isFinite(map.difficultyBonus) ? map.difficultyBonus : 0;
-        const newPoints = calculatePoints(map.entries.length, userRank, difficultyBonus);
+        const newPoints = calculatePoints(map.entries.length, placement, difficultyBonus);
         if (!Number.isFinite(newPoints)) return;
 
         // Update the user object
@@ -156,7 +157,7 @@ async function updateUserPointsIfCalculationMethodChanged(user, mapsWithUser) {
             mapName: map.mapName,
             steamID: map.steamID,
             entryCount: map.entries.length,
-            userRank: userRank,
+            userRank: placement + 1,
             newPoints: newPoints,
             difficultyBonus
         });

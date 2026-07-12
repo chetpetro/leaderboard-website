@@ -1,9 +1,14 @@
 const placementBonusValues = [150, 50, 25]
 const basePoints = 50;
 const scaleFactor = .25;
+// Bump this when point-affecting logic changes without touching the constants above
+// (rev 2: 0-indexed placement fix in the update-points rebuild), so stored user
+// points lazily rebuild on the next user fetch. A one-shot recompute over all maps
+// is not an option: it exceeds Vercel's request timeout.
+const calculationRevision = 2;
 
 function currentPointCalculationMethod() {
-    return `top3:${placementBonusValues[0]}:${placementBonusValues[1]}:${placementBonusValues[2]};base:${basePoints};comp:sqrt;scale:${scaleFactor}`;
+    return `top3:${placementBonusValues[0]}:${placementBonusValues[1]}:${placementBonusValues[2]};base:${basePoints};comp:sqrt;scale:${scaleFactor};rev:${calculationRevision}`;
 }
 
 // placement is 0 indexed so wr = index 0
