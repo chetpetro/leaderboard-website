@@ -1,20 +1,6 @@
+const Leaderboard = require('../../models/LeaderboardModel');
 const CustomLeaderboard = require('../../models/CustomLeaderboardModel');
 const { withMapKey } = require('./mapUtils');
-
-const getCustomLeaderboard = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const leaderboard = await CustomLeaderboard.findOne({ id }).lean();
-
-        if (!leaderboard) {
-            return res.status(404).json({ error: 'No custom leaderboard found' });
-        }
-
-        return res.status(200).json(withMapKey(leaderboard));
-    } catch (error) {
-        return res.status(400).json({ error: error.message });
-    }
-};
 
 const createCustomLeaderboard = async (req, res) => {
     try {
@@ -41,9 +27,15 @@ const createCustomLeaderboard = async (req, res) => {
             return res.status(400).json({ error: 'id, mapName and creator are required' });
         }
 
-        const existingLeaderboard = await CustomLeaderboard.findOne({ id: normalizedId }).lean();
+        const [existingLeaderboard, existingSteamLeaderboard] = await Promise.all([
+            CustomLeaderboard.findOne({ id: normalizedId }).lean(),
+            Leaderboard.findOne({ steamID: normalizedId }).lean()
+        ]);
         if (existingLeaderboard) {
             return res.status(409).json({ error: 'Custom leaderboard id already exists' });
+        }
+        if (existingSteamLeaderboard) {
+            return res.status(409).json({ error: 'A Steam leaderboard already uses this id' });
         }
 
         const leaderboard = await CustomLeaderboard.create({
@@ -51,7 +43,7 @@ const createCustomLeaderboard = async (req, res) => {
             mapName: normalizedMapName,
             creator: normalizedCreator,
             description,
-            previewImage: `/public/customLeaderboardImages/${normalizedId}.png`,
+            previewImage: `/customLeaderboardImages/${normalizedId}.png`,
             difficultyBonus,
             isCustomLeaderboard: true,
             entries: []
@@ -64,6 +56,5 @@ const createCustomLeaderboard = async (req, res) => {
 };
 
 module.exports = {
-    getCustomLeaderboard,
     createCustomLeaderboard
 };

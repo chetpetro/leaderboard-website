@@ -96,19 +96,19 @@ const MapOfTheWeek = ({ user }) => {
                                     )}
                                 </div>
                             </div>
-                            <a
-                                className="steam-btn btn btn-small"
-                                title={map?.isCustomLeaderboard ? `View ${map?.mapName} raw JSON` : `View ${map?.mapName} on Steam`}
-                                href={map?.isCustomLeaderboard ? `/custom-leaderboard/${getMapKey(map)}` : `https://steamcommunity.com/sharedfiles/filedetails/?id=${getMapKey(map)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {map?.isCustomLeaderboard ? 'View JSON' : (
+                            {!map?.isCustomLeaderboard && (
+                                <a
+                                    className="steam-btn btn btn-small"
+                                    title={`View ${map?.mapName} on Steam`}
+                                    href={`https://steamcommunity.com/sharedfiles/filedetails/?id=${getMapKey(map)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
                                     <div className="media-container">
                                         <img src="/Steam.svg" alt="Steam Icon" className="steam-icon" />
                                     </div>
-                                )}
-                            </a>
+                                </a>
+                            )}
                         </div>
                         <div className={"placeholder" + (isLoading ? " is-loading" : "")}>
                             <div className="placeholder-image">

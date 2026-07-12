@@ -19,12 +19,6 @@ export class LeaderboardsApi {
     return this.fetchByMapKey(steamID);
   }
 
-  fetchCustomLeaderboard(id) {
-    return this.httpClient.request(`/leaderboards/custom/${id}`, {
-      errorMessage: 'Failed to load custom leaderboard.'
-    });
-  }
-
   fetchMOTW() {
     return this.httpClient.request('/leaderboards/motw', {
       errorMessage: 'Failed to load map of the week.'

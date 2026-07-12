@@ -44,30 +44,20 @@ const createOrEditEntry = async (req, res) => {
             return res.status(500).json({ error: `Inconsistent state: user has points for a map they have no entry on, if possible write us on discord :) (mapPointsIndex: ${mapPointsIndex}, existingEntryIndex: ${existingEntryIndex})` });
         }
 
-        let recomputeDebugInfo = {};
         try {
             await Promise.all([
-                (async () => {
-                    recomputeDebugInfo = await recomputeMapPointsForLeaderboard({
-                        finalEntries,
-                        mapKey: getMapKey(map),
-                        difficultyBonus: map.difficultyBonus
-                    });
-                })(),
+                recomputeMapPointsForLeaderboard({
+                    finalEntries,
+                    mapKey: getMapKey(map),
+                    difficultyBonus: map.difficultyBonus
+                }),
                 sendDiscordPbMessage(discordPayload)
             ]);
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
 
-        const responseWithDebug = {
-            ...withMapKey(responsePayload),
-            _debug: {
-                finalEntriesCount: Array.isArray(finalEntries) ? finalEntries.length : 0,
-                recomputeMapPointsDebug: recomputeDebugInfo
-            }
-        };
-        return res.status(200).json(responseWithDebug);
+        return res.status(200).json(withMapKey(responsePayload));
     } catch (err) {
         return res.status(400).json({ error: err.message });
     }
@@ -128,15 +118,12 @@ const createMotwEntry = async (req, res) => {
                 return res.status(500).json({ error: `Inconsistent state: user has points for a map they have no entry on, if possible write us on discord :) (mapPointsIndex: ${mapPointsIndex}, existingEntryIndex: ${existingEntryIndex})` });
             }
             try {
-                let recomputeDebugInfo = {};
                 await Promise.all([
-                    (async () => {
-                        recomputeDebugInfo = await recomputeMapPointsForLeaderboard({
-                            finalEntries,
-                            mapKey: mapKeyValue,
-                            difficultyBonus: map.difficultyBonus
-                        });
-                    })(),
+                    recomputeMapPointsForLeaderboard({
+                        finalEntries,
+                        mapKey: mapKeyValue,
+                        difficultyBonus: map.difficultyBonus
+                    }),
                     sendDiscordPbMessage({
                         discordID: req.body.discordID,
                         userName: req.body.userName,
@@ -147,7 +134,6 @@ const createMotwEntry = async (req, res) => {
                         motw: true
                     })
                 ]);
-                responsePayload.normalEntryRecomputeDebug = recomputeDebugInfo;
             } catch (error) {
                 return res.status(500).json({ error: error.message });
             }

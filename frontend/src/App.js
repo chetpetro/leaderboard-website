@@ -16,7 +16,6 @@ import useApi from './hooks/useApi';
 import {Footer} from "./components/Footer";
 import ScrollToTop from './components/ScrollToTop';
 import AdminCustomLeaderboardCreate from './pages/AdminCustomLeaderboardCreate';
-import CustomLeaderboardView from './pages/CustomLeaderboardView';
 
 function AppContent() {
   const api = useApi();
@@ -84,7 +83,6 @@ function AppContent() {
             <Route path='/map-of-the-week' element={<MapOfTheWeek user={user} />} />
             <Route path='/leaderboards/:mapKey' element={<MapDetails user={user} />} />
             <Route path='/:steamID' element={<MapDetails user={user} />} />
-            <Route path='/custom-leaderboard/:id' element={<CustomLeaderboardView />} />
             <Route path='/user/:discordID' element={<User />}/>
             <Route path='/admin/custom-leaderboards/new' element={<AdminCustomLeaderboardCreate user={user} />} />
             <Route path='/login' element={<Login setUser={setUser}/>} />

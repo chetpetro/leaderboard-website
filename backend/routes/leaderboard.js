@@ -9,7 +9,6 @@ const {
     getEntriesByUser
 } = require("../controllers/leaderboard/publicController");
 const {
-    getCustomLeaderboard,
     createCustomLeaderboard
 } = require("../controllers/leaderboard/customController");
 const {
@@ -24,7 +23,6 @@ router.get('/', getLeaderboards); // GET all leaderboards
 router.get('/motw', getMOTW); // GET Map of the Week
 router.get('/recent', getRecentLeaderboards); // GET the 10 most recently updated leaderboards
 router.get('/entries', getEntriesByUser); // GET all entries for a user
-router.get('/custom/:id', getCustomLeaderboard); // GET one custom leaderboard by id
 router.get('/:mapKey', getLeaderboard); // GET one leaderboard by key
 router.post('/', createMapLeaderboard); // POST new leaderboard
 router.post('/custom', requireAuth, requireAdmin, createCustomLeaderboard); // POST custom leaderboard

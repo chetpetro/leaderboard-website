@@ -7,7 +7,6 @@ const MOCK_RESPONSE_FILES = [
     {method: 'GET', pattern: /^\/leaderboards\/recent$/, file: `${MOCK_API_BASE_URL}/leaderboards-recent.json`},
     {method: 'GET', pattern: /^\/leaderboards\/entries$/, file: `${MOCK_API_BASE_URL}/leaderboards-entries.json`},
     {method: 'GET', pattern: /^\/leaderboards\/?$/, file: `${MOCK_API_BASE_URL}/leaderboards.json`},
-    {method: 'GET', pattern: /^\/leaderboards\/custom\/[^/]+$/, file: `${MOCK_API_BASE_URL}/leaderboards-custom-by-id.json`},
     {method: 'GET', pattern: /^\/leaderboards\/[^/]+$/, file: `${MOCK_API_BASE_URL}/leaderboards-by-steamid.json`},
     {method: 'POST', pattern: /^\/leaderboards\/?$/, file: `${MOCK_API_BASE_URL}/leaderboards-create.json`},
     {method: 'POST', pattern: /^\/leaderboards\/custom$/, file: `${MOCK_API_BASE_URL}/leaderboards-custom-create.json`},

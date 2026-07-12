@@ -109,11 +109,7 @@ const MapDetails = ({user}) => {
                                     </div>)}
                                 </div>
                             </div>
-                                {map?.isCustomLeaderboard ? (
-                                    <a className="steam-btn btn btn-small" title={`View ${map?.mapName} raw JSON`} href={`/custom-leaderboard/${getMapKey(map)}`}>
-                                        View JSON
-                                    </a>
-                                ) : (
+                                {!map?.isCustomLeaderboard && (
                                     <a className="steam-btn btn btn-small" title={`View ${map?.mapName} on Steam`} href={`https://steamcommunity.com/sharedfiles/filedetails/?id=${getMapKey(map)}`} target="_blank" rel="noopener noreferrer">
                                         <div className="media-container">
                                             <img src={"/Steam.svg"} alt="Steam Icon" className="steam-icon" />

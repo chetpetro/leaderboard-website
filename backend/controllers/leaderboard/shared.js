@@ -231,6 +231,7 @@ const recomputeMapPointsForLeaderboard = async ({ finalEntries, mapKey, difficul
             throw error;
         }
     }
+    return debugInfo;
 };
 const requestToDiscordPayload = (req, map, wrContext) => ({
     discordID: req.body.discordID,

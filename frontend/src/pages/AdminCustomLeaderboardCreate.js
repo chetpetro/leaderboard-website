@@ -34,7 +34,7 @@ const AdminCustomLeaderboardCreate = ({ user }) => {
                 user?.token
             );
 
-            navigate(`/custom-leaderboard/${created.id}`);
+            navigate(`/leaderboards/${created.mapKey || created.id}`);
         } catch (error) {
             // Errors are already shown by the API layer.
         }

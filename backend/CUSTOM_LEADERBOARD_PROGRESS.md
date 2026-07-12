@@ -30,5 +30,10 @@ Track progress for each phase. Update statuses as work proceeds.
   - Switched frontend map routes and links to `/leaderboards/:mapKey` with legacy Steam fallback
   - Added custom leaderboard support to the MOTW rotation flow
   - Verified backend module loading and frontend production build
+- Post-phase cleanup: ✅ Complete
+  - Removed the debug raw-JSON view (`/custom-leaderboard/:id` page, route, API method, mock fixture, and the backend `GET /leaderboards/custom/:id` endpoint); custom maps are served solely via the unified `/leaderboards/:mapKey` route
+  - Removed `_debug` payloads from submission API responses
+  - Custom map creation now rejects ids that collide with an existing Steam leaderboard's steamID
+  - Fixed the derived preview image path (`/customLeaderboardImages/$id.png`, served from `frontend/public/customLeaderboardImages/`)
 
-Last updated: 2026-07-02T17:08:34+02:00
+Last updated: 2026-07-12
