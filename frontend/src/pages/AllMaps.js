@@ -12,16 +12,19 @@ const AllMaps = () => {
     const [maps, setMaps] = useState([]);
     const [total, setTotal] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
-    const [sortMostPlayed, setSortMostPlayed] = useState(true);
-    const [onlyWithBonus, setOnlyWithBonus] = useState(false);
+    const [sortPrimary, setSortPrimary] = useState(true);
+    const [onlyHardMaps, setOnlyHardMaps] = useState(false);
     const [onlyBoostless, setOnlyBoostless] = useState(false);
 
     const fetchPage = useCallback(async (offset) => {
         setIsLoading(true);
         try {
+            const sort = onlyHardMaps
+                ? (sortPrimary ? 'hardest' : 'easiest')
+                : (sortPrimary ? 'mostPlayed' : 'leastPlayed');
             const json = await api.leaderboards.browse({
-                sort: sortMostPlayed ? 'mostPlayed' : 'leastPlayed',
-                bonusOnly: onlyWithBonus,
+                sort,
+                bonusOnly: onlyHardMaps,
                 boostless: onlyBoostless,
                 limit: PAGE_SIZE,
                 offset
@@ -34,7 +37,7 @@ const AllMaps = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [api, sortMostPlayed, onlyWithBonus, onlyBoostless]);
+    }, [api, sortPrimary, onlyHardMaps, onlyBoostless]);
 
     // Re-fetch from the first page whenever sort or filters change.
     useEffect(() => {
@@ -47,30 +50,27 @@ const AllMaps = () => {
                 <h1 className="heading"><span className="text-gradient">All</span> Maps</h1>
                 <div className="filters">
                     <ToggleButton
-                        isOn={sortMostPlayed}
-                        onToggle={() => setSortMostPlayed(!sortMostPlayed)}
+                        isOn={sortPrimary}
+                        onToggle={() => setSortPrimary(!sortPrimary)}
                         label="Sort"
-                        onLabel="Most Played"
-                        offLabel="Least Played"
+                        onLabel={onlyHardMaps ? "Hardest" : "Most Played"}
+                        offLabel={onlyHardMaps ? "Easiest" : "Least Played"}
                     />
                     <ToggleButton
-                        isOn={onlyWithBonus}
-                        onToggle={() => setOnlyWithBonus(!onlyWithBonus)}
-                        label="Difficulty Bonus"
-                        onLabel="Only With Bonus"
-                        offLabel="All Maps"
+                        isOn={onlyHardMaps}
+                        onToggle={() => setOnlyHardMaps(!onlyHardMaps)}
+                        label="Only Hard Maps"
+                        onLabel="On"
+                        offLabel="Off"
                     />
                     <ToggleButton
                         isOn={onlyBoostless}
                         onToggle={() => setOnlyBoostless(!onlyBoostless)}
-                        label="Boostless"
-                        onLabel="Only Boostless"
-                        offLabel="All Maps"
+                        label="Only Boostless"
+                        onLabel="On"
+                        offLabel="Off"
                     />
                 </div>
-                <p className="map-count text-muted">
-                    Showing {maps.length} of {total} maps
-                </p>
                 {maps.length > 0 ? (
                     <div className="maps">
                         {maps.map((map) => (

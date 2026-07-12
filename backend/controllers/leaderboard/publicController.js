@@ -55,10 +55,13 @@ const browseLeaderboards = async (req, res) => {
         CustomLeaderboard.aggregate(pipeline)
     ]);
 
-    const direction = sort === 'leastPlayed' ? 1 : -1;
+    const isDifficultySort = sort === 'hardest' || sort === 'easiest';
+    const direction = (isDifficultySort ? sort === 'easiest' : sort === 'leastPlayed') ? 1 : -1;
     const merged = [...steamLeaderboards, ...customLeaderboards]
         .map(withMapKey)
-        .sort((a, b) => direction * ((a.entriesCount || 0) - (b.entriesCount || 0)));
+        .sort((a, b) => isDifficultySort
+            ? direction * ((a.difficultyBonus || 0) - (b.difficultyBonus || 0))
+            : direction * ((a.entriesCount || 0) - (b.entriesCount || 0)));
 
     res.status(200).json({
         maps: merged.slice(offset, offset + limit),
