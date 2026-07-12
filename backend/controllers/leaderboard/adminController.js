@@ -31,6 +31,19 @@ const deleteEntryByMapAndDiscord = async (req, res) => {
         map.entries = filteredEntries;
         map.lastSubmissionAt = lastSubmissionAt;
         await map.save();
+
+        // The recompute the frontend triggers afterwards only touches users that
+        // still have an entry, so the deleted user's mapPoints must be pulled here.
+        const mapKeyValue = getMapKey(map);
+        await User.updateOne(
+            { discordID, 'mapPoints.mapKey': mapKeyValue },
+            { $pull: { mapPoints: { mapKey: mapKeyValue } } }
+        );
+        await User.updateOne(
+            { discordID, 'mapPoints.mapSteamID': mapKeyValue },
+            { $pull: { mapPoints: { mapSteamID: mapKeyValue } } }
+        );
+
         return res.status(200).json({ success: true });
     } catch (err) {
         return res.status(400).json({ error: err.message });

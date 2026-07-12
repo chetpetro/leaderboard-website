@@ -77,6 +77,14 @@ export class LeaderboardsApi {
     });
   }
 
+  deleteOwnEntry(mapKey, token) {
+    return this.httpClient.request(`/leaderboards/${mapKey}/entries/me`, {
+      method: 'DELETE',
+      token,
+      errorMessage: 'Failed to delete your score.'
+    });
+  }
+
   createMotwEntry(mapKey, entry, token) {
     return this.httpClient.request(`/leaderboards/${mapKey}/motw`, {
       method: 'PATCH',

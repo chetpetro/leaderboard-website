@@ -14,7 +14,8 @@ const {
 } = require("../controllers/leaderboard/customController");
 const {
     createOrEditEntry,
-    createMotwEntry
+    createMotwEntry,
+    deleteOwnEntry
 } = require("../controllers/leaderboard/submissionController");
 const requireAuth = require('../middleware/requireAuth');
 const requireAdmin = require('../middleware/requireAdmin');
@@ -33,6 +34,7 @@ router.post('/custom', requireAuth, requireAdmin, createCustomLeaderboard); // P
 router.use(requireAuth);
 router.patch('/:mapKey/motw', createMotwEntry); // PATCH one featured map MOTW entry
 router.patch('/:mapKey', createOrEditEntry); // PATCH one leaderboard by key
+router.delete('/:mapKey/entries/me', deleteOwnEntry); // DELETE the authenticated user's own entry
 
 router.use(requireAdmin);
 router.patch('/:mapKey/difficultyBonus', changeMapDifficultyBonus); // PATCH one leaderboard's difficulty bonus by key)

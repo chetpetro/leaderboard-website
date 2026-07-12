@@ -201,7 +201,61 @@ const createMotwEntry = async (req, res) => {
     }
 };
 
+// Deletes the authenticated user's own entry. The discordID comes from the
+// auth token's user, never from the request, so users can only delete their own score.
+const deleteOwnEntry = async (req, res) => {
+    try {
+        const { mapKey } = req.params;
+        const resolved = await resolveLeaderboardByKey(mapKey);
+        const map = resolved.map;
+        if (!map) return res.status(404).json({ error: 'No leadearboard found' });
+
+        const authedUser = await User.findOne({ _id: req.user._id }, { discordID: 1 }).lean();
+        if (!authedUser?.discordID) return res.status(404).json({ error: 'No user found' });
+        const { discordID } = authedUser;
+
+        const filteredEntries = map.entries.filter((entry) => entry.discordID !== discordID);
+        if (filteredEntries.length === map.entries.length) {
+            return res.status(404).json({ error: 'You have no entry on this map' });
+        }
+
+        const lastSubmissionAt = filteredEntries.reduce((latest, entry) => {
+            if (!entry?.submittedAt) return latest;
+            const submittedAt = new Date(entry.submittedAt);
+            if (Number.isNaN(submittedAt.getTime())) return latest;
+            if (!latest || submittedAt > latest) return submittedAt;
+            return latest;
+        }, null);
+
+        map.entries = filteredEntries;
+        map.lastSubmissionAt = lastSubmissionAt;
+        await map.save();
+
+        const mapKeyValue = getMapKey(map);
+        await User.updateOne(
+            { discordID, 'mapPoints.mapKey': mapKeyValue },
+            { $pull: { mapPoints: { mapKey: mapKeyValue } } }
+        );
+        await User.updateOne(
+            { discordID, 'mapPoints.mapSteamID': mapKeyValue },
+            { $pull: { mapPoints: { mapSteamID: mapKeyValue } } }
+        );
+
+        await recomputeMapPointsForLeaderboard({
+            finalEntries: filteredEntries,
+            mapKey: mapKeyValue,
+            difficultyBonus: map.difficultyBonus,
+            isBoostless: map.isBoostless
+        });
+
+        return res.status(200).json({ success: true });
+    } catch (err) {
+        return res.status(400).json({ error: err.message });
+    }
+};
+
 module.exports = {
     createOrEditEntry,
-    createMotwEntry
+    createMotwEntry,
+    deleteOwnEntry
 };

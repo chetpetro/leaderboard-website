@@ -153,6 +153,17 @@
                     font-size: .75rem;
                 }
             }
+            .own-entry-panel {
+                .own-entry-cnt {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 1rem;
+                    .own-entry-time {
+                        font-size: .9rem;
+                    }
+                }
+            }
             .admin-panel {
                 h3 {
                     margin-block: .5rem .25rem;

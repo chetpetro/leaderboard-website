@@ -79,6 +79,23 @@ const MapDetails = ({user}) => {
         }
     };
 
+    const ownEntry = user?.discordID
+        ? (map?.entries || []).find((entry) => entry.discordID === user.discordID)
+        : null;
+
+    const handleDeleteOwnEntry = async () => {
+        if (!user?.token || !ownEntry) return;
+        const confirmed = window.confirm(`Are you sure you want to delete your score?\n${msToTime(ownEntry.time)}`);
+        if (!confirmed) return;
+
+        try {
+            await api.leaderboards.deleteOwnEntry(getMapKey(map), user.token);
+            await fetchMap();
+        } catch (error) {
+            // Errors are already shown by the API layer.
+        }
+    };
+
     const handleLogPointsClick = async () => {
         if (!mapKey || !user?.token) return;
 
@@ -191,6 +208,20 @@ const MapDetails = ({user}) => {
                         )}
                         {!user.userName && <h2>Login to Submit Entry</h2>}
                     </div>
+                    {ownEntry && (
+                        <div className="own-entry-panel card">
+                            <h2>Your Score</h2>
+                            <div className="own-entry-cnt">
+                                <span className="own-entry-time">
+                                    {msToTime(ownEntry.time)}
+                                    {map?.isBoostless && ` (${ownEntry.boosts ?? 0} boosts)`}
+                                </span>
+                                <button className="btn btn-red btn-small" onClick={handleDeleteOwnEntry}>
+                                    Delete My Score
+                                </button>
+                            </div>
+                        </div>
+                    )}
                     {map?.featured && (<Link to="/map-of-the-week" className="btn btn-primary btn-small">Visit Map of the Week Leaderboard</Link>)}
                     <div className="map-details-placeholder placeholder-wrapper">
                         <div className={"map-details card placeholder-target" + (isLoading ? ' is-loading' : '')}>
