@@ -9,7 +9,21 @@ const {
     sendDiscordPbMessage,
     requestToDiscordPayload
 } = require('./shared');
-const { resolveLeaderboardByKey, getMapKey, withMapKey } = require('./mapUtils');
+const { resolveLeaderboardByKey, getMapKey, withMapKey, isBetterEntry } = require('./mapUtils');
+
+// Boostless maps require a boost count on every submission; on normal maps a stray
+// `boosts` value must not be persisted, so it gets stripped from the body.
+const normalizeSubmissionBody = (map, rawBody) => {
+    const { boosts, ...bodyWithoutBoosts } = rawBody || {};
+    if (!map.isBoostless) {
+        return { body: bodyWithoutBoosts };
+    }
+    const parsedBoosts = Number(boosts);
+    if (!Number.isInteger(parsedBoosts) || parsedBoosts < 0) {
+        return { error: { status: 400, payload: { error: 'This map is boostless: boosts is required and must be an integer >= 0' } } };
+    }
+    return { body: { ...bodyWithoutBoosts, boosts: parsedBoosts } };
+};
 
 const createOrEditEntry = async (req, res) => {
     try {
@@ -18,18 +32,24 @@ const createOrEditEntry = async (req, res) => {
         const map = resolved.map;
         if (!map) return res.status(404).json({ error: 'No leadearboard found' });
 
-        const user = await User.findOne({ discordID: req.body.discordID }, { mapPoints: 1 }).lean();
+        const normalized = normalizeSubmissionBody(map, req.body);
+        if (normalized.error) {
+            return res.status(normalized.error.status).json(normalized.error.payload);
+        }
+        const body = normalized.body;
+
+        const user = await User.findOne({ discordID: body.discordID }, { mapPoints: 1 }).lean();
         if (!user) return res.status(404).json({ error: 'No user found' });
 
         const entries = map.entries;
         const submissionDate = new Date();
-        const wrContext = buildWrContext(entries, req.body.time, req.body.discordID);
-        const discordPayload = requestToDiscordPayload(req, map, wrContext);
-        const existingEntryIndex = getEntryIndexForUser(entries, req.body);
+        const wrContext = buildWrContext(entries, body, body.discordID, map.isBoostless);
+        const discordPayload = requestToDiscordPayload(body, map, wrContext);
+        const existingEntryIndex = getEntryIndexForUser(entries, body);
         const persistResult = await persistLeaderboardEntry({
             map,
             mapKey: getMapKey(map),
-            body: req.body,
+            body,
             submissionDate,
             existingEntryIndex
         });
@@ -49,7 +69,8 @@ const createOrEditEntry = async (req, res) => {
                 recomputeMapPointsForLeaderboard({
                     finalEntries,
                     mapKey: getMapKey(map),
-                    difficultyBonus: map.difficultyBonus
+                    difficultyBonus: map.difficultyBonus,
+                    isBoostless: map.isBoostless
                 }),
                 sendDiscordPbMessage(discordPayload)
             ]);
@@ -71,7 +92,13 @@ const createMotwEntry = async (req, res) => {
         if (!map) return res.status(404).json({ error: 'No leadearboard found' });
         if (!map.featured) return res.status(400).json({ error: 'Map of the week submissions are only available for the featured map' });
 
-        const user = await User.findOne({ discordID: req.body.discordID }, { mapPoints: 1 }).lean();
+        const normalized = normalizeSubmissionBody(map, req.body);
+        if (normalized.error) {
+            return res.status(normalized.error.status).json(normalized.error.payload);
+        }
+        const body = normalized.body;
+
+        const user = await User.findOne({ discordID: body.discordID }, { mapPoints: 1 }).lean();
         if (!user) return res.status(404).json({ error: 'No user found' });
 
         const submissionDate = new Date();
@@ -80,8 +107,9 @@ const createMotwEntry = async (req, res) => {
             mapKey: mapKeyValue,
             mapName: map.mapName,
             creator: map.creator,
-            body: req.body,
-            submissionDate
+            body,
+            submissionDate,
+            isBoostless: map.isBoostless
         });
 
         if (motwResult.error) {
@@ -93,19 +121,19 @@ const createMotwEntry = async (req, res) => {
             updatedNormalEntry: false
         };
         const entries = Array.isArray(map.entries) ? map.entries : [];
-        const submittedTime = Number(req.body.time);
-        const existingEntryIndex = getEntryIndexForUser(entries, req.body);
-        const wrContext = buildWrContext(entries, submittedTime, req.body.discordID);
-        const currentBestTime = existingEntryIndex !== -1 ? Number(entries[existingEntryIndex].time) : null;
+        const submittedTime = Number(body.time);
+        const existingEntryIndex = getEntryIndexForUser(entries, body);
+        const wrContext = buildWrContext(entries, body, body.discordID, map.isBoostless);
+        const submittedEntry = { time: submittedTime, boosts: body.boosts };
         const shouldUpdateNormalEntry = Number.isFinite(submittedTime)
-            && (existingEntryIndex === -1 || (Number.isFinite(currentBestTime) && submittedTime < currentBestTime));
+            && (existingEntryIndex === -1 || isBetterEntry(submittedEntry, entries[existingEntryIndex], map.isBoostless));
 
         if (shouldUpdateNormalEntry) {
             const persistResult = await persistLeaderboardEntry({
                 map,
                 mapKey: mapKeyValue,
                 entries,
-                body: req.body,
+                body,
                 submissionDate,
                 existingEntryIndex
             });
@@ -122,12 +150,15 @@ const createMotwEntry = async (req, res) => {
                     recomputeMapPointsForLeaderboard({
                         finalEntries,
                         mapKey: mapKeyValue,
-                        difficultyBonus: map.difficultyBonus
+                        difficultyBonus: map.difficultyBonus,
+                        isBoostless: map.isBoostless
                     }),
                     sendDiscordPbMessage({
-                        discordID: req.body.discordID,
-                        userName: req.body.userName,
+                        discordID: body.discordID,
+                        userName: body.userName,
                         time: submittedTime,
+                        boosts: body.boosts,
+                        isBoostless: !!map.isBoostless,
                         mapName: map.mapName,
                         mapKey: mapKeyValue,
                         wrContext,
@@ -144,9 +175,11 @@ const createMotwEntry = async (req, res) => {
         if (!shouldUpdateNormalEntry) {
             try {
                 await sendDiscordPbMessage({
-                    discordID: req.body.discordID,
-                    userName: req.body.userName,
+                    discordID: body.discordID,
+                    userName: body.userName,
                     time: submittedTime,
+                    boosts: body.boosts,
+                    isBoostless: !!map.isBoostless,
                     mapName: map.mapName,
                     mapKey: mapKeyValue,
                     wrContext,

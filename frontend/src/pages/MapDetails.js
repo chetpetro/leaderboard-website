@@ -8,6 +8,7 @@ import { useError } from '../context/ErrorContext';
 import useAdminAuthorization from '../hooks/useAdminAuthorization';
 import useApi from '../hooks/useApi';
 import { getMapKey } from "../utils/mapUtils";
+import { compareEntries } from "../utils/entryUtils";
 
 const MapDetails = ({user}) => {
     const api = useApi();
@@ -107,6 +108,7 @@ const MapDetails = ({user}) => {
                                         {map?.difficultyBonus > 0 && (<div className="difficulty-bonus-cnt">
                                         <div className="hot_pepper media-container"><img src="/hot_pepper.png" alt=""/></div><span className="bonus">+{map?.difficultyBonus}</span>
                                     </div>)}
+                                        {map?.isBoostless && (<span className="boostless-badge" title="Boostless map: ranked by fewest boosts, then fastest time">Boostless</span>)}
                                 </div>
                             </div>
                                 {!map?.isCustomLeaderboard && (
@@ -140,13 +142,13 @@ const MapDetails = ({user}) => {
                         </div>
                     </div>
                     <div className="leaderboard map-rankings">
-                        {map && [...(map.entries || [])].sort((a, b) => a.time - b.time).map((entry, index) => (
+                        {map && [...(map.entries || [])].sort((a, b) => compareEntries(a, b, map.isBoostless)).map((entry, index) => (
                             <div key={entry.discordID}
                                  className={"leaderboard-entry" + (isAdminAuthorized ? ' admin-view' : '')}
                                  style={{'--leaderboard-entry-animation-delay': 500 + 75*index + 'ms'}}>
                                 <span className={"placing"}>{index + 1}</span>
                                 <Link to={`/user/${entry.discordID}`}>{ entry.userName }</Link>
-                                <span>{ msToTime(entry.time) }</span>
+                                <span>{map.isBoostless && (<span className="entry-boosts" title="Boosts used">🚀{entry.boosts ?? 0} </span>)}{ msToTime(entry.time) }</span>
                                 { isAdminAuthorized &&
                                     <button type={"button"} onClick={() => handleDeleteEntry(entry)}
                                             className={"delete-btn btn btn-ghost btn-small"}>
@@ -183,6 +185,7 @@ const MapDetails = ({user}) => {
                                 user={user}
                                 onEntrySaved={fetchMap}
                                 submissionMode={map?.featured === true ? 'motw' : 'normal'}
+                                isBoostless={map?.isBoostless === true}
                             />
                         )}
                         {!user.userName && <h2>Login to Submit Entry</h2>}

@@ -1,11 +1,13 @@
 {
   "_id": "custom-123",
   "id": "custom-123",
+  "mapKey": "custom-123",
   "mapName": "Custom Map",
   "creator": "Superku",
   "description": "description",
   "previewImage": "/public/customLeaderboardImages/custom-123.png",
   "difficultyBonus": 0,
   "isCustomLeaderboard": true,
+  "isBoostless": true,
   "entries": []
 }

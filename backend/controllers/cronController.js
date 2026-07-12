@@ -6,7 +6,7 @@ const { replaceTemplateKeywords } = require('../utils/templateReplacer');
 const {msToTime} = require("../utils/timeUtil");
 const { sendDiscordMessage } = require('../utils/discordUtil');
 const { getMotwNumber } = require('../scripts/motwNumber');
-const { getMapKey } = require('./leaderboard/mapUtils');
+const { getMapKey, compareEntries } = require('./leaderboard/mapUtils');
 
 const buildMotwMessageContent = ({ mapName, mapKey, creator, wrEntry }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
@@ -42,7 +42,7 @@ const sendMotwRecapMessage = async (currentFeatured, motwEntries) => {
         }
 
         const entries = Array.isArray(motwEntries)
-            ? [...motwEntries].sort((a, b) => a.time - b.time)
+            ? [...motwEntries].sort((a, b) => compareEntries(a, b, currentFeatured.isBoostless))
             : [];
 
         const participantCount = entries.length;
@@ -111,7 +111,7 @@ const newFeaturedLeaderboard = async (req, res) => {
             : [];
 
         if (current) {
-            const entries = [...motwEntries].sort((a, b) => a.time - b.time);
+            const entries = [...motwEntries].sort((a, b) => compareEntries(a, b, current.isBoostless));
 
             for (let i = 0; i < entries.length; i++) {
                 const user = await User.findOne({ discordID: entries[i].discordID });
@@ -140,7 +140,7 @@ const newFeaturedLeaderboard = async (req, res) => {
 
     const selectedMap = randomLeaderboard;
     const wrEntries = Array.isArray(selectedMap.entries)
-        ? [...selectedMap.entries].sort((a, b) => a.time - b.time)
+        ? [...selectedMap.entries].sort((a, b) => compareEntries(a, b, selectedMap.isBoostless))
         : [];
     const wrEntry = wrEntries.length ? wrEntries[0] : null;
     const mapKey = getMapKey(selectedMap);
@@ -183,7 +183,7 @@ const previewMotwMessage = async (req, res) => {
 
         const selectedMap = randomLeaderboard;
         const wrEntries = Array.isArray(selectedMap.entries)
-            ? [...selectedMap.entries].sort((a, b) => a.time - b.time)
+            ? [...selectedMap.entries].sort((a, b) => compareEntries(a, b, selectedMap.isBoostless))
             : [];
         const wrEntry = wrEntries.length ? wrEntries[0] : null;
         const mapKey = getMapKey(selectedMap);

@@ -1,2 +1,27 @@
-{}
-
+{
+  "motw": {
+    "_id": "motw-submission-1",
+    "mapName": "Weekly Wind Tunnel",
+    "steamID": "weekly-wind-tunnel",
+    "mapKey": "weekly-wind-tunnel",
+    "creator": "Map Maker",
+    "lastSubmissionAt": "2026-04-27T02:00:00.000Z",
+    "entries": [
+      {
+        "userName": "RunnerOne",
+        "discordID": "1111",
+        "time": 123456,
+        "boosts": 2,
+        "submittedAt": "2026-04-27T00:00:00.000Z"
+      },
+      {
+        "userName": "RunnerTwo",
+        "discordID": "2222",
+        "time": 130000,
+        "boosts": 0,
+        "submittedAt": "2026-04-27T01:00:00.000Z"
+      }
+    ]
+  },
+  "updatedNormalEntry": false
+}

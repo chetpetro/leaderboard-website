@@ -11,6 +11,7 @@ const createCustomLeaderboard = async (req, res) => {
             creator
         } = req.body;
         const difficultyBonus = Number.parseInt(req.body?.difficultyBonus ?? 0, 10);
+        const isBoostless = req.body?.isBoostless === true || req.body?.isBoostless === 'true';
 
         if (!id || !mapName || !creator) {
             return res.status(400).json({ error: 'id, mapName and creator are required' });
@@ -46,6 +47,7 @@ const createCustomLeaderboard = async (req, res) => {
             previewImage: `/customLeaderboardImages/${normalizedId}.png`,
             difficultyBonus,
             isCustomLeaderboard: true,
+            isBoostless,
             entries: []
         });
 

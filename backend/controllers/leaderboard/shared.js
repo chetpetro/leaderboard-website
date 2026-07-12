@@ -5,9 +5,9 @@ const { replaceTemplateKeywords } = require('../../utils/templateReplacer');
 const { msToTime } = require('../../utils/timeUtil');
 const { sendDiscordMessage } = require('../../utils/discordUtil');
 const { calculatePoints } = require('../../scripts/points');
-const { getMapKey } = require('./mapUtils');
+const { getMapKey, compareEntries, isBetterEntry } = require('./mapUtils');
 require('dotenv').config();
-const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, mapKey, wrContext, motw = false }) => {
+const sendDiscordPbMessage = async ({ discordID, userName, time, boosts, isBoostless = false, mapName, mapKey, wrContext, motw = false }) => {
     const leaderboardUrl = 'https://pogostuckleaderboards.vercel.app/';
     const newline = String.fromCharCode(10);
     const userUrl = `${leaderboardUrl}user/${discordID}`;
@@ -16,15 +16,20 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, mapKey
     const hasOldWrTime = Number.isFinite(oldWrTime);
     const isNewWr = wrContext?.isNewWr === true;
     const motwStr = motw ? ' Map of the Week' : '';
+    // On boostless maps a WR can be taken with a slower time (fewer boosts) — only show the time diff when the time actually improved.
+    const wrImprovement = hasOldWrTime ? oldWrTime - time : null;
+    const showTimeDiff = wrImprovement !== null && wrImprovement > 0;
+    const boostsLine = isBoostless && Number.isFinite(Number(boosts)) ? ['**Boosts:** `%BOOSTS%`'] : [];
     const template = isNewWr
         ? [
             wrContext?.isSelfWrImprovement || !hasOldWrTime
                 ? `New${motwStr} WR by <@%DISCORDID%>`
                 : `New${motwStr} WR by <@%DISCORDID%> dethroning %OLDWRHOLDER%'s %OLDWRTIME%`,
             '',
-            hasOldWrTime
+            showTimeDiff
                 ? '**WR:** `%PBTIME%` (`-%TIMEDIFF%`)'
                 : '**WR:** `%PBTIME%`',
+            ...boostsLine,
             '**By:** [%USERNAME%](<%USERURL%>)',
             '**Map:** [%MAPNAME%](<%MAPURL%>)',
             '',
@@ -34,12 +39,12 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, mapKey
             `New${motwStr} PB for <@%DISCORDID%>`,
             '',
             '**PB:** `%PBTIME%`',
+            ...boostsLine,
             '**By:** [%USERNAME%](<%USERURL%>)',
             '**Map:** [%MAPNAME%](<%MAPURL%>)',
             '',
             '**More on:** [Pogostuck Leaderboards](<%LEADERBOARDURL%>)'
         ].join(newline);
-    const wrImprovement = hasOldWrTime ? oldWrTime - time : null;
     const oldWrHolder = wrContext?.oldWrHolder
         || (wrContext?.oldWrHolderDiscordID ? `<@${wrContext.oldWrHolderDiscordID}>` : 'unknown');
     const content = replaceTemplateKeywords(template, {
@@ -52,17 +57,18 @@ const sendDiscordPbMessage = async ({ discordID, userName, time, mapName, mapKey
         LEADERBOARDURL: leaderboardUrl,
         OLDWRTIME: hasOldWrTime ? msToTime(oldWrTime) : '',
         OLDWRHOLDER: oldWrHolder,
-        TIMEDIFF: wrImprovement !== null ? msToTime(wrImprovement) : ''
+        TIMEDIFF: showTimeDiff ? msToTime(wrImprovement) : '',
+        BOOSTS: Number.isFinite(Number(boosts)) ? String(Number(boosts)) : ''
     });
     await sendDiscordMessage(content);
 };
-const buildWrContext = (entries, submittedTimeRaw, submittedDiscordID) => {
+const buildWrContext = (entries, body, submittedDiscordID, isBoostless = false) => {
     const oldWrEntry = entries.reduce((best, entry) => {
         if (!entry || !Number.isFinite(entry.time)) return best;
-        if (!best || entry.time < best.time) return entry;
+        if (!best || compareEntries(entry, best, isBoostless) < 0) return entry;
         return best;
     }, null);
-    const submittedTime = Number(submittedTimeRaw);
+    const submittedTime = Number(body?.time);
     if (!Number.isFinite(submittedTime)) return { isNewWr: false };
     if (!oldWrEntry) {
         return {
@@ -73,7 +79,7 @@ const buildWrContext = (entries, submittedTimeRaw, submittedDiscordID) => {
             oldWrHolderDiscordID: null
         };
     }
-    const isNewWr = submittedTime < oldWrEntry.time;
+    const isNewWr = isBetterEntry({ time: submittedTime, boosts: body?.boosts }, oldWrEntry, isBoostless);
     return {
         isNewWr,
         isSelfWrImprovement: isNewWr && oldWrEntry.discordID === submittedDiscordID,
@@ -88,8 +94,8 @@ const getEntryIndexForUser = (entries, body) => entries.findIndex(
 const persistLeaderboardEntry = async ({ map, mapKey, body, submissionDate, existingEntryIndex }) => {
     const entries = Array.isArray(map.entries) ? [...map.entries] : [];
     if (existingEntryIndex !== -1) {
-        if (entries[existingEntryIndex].time <= body.time) {
-            return { error: { status: 400, payload: { msg: 'Posting slower time, time not updated!' } } };
+        if (!isBetterEntry(body, entries[existingEntryIndex], map.isBoostless)) {
+            return { error: { status: 400, payload: { msg: 'Posting a worse score, entry not updated!' } } };
         }
         entries[existingEntryIndex] = { ...body, submittedAt: submissionDate };
         map.entries = entries;
@@ -104,7 +110,7 @@ const persistLeaderboardEntry = async ({ map, mapKey, body, submissionDate, exis
     const responsePayload = await map.save();
     return { responsePayload, finalEntries, mapKey: getMapKey(map) || mapKey };
 };
-const persistMotwSubmissionEntry = async ({ mapKey, mapName, creator, body, submissionDate }) => {
+const persistMotwSubmissionEntry = async ({ mapKey, mapName, creator, body, submissionDate, isBoostless = false }) => {
     const submittedTime = Number(body.time);
     if (!Number.isFinite(submittedTime)) {
         return { error: { status: 400, payload: { error: 'Invalid submission time' } } };
@@ -112,19 +118,22 @@ const persistMotwSubmissionEntry = async ({ mapKey, mapName, creator, body, subm
     const existingSubmission = await MotwSubmission.findOne({ steamID: mapKey }).lean();
     const entries = Array.isArray(existingSubmission?.entries) ? [...existingSubmission.entries] : [];
     const existingEntryIndex = entries.findIndex((entry) => entry.discordID === body.discordID);
-    if (existingEntryIndex !== -1 && entries[existingEntryIndex].time <= submittedTime) {
-        return {
-            responsePayload: existingSubmission,
-            finalEntries: entries,
-            updated: false
-        };
-    }
     const updatedEntry = {
         userName: body.userName,
         discordID: body.discordID,
         time: submittedTime,
         submittedAt: submissionDate
     };
+    if (body.boosts !== undefined) {
+        updatedEntry.boosts = Number(body.boosts);
+    }
+    if (existingEntryIndex !== -1 && !isBetterEntry(updatedEntry, entries[existingEntryIndex], isBoostless)) {
+        return {
+            responsePayload: existingSubmission,
+            finalEntries: entries,
+            updated: false
+        };
+    }
     if (existingEntryIndex !== -1) {
         entries[existingEntryIndex] = updatedEntry;
     } else {
@@ -154,11 +163,11 @@ const hasInconsistentMapPointState = (user, mapKey, existingEntryIndex) => {
         mapPointsIndex
     };
 };
-const buildComputedMapPointsForLeaderboard = ({ finalEntries, mapKey, difficultyBonus }) => {
+const buildComputedMapPointsForLeaderboard = ({ finalEntries, mapKey, difficultyBonus, isBoostless = false }) => {
     const sortedEntries = finalEntries
         .filter((entry) => entry?.discordID && Number.isFinite(Number(entry.time)))
         .map((entry) => ({ ...entry, discordID: entry.discordID, time: Number(entry.time) }))
-        .sort((a, b) => a.time - b.time);
+        .sort((a, b) => compareEntries(a, b, isBoostless));
     const distinctDiscordIDs = [...new Set(sortedEntries.map((entry) => entry.discordID))];
     const effectiveDifficultyBonus = Number.isFinite(difficultyBonus) ? difficultyBonus : 0;
     const computedMapPoints = [];
@@ -184,8 +193,8 @@ const buildComputedMapPointsForLeaderboard = ({ finalEntries, mapKey, difficulty
         effectiveDifficultyBonus,
     };
 };
-const recomputeMapPointsForLeaderboard = async ({ finalEntries, mapKey, difficultyBonus }) => {
-    const { distinctDiscordIDs, computedMapPoints, sortedEntries } = buildComputedMapPointsForLeaderboard({ finalEntries, mapKey, difficultyBonus });
+const recomputeMapPointsForLeaderboard = async ({ finalEntries, mapKey, difficultyBonus, isBoostless = false }) => {
+    const { distinctDiscordIDs, computedMapPoints, sortedEntries } = buildComputedMapPointsForLeaderboard({ finalEntries, mapKey, difficultyBonus, isBoostless });
     const debugInfo = {
         finalEntriesCount: Array.isArray(finalEntries) ? finalEntries.length : 0,
         distinctDiscordIDs,
@@ -233,10 +242,12 @@ const recomputeMapPointsForLeaderboard = async ({ finalEntries, mapKey, difficul
     }
     return debugInfo;
 };
-const requestToDiscordPayload = (req, map, wrContext) => ({
-    discordID: req.body.discordID,
-    userName: req.body.userName,
-    time: req.body.time,
+const requestToDiscordPayload = (body, map, wrContext) => ({
+    discordID: body.discordID,
+    userName: body.userName,
+    time: body.time,
+    boosts: body.boosts,
+    isBoostless: !!map.isBoostless,
     mapName: map.mapName,
     mapKey: getMapKey(map),
     wrContext,

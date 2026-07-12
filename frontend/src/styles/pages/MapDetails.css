@@ -81,6 +81,16 @@
                                 color: transparent;
                             }
                         }
+                        .boostless-badge {
+                            margin-inline-start: .5ch;
+                            padding: 0 .5ch;
+                            border: 1px solid var(--primary);
+                            border-radius: .25rem;
+                            font-size: .8rem;
+                            font-style: italic;
+                            text-wrap: nowrap;
+                            color: var(--primary);
+                        }
 
                     }
 

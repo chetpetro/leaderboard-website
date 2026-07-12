@@ -110,7 +110,8 @@ const logMapPointsForLeaderboard = async (req, res) => {
         const { computedMapPoints, distinctDiscordIDs, effectiveDifficultyBonus } = buildComputedMapPointsForLeaderboard({
             finalEntries: Array.isArray(map.entries) ? map.entries : [],
             mapKey: mapKeyValue,
-            difficultyBonus: map.difficultyBonus
+            difficultyBonus: map.difficultyBonus,
+            isBoostless: map.isBoostless
         });
         const users = distinctDiscordIDs.length === 0
             ? []
@@ -157,7 +158,8 @@ const recomputeMapPointsAdmin = async (req, res) => {
         const recomputeDebugInfo = await recomputeMapPointsForLeaderboard({
             finalEntries: Array.isArray(map.entries) ? map.entries : [],
             mapKey: mapKeyValue,
-            difficultyBonus: map.difficultyBonus
+            difficultyBonus: map.difficultyBonus,
+            isBoostless: map.isBoostless
         });
         return res.status(200).json({
             success: true,

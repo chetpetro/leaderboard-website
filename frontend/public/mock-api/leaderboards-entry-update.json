@@ -1,1 +1,31 @@
-{}
+{
+  "_id": "1234111",
+  "mapName": "Boostless Gauntlet",
+  "id": "boostless-gauntlet",
+  "mapKey": "boostless-gauntlet",
+  "creator": "gurg",
+  "featured": false,
+  "description": "Boostless custom map: ranked by fewest boosts, then fastest time.",
+  "previewImage": "/crown.svg",
+  "colour": "red",
+  "lastSubmissionAt": "04-01-2021",
+  "difficultyBonus": 0,
+  "isCustomLeaderboard": true,
+  "isBoostless": true,
+  "entries": [
+    {
+      "userName": "gurgy",
+      "discordID": "1234",
+      "time": 1234,
+      "boosts": 1,
+      "submittedAt": "03-01-2021"
+    },
+    {
+      "userName": "slowAndSteady",
+      "discordID": "5678",
+      "time": 9999999,
+      "boosts": 0,
+      "submittedAt": "04-01-2021"
+    }
+  ]
+}

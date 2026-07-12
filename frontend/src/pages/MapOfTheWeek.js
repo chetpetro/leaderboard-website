@@ -8,6 +8,7 @@ import useApi from "../hooks/useApi";
 import "../styles/pages/MapDetails.css";
 import "../styles/pages/MapOfTheWeek.css"
 import { getMapKey } from "../utils/mapUtils";
+import { compareEntries } from "../utils/entryUtils";
 
 const MapOfTheWeek = ({ user }) => {
     const api = useApi();
@@ -46,7 +47,7 @@ const MapOfTheWeek = ({ user }) => {
     const motwEntries = useMemo(() => {
         const entries = Array.isArray(map?.entries) ? map.entries : [];
 
-        return [...entries].sort((a, b) => a.time - b.time);
+        return [...entries].sort((a, b) => compareEntries(a, b, map?.isBoostless));
     }, [map]);
 
     const handleDeleteEntry = async (entry) => {
@@ -94,6 +95,7 @@ const MapOfTheWeek = ({ user }) => {
                                             <div className="hot_pepper media-container"><img src="/hot_pepper.png" alt="" /></div><span className="bonus">+{map.difficultyBonus}</span>
                                         </div>
                                     )}
+                                    {map.isBoostless && (<span className="boostless-badge" title="Boostless map: ranked by fewest boosts, then fastest time">Boostless</span>)}
                                 </div>
                             </div>
                             {!map?.isCustomLeaderboard && (
@@ -139,7 +141,7 @@ const MapOfTheWeek = ({ user }) => {
                                  style={{'--leaderboard-entry-animation-delay': 500 + 75*index + 'ms'}}>
                                 <span className="placing">{index + 1}</span>
                                 <Link to={`/user/${entry.discordID}`}>{entry.userName}</Link>
-                                <span>{msToTime(entry.time)}</span>
+                                <span>{map.isBoostless && (<span className="entry-boosts" title="Boosts used">🚀{entry.boosts ?? 0} </span>)}{msToTime(entry.time)}</span>
                                 {isAdminAuthorized && (
                                     <button
                                         type="button"
@@ -161,6 +163,7 @@ const MapOfTheWeek = ({ user }) => {
                                 user={user}
                                 onEntrySaved={fetchMap}
                                 submissionMode="motw"
+                                isBoostless={map?.isBoostless === true}
                             />
                         )}
                         {!user.userName && <h2>Login to Submit Entry</h2>}

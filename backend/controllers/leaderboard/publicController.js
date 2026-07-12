@@ -4,7 +4,7 @@ const MotwSubmission = require('../../models/MotwSubmissionModel');
 const { getAverageColor } = require('fast-average-color-node');
 const { getMotwNumber } = require('../../scripts/motwNumber');
 const { recomputeMapPointsForLeaderboard } = require('./shared');
-const { resolveLeaderboardByKey, getMapKey, withMapKey } = require('./mapUtils');
+const { resolveLeaderboardByKey, getMapKey, withMapKey, compareEntries } = require('./mapUtils');
 
 const fetchAllLeaderboards = async () => {
     const [steamLeaderboards, customLeaderboards] = await Promise.all([
@@ -43,7 +43,7 @@ const getEntriesByUser = async (req, res) => {
     try {
         const [steamLeaderboards, customLeaderboards] = await Promise.all([
             Leaderboard.find({ 'entries.discordID': discordID }, { mapName: 1, steamID: 1, entries: 1 }).lean(),
-            CustomLeaderboard.find({ 'entries.discordID': discordID }, { mapName: 1, id: 1, entries: 1 }).lean()
+            CustomLeaderboard.find({ 'entries.discordID': discordID }, { mapName: 1, id: 1, entries: 1, isBoostless: 1 }).lean()
         ]);
 
         const mapsWithUser = [
@@ -53,7 +53,7 @@ const getEntriesByUser = async (req, res) => {
 
         mapsWithUser.forEach((map) => {
             if (Array.isArray(map.entries)) {
-                map.entries.sort((a, b) => a.time - b.time);
+                map.entries.sort((a, b) => compareEntries(a, b, map.isBoostless));
             }
         });
 
@@ -153,7 +153,8 @@ const changeMapDifficultyBonus = async (req, res) => {
     await recomputeMapPointsForLeaderboard({
         finalEntries: map.entries,
         mapKey: getMapKey(map),
-        difficultyBonus: map.difficultyBonus
+        difficultyBonus: map.difficultyBonus,
+        isBoostless: map.isBoostless
     });
     res.status(200).json(withMapKey(map));
 };

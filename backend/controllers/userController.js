@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const Leaderboard = require('../models/LeaderboardModel');
 const CustomLeaderboard = require('../models/CustomLeaderboardModel');
 const {currentPointCalculationMethod, calculatePoints} = require("../scripts/points");
+const { compareEntries } = require('./leaderboard/mapUtils');
 
 const createToken = (_id) => {
     return jwt.sign({_id}, process.env.SECRET, { expiresIn: '3d' });
@@ -97,13 +98,13 @@ const updateUserPoints = async (req, res) => {
             ).lean(),
             CustomLeaderboard.find(
                 { 'entries.discordID': user.discordID },
-                { mapName: 1, id: 1, entries: 1, difficultyBonus: 1 }
+                { mapName: 1, id: 1, entries: 1, difficultyBonus: 1, isBoostless: 1 }
             ).lean()
         ]);
         const mapsWithUser = [...steamMapsWithUser, ...customMapsWithUser];
         mapsWithUser.forEach((map) => {
             if (Array.isArray(map.entries)) {
-                map.entries.sort((a, b) => a.time - b.time);
+                map.entries.sort((a, b) => compareEntries(a, b, map.isBoostless));
             }
         });
 

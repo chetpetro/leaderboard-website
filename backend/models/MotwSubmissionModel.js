@@ -39,6 +39,9 @@ const motwSubmissionSchema = new Schema({
             type: Number,
             required: true
         },
+        boosts: {
+            type: Number
+        },
         submittedAt: {
             type: Date,
         }

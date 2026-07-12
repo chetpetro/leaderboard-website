@@ -12,13 +12,15 @@ const AdminCustomLeaderboardCreate = ({ user }) => {
         mapName: '',
         creator: 'Superku',
         description: '',
-        difficultyBonus: '0'
+        difficultyBonus: '0',
+        isBoostless: false
     });
 
     const handleChange = (field) => (event) => {
+        const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
         setForm((prev) => ({
             ...prev,
-            [field]: event.target.value
+            [field]: value
         }));
     };
 
@@ -71,6 +73,10 @@ const AdminCustomLeaderboardCreate = ({ user }) => {
                 <div>
                     <label htmlFor="custom-difficulty-bonus">Difficulty Bonus</label>
                     <input id="custom-difficulty-bonus" type="number" value={form.difficultyBonus} onChange={handleChange('difficultyBonus')} />
+                </div>
+                <div>
+                    <label htmlFor="custom-is-boostless">Boostless map (submissions ranked by fewest boosts, then time)</label>
+                    <input id="custom-is-boostless" type="checkbox" checked={form.isBoostless} onChange={handleChange('isBoostless')} />
                 </div>
                 <button className="btn btn-primary" type="submit">Create</button>
             </form>

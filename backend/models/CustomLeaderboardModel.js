@@ -35,6 +35,10 @@ const customLeaderboardSchema = new Schema({
         type: Boolean,
         default: true
     },
+    isBoostless: {
+        type: Boolean,
+        default: false
+    },
     lastSubmissionAt: {
         type: Date,
         default: null,
@@ -53,6 +57,9 @@ const customLeaderboardSchema = new Schema({
         time: {
             type: Number,
             required: true
+        },
+        boosts: {
+            type: Number
         },
         submittedAt: {
             type: Date

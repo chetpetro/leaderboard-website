@@ -42,14 +42,34 @@ const resolveLeaderboardByKey = async (mapKey) => {
     return { map: null, mapType: null, mapKey: normalizedMapKey };
 };
 
+// Missing boosts count as 0 — only possible on legacy/non-boostless entries,
+// since boostless submissions are validated to always carry boosts.
+const getEntryBoosts = (entry) => {
+    const boosts = Number(entry?.boosts);
+    return Number.isFinite(boosts) ? boosts : 0;
+};
+
+const compareEntries = (a, b, isBoostless) => {
+    if (isBoostless) {
+        const boostsDiff = getEntryBoosts(a) - getEntryBoosts(b);
+        if (boostsDiff !== 0) return boostsDiff;
+    }
+    return Number(a?.time) - Number(b?.time);
+};
+
+const isBetterEntry = (candidate, existing, isBoostless) => compareEntries(candidate, existing, isBoostless) < 0;
+
 const getMapRoutePath = (mapOrKey) => {
     const mapKey = normalizeMapKey(typeof mapOrKey === 'object' ? getMapKey(mapOrKey) : mapOrKey);
     return mapKey ? `/leaderboards/${encodeURIComponent(mapKey)}` : '/leaderboards';
 };
 
 module.exports = {
+    compareEntries,
+    getEntryBoosts,
     getMapKey,
     getMapRoutePath,
+    isBetterEntry,
     normalizeMapKey,
     resolveLeaderboardByKey,
     withMapKey
