@@ -63,6 +63,7 @@ const RecentMaps = () => {
                 )}
                 <div className="btn-container justify-center">
                     <button className="btn btn-primary" onClick={scrollToSearchAndClick}>Search Maps</button>
+                    <Link to="/maps" className="btn btn-gray">View All Maps</Link>
                 </div>
             </div>
         </div>

@@ -1,0 +1,83 @@
+{
+  "maps": [
+    {
+      "_id": "boostless-gauntlet",
+      "mapName": "Boostless Gauntlet",
+      "steamID": null,
+      "id": "boostless-gauntlet",
+      "creator": "gurg",
+      "previewImage": "/crown.svg",
+      "difficultyBonus": 0,
+      "isBoostless": true,
+      "entriesCount": 2,
+      "mapKey": "boostless-gauntlet",
+      "isCustomLeaderboard": true
+    },
+    {
+      "_id": "123411111",
+      "mapName": "Short Map",
+      "steamID": "1234",
+      "id": null,
+      "creator": "gurg",
+      "previewImage": "Steam.svg",
+      "difficultyBonus": 10,
+      "isBoostless": false,
+      "entriesCount": 1,
+      "mapKey": "1234",
+      "isCustomLeaderboard": false
+    },
+    {
+      "_id": "12341111",
+      "mapName": "Long Map name, wow so long",
+      "steamID": "124",
+      "id": null,
+      "creator": "gurgy",
+      "previewImage": "user.svg",
+      "difficultyBonus": 60,
+      "isBoostless": false,
+      "entriesCount": 1,
+      "mapKey": "124",
+      "isCustomLeaderboard": false
+    },
+    {
+      "_id": "1234111",
+      "mapName": "Short Map 2",
+      "steamID": "234",
+      "id": null,
+      "creator": "gurg",
+      "previewImage": "/bee.png",
+      "difficultyBonus": 20,
+      "isBoostless": false,
+      "entriesCount": 1,
+      "mapKey": "234",
+      "isCustomLeaderboard": false
+    },
+    {
+      "_id": "123411",
+      "mapName": "Long Map of doom wow so long",
+      "steamID": "12346",
+      "id": null,
+      "creator": "gurg",
+      "previewImage": "/bee.png",
+      "difficultyBonus": 80,
+      "isBoostless": false,
+      "entriesCount": 1,
+      "mapKey": "12346",
+      "isCustomLeaderboard": false
+    },
+    {
+      "_id": "12341",
+      "mapName": "Short Maps collection",
+      "steamID": "12341",
+      "id": null,
+      "creator": "gurg",
+      "previewImage": "/bee.png",
+      "difficultyBonus": 100,
+      "isBoostless": false,
+      "entriesCount": 1,
+      "mapKey": "12341",
+      "isCustomLeaderboard": false
+    }
+  ],
+  "total": 6
+}

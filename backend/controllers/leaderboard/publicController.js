@@ -23,6 +23,49 @@ const getLeaderboards = async (req, res) => {
     res.status(200).json(response.sort((a, b) => (b.entries?.length || 0) - (a.entries?.length || 0)));
 };
 
+const BROWSE_PROJECTION = {
+    mapName: 1,
+    steamID: 1,
+    id: 1,
+    creator: 1,
+    previewImage: 1,
+    difficultyBonus: 1,
+    isBoostless: 1,
+    entriesCount: { $size: { $ifNull: ['$entries', []] } }
+};
+
+const browseLeaderboards = async (req, res) => {
+    const { sort, bonusOnly, boostless } = req.query;
+    const requestedLimit = Number.parseInt(req.query.limit, 10);
+    const limit = Number.isNaN(requestedLimit) ? 9 : Math.min(Math.max(requestedLimit, 1), 50);
+    const requestedOffset = Number.parseInt(req.query.offset, 10);
+    const offset = Number.isNaN(requestedOffset) ? 0 : Math.max(requestedOffset, 0);
+
+    const match = {};
+    if (bonusOnly === 'true') match.difficultyBonus = { $gt: 0 };
+    if (boostless === 'true') match.isBoostless = true;
+
+    const pipeline = [
+        { $match: match },
+        { $project: BROWSE_PROJECTION }
+    ];
+
+    const [steamLeaderboards, customLeaderboards] = await Promise.all([
+        Leaderboard.aggregate(pipeline),
+        CustomLeaderboard.aggregate(pipeline)
+    ]);
+
+    const direction = sort === 'leastPlayed' ? 1 : -1;
+    const merged = [...steamLeaderboards, ...customLeaderboards]
+        .map(withMapKey)
+        .sort((a, b) => direction * ((a.entriesCount || 0) - (b.entriesCount || 0)));
+
+    res.status(200).json({
+        maps: merged.slice(offset, offset + limit),
+        total: merged.length
+    });
+};
+
 const getRecentLeaderboards = async (req, res) => {
     const requestedLimit = Number.parseInt(req.query.limit, 10);
     const limit = Number.isNaN(requestedLimit) ? 10 : Math.min(Math.max(requestedLimit, 1), 50);
@@ -179,6 +222,7 @@ const getMOTW = async (req, res) => {
 
 module.exports = {
     getLeaderboards,
+    browseLeaderboards,
     getLeaderboard,
     createMapLeaderboard,
     changeMapDifficultyBonus,

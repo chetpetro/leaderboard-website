@@ -16,6 +16,7 @@ import useApi from './hooks/useApi';
 import {Footer} from "./components/Footer";
 import ScrollToTop from './components/ScrollToTop';
 import AdminCustomLeaderboardCreate from './pages/AdminCustomLeaderboardCreate';
+import AllMaps from './pages/AllMaps';
 
 function AppContent() {
   const api = useApi();
@@ -80,6 +81,7 @@ function AppContent() {
         <div className="pages">
           <Routes>
             <Route exact path='/' element={<Home/>} />
+            <Route path='/maps' element={<AllMaps />} />
             <Route path='/map-of-the-week' element={<MapOfTheWeek user={user} />} />
             <Route path='/leaderboards/:mapKey' element={<MapDetails user={user} />} />
             <Route path='/:steamID' element={<MapDetails user={user} />} />

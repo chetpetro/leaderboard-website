@@ -2,6 +2,7 @@ const express = require('express');
 const {
     getLeaderboard,
     getLeaderboards,
+    browseLeaderboards,
     createMapLeaderboard,
     getMOTW,
     getRecentLeaderboards,
@@ -20,6 +21,7 @@ const requireAdmin = require('../middleware/requireAdmin');
 const router = express.Router();
 
 router.get('/', getLeaderboards); // GET all leaderboards
+router.get('/browse', browseLeaderboards); // GET paginated/filtered maps without entries
 router.get('/motw', getMOTW); // GET Map of the Week
 router.get('/recent', getRecentLeaderboards); // GET the 10 most recently updated leaderboards
 router.get('/entries', getEntriesByUser); // GET all entries for a user

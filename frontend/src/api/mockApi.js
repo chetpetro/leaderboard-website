@@ -3,6 +3,7 @@ const MOCK_API_BASE_URL = '/mock-api';
 export const USE_MOCK_API = process.env.REACT_APP_USE_MOCK_API === 'true';
 
 const MOCK_RESPONSE_FILES = [
+    {method: 'GET', pattern: /^\/leaderboards\/browse$/, file: `${MOCK_API_BASE_URL}/leaderboards-browse.json`},
     {method: 'GET', pattern: /^\/leaderboards\/motw$/, file: `${MOCK_API_BASE_URL}/leaderboards-motw.json`},
     {method: 'GET', pattern: /^\/leaderboards\/recent$/, file: `${MOCK_API_BASE_URL}/leaderboards-recent.json`},
     {method: 'GET', pattern: /^\/leaderboards\/entries$/, file: `${MOCK_API_BASE_URL}/leaderboards-entries.json`},

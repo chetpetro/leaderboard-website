@@ -9,6 +9,20 @@ export class LeaderboardsApi {
     });
   }
 
+  browse({ sort = 'mostPlayed', bonusOnly = false, boostless = false, limit = 9, offset = 0 } = {}) {
+    const params = new URLSearchParams({
+      sort,
+      limit: String(limit),
+      offset: String(offset)
+    });
+    if (bonusOnly) params.set('bonusOnly', 'true');
+    if (boostless) params.set('boostless', 'true');
+
+    return this.httpClient.request(`/leaderboards/browse?${params}`, {
+      errorMessage: 'Failed to load maps.'
+    });
+  }
+
   fetchByMapKey(mapKey) {
     return this.httpClient.request(`/leaderboards/${mapKey}`, {
       errorMessage: 'Failed to load map details.'

@@ -1,6 +1,6 @@
 import { USE_MOCK_API, requestMockResponse } from './mockApi';
 
-const API_BASE_URL = 'https://leaderboard-website-api.vercel.app/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://leaderboard-website-api.vercel.app/api';
 
 const parseResponseBody = async (response) => {
   const contentType = response.headers.get('content-type') || '';

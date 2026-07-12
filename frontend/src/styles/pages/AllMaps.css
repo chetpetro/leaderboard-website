@@ -1,0 +1,65 @@
+body:has(.all-maps) {
+    background: var(--color-surface-100) radial-gradient(circle at center 10rem, rgba(255, 255, 255, 8%), transparent 25rem) top center;
+    background-repeat: no-repeat;
+}
+.all-maps {
+    min-height: calc(100dvh - var(--header-height) - 2px);
+    .heading {
+        margin-bottom: .75rem;
+        text-align: center;
+    }
+    .filters {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: .75rem;
+        margin-block: 1.5rem;
+    }
+    .map-count {
+        text-align: center;
+        color: var(--color-surface-600);
+        margin-block-end: 1.5rem;
+    }
+    .maps {
+        display: grid;
+        gap: 1rem;
+    }
+    .map-info .difficulty-bonus-cnt {
+        display: flex;
+        align-items: center;
+        filter: drop-shadow(#ff7f00 0px 0px 3px);
+        .hot_pepper.media-container {
+            max-height: 1.25rem;
+            aspect-ratio: 1;
+        }
+        .bonus {
+            font-weight: 500;
+            font-style: italic;
+            text-align: end;
+            /* gradient "flame" so red orange yellow*/
+            background: linear-gradient(200deg,
+                    #ffff00 40%,
+                    #ff7f00 60%,
+                    #ff0000 100%
+            );
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+    }
+    .no-maps {
+        text-align: center;
+        color: var(--color-surface-600);
+    }
+    .btn-container {
+        margin-block-start: 2rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .all-maps {
+        .maps {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+}
