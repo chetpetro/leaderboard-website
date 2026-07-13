@@ -84,7 +84,7 @@ Note: it only **upserts** points for users that still have an entry. Removing a 
 | Admin deletes an entry | `DELETE /api/admin/leaderboards/:mapKey/entries/:discordID` (`adminController.deleteEntryByMapAndDiscord`) | Removes the entry, `$pull`s the deleted user's `mapPoints`, then recomputes the map for the remaining users. |
 | Admin deletes a map | `DELETE /api/admin/leaderboards/:mapKey` (`adminController.deleteLeaderboardBySteamID`) | Deletes the leaderboard (steam or custom) plus its MOTW submissions, and `$pull`s that map's element from **all** users' `mapPoints`. |
 | Admin changes difficulty bonus | `PATCH /api/leaderboards/:mapKey/difficultyBonus` (`publicController.changeMapDifficultyBonus`) | Saves the bonus, then recomputes the map. |
-| Admin manual recompute | `POST /api/admin/leaderboards/:mapKey/recompute-map-points` (`adminController.recomputeMapPointsAdmin`) | Runs the core recompute on the map's current entries; returns `debugInfo`. |
+| Admin manual recompute | `POST /api/admin/leaderboards/:mapKey/recompute-map-points` (`adminController.recomputeMapPointsAdmin`) | Runs the core recompute on the map's current entries; returns `debugInfo`. Triggered by the "recompute points" button on the map admin panel (`MapDetails.js`), next to "log points"; response is logged to the console. |
 
 Admin-deleting a **MOTW** entry (`DELETE /api/admin/leaderboards/:mapKey/motw/entries/:discordID`)
 only edits the `MotwSubmission` document; the mirrored normal entry and its points are untouched.
@@ -122,8 +122,13 @@ Two frontend callers:
   min/max map points) and sorts the rows by points.
 - `GET /api/admin/leaderboards/:mapKey/map-points` (`adminController.logMapPointsForLeaderboard`):
   debug endpoint returning, per user on the map, the freshly computed value next to the currently
-  stored `mapPoints` element. Surfaced by the "log points" button on the map admin panel (output
-  goes to the browser console).
+  stored `mapPoints` element. Surfaced by the "log points" button on the map admin panel
+  (`MapDetails.js`), which trims the raw response before logging to the console: it drops the
+  top-level `map` and `computedMapPoints` keys, and for each user keeps only `currentMapPoint` and
+  `computedMapPoint` (dropping `discordID`/`userName`/the full `mapPoints` array). It also adds a
+  top-level `mismatches` array — `{ current, computedMapPoint, userName }` triples for every user
+  whose stored points differ from the freshly computed value (including users with no stored entry
+  at all) — so stale points are visible without diffing the full user list by hand.
 - Login/signup responses include the user's `mapPoints` snapshot, which the frontend keeps in the
   auth user state (`App.js`) — currently nothing renders from it; pages fetch fresh data instead.
 

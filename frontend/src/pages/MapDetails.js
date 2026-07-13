@@ -98,6 +98,32 @@ const MapDetails = ({user}) => {
 
         try {
             const response = await api.admin.logMapPoints(mapKey, user.token);
+            const responseUsers = Array.isArray(response?.users) ? response.users : [];
+
+            const users = responseUsers.map(({ currentMapPoint, computedMapPoint }) => ({
+                currentMapPoint,
+                computedMapPoint
+            }));
+
+            const mismatches = responseUsers
+                .filter(({ currentMapPoint, computedMapPoint }) => (currentMapPoint?.points ?? null) !== (computedMapPoint?.points ?? null))
+                .map(({ currentMapPoint, computedMapPoint, userName }) => ({
+                    current: currentMapPoint,
+                    computedMapPoint,
+                    userName
+                }));
+
+            console.log({ users, mismatches });
+        } catch (error) {
+            // Errors are already shown by the API layer.
+        }
+    }
+
+    const handleRecomputePointsClick = async () => {
+        if (!mapKey || !user?.token) return;
+
+        try {
+            const response = await api.admin.recomputeMapPoints(mapKey, user.token);
             console.log(response);
         } catch (error) {
             // Errors are already shown by the API layer.
@@ -185,8 +211,11 @@ const MapDetails = ({user}) => {
                                         <button className="btn btn-red btn-small" onClick={handleDeleteMap}>
                                             !Delete Map!
                                         </button>
-                                        <button className="btn btn-gray btn-small" onClick={handleLogPointsClick} title="Logs some info about what points there should be and what they really are into the console">
+                                        <button className="btn btn-gray btn-small" onClick={handleLogPointsClick} title="Logs each user's current vs. freshly computed map points into the console">
                                             log points
+                                        </button>
+                                        <button className="btn btn-gray btn-small" onClick={handleRecomputePointsClick} title="Recomputes and stores map points for this map's current entries">
+                                            recompute points
                                         </button>
                                     </div>
                                 </div>
