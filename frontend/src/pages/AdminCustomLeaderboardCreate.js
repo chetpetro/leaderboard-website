@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import useAdminAuthorization from '../hooks/useAdminAuthorization';
 import useApi from '../hooks/useApi';
 import { ToggleButton } from '../components/ToggleButton';
+import "../styles/pages/AdminCustomLeaderboardCreate.css"
 
 const AdminCustomLeaderboardCreate = ({ user }) => {
     const api = useApi();
@@ -54,7 +55,7 @@ const AdminCustomLeaderboardCreate = ({ user }) => {
     return (
         <div className="inside">
             <h1>Create Custom Leaderboard</h1>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="create-custom-leaderboard-form">
                 <div>
                     <label htmlFor="custom-id">ID</label>
                     <input id="custom-id" type="text" value={form.id} onChange={handleChange('id')} />
@@ -79,7 +80,7 @@ const AdminCustomLeaderboardCreate = ({ user }) => {
                     <ToggleButton
                         isOn={form.isBoostless}
                         onToggle={() => setForm((prev) => ({ ...prev, isBoostless: !prev.isBoostless }))}
-                        label="Boostless map (submissions ranked by fewest boosts, then time)"
+                        label="Boostless"
                         onLabel="On"
                         offLabel="Off"
                     />

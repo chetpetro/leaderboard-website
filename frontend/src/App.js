@@ -9,14 +9,14 @@ import MapOfTheWeek from './pages/MapOfTheWeek';
 import { useState, useEffect } from 'react';
 import User from './pages/UserDetails';
 import PointsLeaderboard from './pages/PointsLeaderboard';
+import AdminCustomLeaderboardCreate from './pages/AdminCustomLeaderboardCreate';
+import HardestMaps from "./pages/HardestMaps";
+import AllMaps from './pages/AllMaps';
 import ErrorMessageDisplay from "./components/ErrorMessageDisplay";
 import { ErrorProvider } from './context/ErrorContext';
-import HardestMaps from "./pages/HardestMaps";
 import useApi from './hooks/useApi';
 import {Footer} from "./components/Footer";
 import ScrollToTop from './components/ScrollToTop';
-import AdminCustomLeaderboardCreate from './pages/AdminCustomLeaderboardCreate';
-import AllMaps from './pages/AllMaps';
 
 function AppContent() {
   const api = useApi();

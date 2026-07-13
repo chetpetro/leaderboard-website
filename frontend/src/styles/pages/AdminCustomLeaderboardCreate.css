@@ -1,0 +1,6 @@
+.create-custom-leaderboard-form {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    align-items: start;
+}
