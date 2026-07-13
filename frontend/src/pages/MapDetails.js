@@ -107,10 +107,9 @@ const MapDetails = ({user}) => {
 
             const mismatches = responseUsers
                 .filter(({ currentMapPoint, computedMapPoint }) => (currentMapPoint?.points ?? null) !== (computedMapPoint?.points ?? null))
-                .map(({ currentMapPoint, computedMapPoint, userName }) => ({
+                .map(({ currentMapPoint, computedMapPoint }) => ({
                     current: currentMapPoint,
-                    computedMapPoint,
-                    userName
+                    computedMapPoint
                 }));
 
             console.log({ users, mismatches });

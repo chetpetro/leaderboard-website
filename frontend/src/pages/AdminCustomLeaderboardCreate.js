@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAdminAuthorization from '../hooks/useAdminAuthorization';
 import useApi from '../hooks/useApi';
+import { ToggleButton } from '../components/ToggleButton';
 
 const AdminCustomLeaderboardCreate = ({ user }) => {
     const api = useApi();
@@ -75,8 +76,13 @@ const AdminCustomLeaderboardCreate = ({ user }) => {
                     <input id="custom-difficulty-bonus" type="number" value={form.difficultyBonus} onChange={handleChange('difficultyBonus')} />
                 </div>
                 <div>
-                    <label htmlFor="custom-is-boostless">Boostless map (submissions ranked by fewest boosts, then time)</label>
-                    <input id="custom-is-boostless" type="checkbox" checked={form.isBoostless} onChange={handleChange('isBoostless')} />
+                    <ToggleButton
+                        isOn={form.isBoostless}
+                        onToggle={() => setForm((prev) => ({ ...prev, isBoostless: !prev.isBoostless }))}
+                        label="Boostless map (submissions ranked by fewest boosts, then time)"
+                        onLabel="On"
+                        offLabel="Off"
+                    />
                 </div>
                 <button className="btn btn-primary" type="submit">Create</button>
             </form>

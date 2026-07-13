@@ -126,9 +126,9 @@ Two frontend callers:
   (`MapDetails.js`), which trims the raw response before logging to the console: it drops the
   top-level `map` and `computedMapPoints` keys, and for each user keeps only `currentMapPoint` and
   `computedMapPoint` (dropping `discordID`/`userName`/the full `mapPoints` array). It also adds a
-  top-level `mismatches` array — `{ current, computedMapPoint, userName }` triples for every user
-  whose stored points differ from the freshly computed value (including users with no stored entry
-  at all) — so stale points are visible without diffing the full user list by hand.
+  top-level `mismatches` array — `{ current, computedMapPoint }` pairs for every user whose stored
+  points differ from the freshly computed value (including users with no stored entry at all) — so
+  stale points are visible without diffing the full user list by hand.
 - Login/signup responses include the user's `mapPoints` snapshot, which the frontend keeps in the
   auth user state (`App.js`) — currently nothing renders from it; pages fetch fresh data instead.
 
