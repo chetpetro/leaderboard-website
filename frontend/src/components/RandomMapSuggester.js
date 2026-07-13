@@ -164,7 +164,7 @@ export const RandomMapSuggester = ({maps}) => {
                 </div>
                 <div className="buttons">
                     <button type="button" className="btn btn-primary" onClick={handleShuffle}>
-                        Random Map 🔀
+                        Random Map
                     </button>
                     <ToggleButton
                         isOn={isReducedMotion}
