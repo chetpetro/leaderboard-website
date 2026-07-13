@@ -83,7 +83,6 @@ const UserDetails = () => {
     const motwStreak = useMemo(() => {
         if(!motwInfo) return
         const motwNumber = motwInfo.motwNumber;
-        console.log("motwInfo", motwInfo);
         if (!Number.isFinite(motwNumber) || motwNumber <= 0) {
             return 0;
         }
@@ -94,14 +93,9 @@ const UserDetails = () => {
                 .filter((number) => Number.isFinite(number))
         );
 
-        console.log("participationNumbers", participationNumbers);
-
         const startMotwNumber = motwNumber - 1;
 
-        console.log("startMotwNumber", startMotwNumber);
-
         let streak = 0;
-        console.log("Initial streak", streak);
 
         while (participationNumbers.has(startMotwNumber - streak)) {
             streak += 1;
@@ -128,7 +122,6 @@ const UserDetails = () => {
             try {
                 const motwPayload = await api.leaderboards.fetchMOTW();
                 if (motwPayload) {
-                    console.log("payload", motwPayload)
                     setMotwInfo({
                         motwNumber: Number(motwPayload.motwNumber),
                         submittedToCurrent: motwPayload.entries?.some((entry) => entry.discordID === discordID) || false
