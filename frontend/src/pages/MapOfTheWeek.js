@@ -75,6 +75,23 @@ const MapOfTheWeek = ({ user }) => {
         }
     };
 
+    const ownEntry = user?.discordID
+        ? motwEntries.find((entry) => entry.discordID === user.discordID)
+        : null;
+
+    const handleDeleteOwnEntry = async () => {
+        if (!user?.token || !ownEntry) return;
+        const confirmed = window.confirm(`Are you sure you want to delete your score?\n${msToTime(ownEntry.time)}`);
+        if (!confirmed) return;
+
+        try {
+            await api.leaderboards.deleteOwnEntry(getMapKey(map), user.token);
+            await fetchMap();
+        } catch (error) {
+            // Errors are already shown by the API layer.
+        }
+    };
+
     return (
         <div className="map-details map-of-the-week">
             <div className="inside">
@@ -169,6 +186,20 @@ const MapOfTheWeek = ({ user }) => {
                         )}
                         {!user.userName && <h2>Login to Submit Entry</h2>}
                     </div>
+                    {ownEntry && (
+                        <div className="own-entry-panel card">
+                            <h2>Your Score</h2>
+                            <div className="own-entry-cnt">
+                                <span className="own-entry-time">
+                                    {msToTime(ownEntry.time)}
+                                    {map?.isBoostless && ` (${ownEntry.boosts ?? 0} boosts)`}
+                                </span>
+                                <button className="btn btn-red btn-small" onClick={handleDeleteOwnEntry}>
+                                    Delete My Score
+                                </button>
+                            </div>
+                        </div>
+                    )}
                     <div className={"card"}>
                         <h2>Info</h2>
                         <p>Submit your time here or on the actual pap page to submit to the <i>Map Of The Week</i> leaderboard</p>
